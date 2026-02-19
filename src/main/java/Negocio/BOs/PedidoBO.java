@@ -9,6 +9,13 @@ import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * 
+ * @author Brian Kaleb Sandoval Rodríguez - 00000262741
+ * @author Alejandra Leal Armenta - 00000262719
+ * @author Paulina Michel Guevara Cervantez - 00000262724
+ */
+
 public class PedidoBO implements IPedidoBO {
 
     private final IPedidoDAO pedidoDAO;
