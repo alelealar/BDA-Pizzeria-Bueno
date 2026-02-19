@@ -1,5 +1,6 @@
 package presentacion;
 
+import Negocio.BOs.IPizzaBO;
 import persistencia.dominio.Pedido;
 
 import javax.swing.*;
@@ -9,9 +10,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
+import persistencia.excepciones.PersistenciaException;
 
 public class PantallaMisPedidos extends JFrame {
+
+    private final IPizzaBO pizzaBO;
 
     private JTable tabla;
     private DefaultTableModel modelo;
@@ -24,7 +30,8 @@ public class PantallaMisPedidos extends JFrame {
     private final Font FONT_LOGO = new Font("Segoe UI", Font.BOLD, 34);
     private final Font FONT_MENU = new Font("Segoe UI", Font.PLAIN, 16);
 
-    public PantallaMisPedidos() {
+    public PantallaMisPedidos(IPizzaBO pizzaBO) {
+        this.pizzaBO = pizzaBO;
 
         setTitle("Papizza - Mis Pedidos");
         setSize(1000, 650);
@@ -93,14 +100,21 @@ public class PantallaMisPedidos extends JFrame {
             switch (texto) {
 
                 case "Carrito":
-                    new PantallaCarrito().setVisible(true);
+                    new PantallaCarrito(pizzaBO).setVisible(true);
                     dispose();
                     break;
 
                 case "Inicio":
-                    new PantallaInicioPedidoProgramado().setVisible(true);
+                {
+                    try {
+                        new PantallaInicioPedidoProgramado(pizzaBO).setVisible(true);
+                    } catch (PersistenciaException ex) {
+                        Logger.getLogger(PantallaMisPedidos.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
                     dispose();
                     break;
+
 
                 case "Actualizar":
                     JOptionPane.showMessageDialog(this,

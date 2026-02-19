@@ -1,11 +1,16 @@
 package presentacion;
 
+import Negocio.BOs.IPizzaBO;
+import Negocio.DTOs.PizzaDTO;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import persistencia.excepciones.PersistenciaException;
 
 public class PantallaInicioPedidoProgramado extends JFrame {
+
+    private final IPizzaBO pizzaBO;
 
     private JPanel panelCatalogo;
     private JLabel lblTotal;
@@ -19,7 +24,9 @@ public class PantallaInicioPedidoProgramado extends JFrame {
     private final Font FONT_BOTON = new Font("Segoe UI", Font.BOLD, 16);
     private final Font FONT_TOTAL = new Font("Segoe UI", Font.BOLD, 20);
 
-    public PantallaInicioPedidoProgramado() {
+    public PantallaInicioPedidoProgramado(IPizzaBO pizzaBO) throws PersistenciaException {
+        this.pizzaBO = pizzaBO;
+
         setTitle("Papizza - Pedido Programado");
         setSize(1000, 650);
         setLocationRelativeTo(null);
@@ -28,7 +35,6 @@ public class PantallaInicioPedidoProgramado extends JFrame {
 
         crearHeader();
         crearCatalogo();
-        //crearFooter();
     }
 
     // HEADER 
@@ -79,7 +85,7 @@ public class PantallaInicioPedidoProgramado extends JFrame {
             switch (texto) {
 
                 case "Carrito":
-                    new PantallaCarrito().setVisible(true);
+                    new PantallaCarrito(pizzaBO).setVisible(true);
                     dispose(); // cierra esta pantalla
                     break;
 
@@ -92,7 +98,7 @@ public class PantallaInicioPedidoProgramado extends JFrame {
                     break;
 
                 case "Mis pedidos":
-                    new PantallaMisPedidos().setVisible(true);
+                    new PantallaMisPedidos(pizzaBO).setVisible(true);
                     dispose();
                     break;
             }
@@ -102,19 +108,18 @@ public class PantallaInicioPedidoProgramado extends JFrame {
     }
 
     // Cátalogo
-    private void crearCatalogo() {
+    private void crearCatalogo() throws PersistenciaException {
 
         panelCatalogo = new JPanel();
         panelCatalogo.setLayout(new GridLayout(0, 3, 25, 25));
         panelCatalogo.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
         panelCatalogo.setBackground(new Color(245, 245, 245));
 
-        agregarPizza("Pepperoni Supreme", 180);
-        agregarPizza("Mar y Tierra", 210);
-        agregarPizza("Clásica Americana", 170);
-        agregarPizza("Bosque Blanco", 190);
-        agregarPizza("Veggie Deluxe", 160);
-        agregarPizza("Hawaiian Punch", 175);
+        List<PizzaDTO> lista = pizzaBO.obtenerProductos();
+
+        for (PizzaDTO pizza : lista) {
+            agregarPizza(pizza.getNombre(), pizza.getPrecio());
+        }
 
         JScrollPane scroll = new JScrollPane(panelCatalogo);
         scroll.getVerticalScrollBar().setUnitIncrement(16);
@@ -229,11 +234,11 @@ public class PantallaInicioPedidoProgramado extends JFrame {
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(()
-                -> new PantallaInicioPedidoProgramado().setVisible(true)
-        );
-    }
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(()
+//                -> new PantallaInicioPedidoProgramado().setVisible(true)
+//        );
+//    }
 
     private static class PizzaItem {
 

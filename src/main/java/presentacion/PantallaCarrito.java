@@ -1,11 +1,17 @@
 package presentacion;
 
+import Negocio.BOs.IPizzaBO;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import persistencia.excepciones.PersistenciaException;
 
 public class PantallaCarrito extends JFrame {
+
+    private final IPizzaBO pizzaBO;
 
     private JPanel panelDetalleResumen;
     private JLabel lblDescuento;
@@ -18,7 +24,8 @@ public class PantallaCarrito extends JFrame {
     private double total = 0;
     private double descuento = 0;
 
-    public PantallaCarrito() {
+    public PantallaCarrito(IPizzaBO pizzaBO) {
+        this.pizzaBO = pizzaBO;
 
         setTitle("Papizza - Carrito");
         setSize(1150, 680);
@@ -28,10 +35,6 @@ public class PantallaCarrito extends JFrame {
 
         crearHeader();
         crearContenido();
-
-        // Datos de prueba
-        agregarItem("Pepperoni Supreme", 245);
-        agregarItem("La Papi-Margarita", 175);
     }
 
     // HEADER
@@ -84,15 +87,22 @@ public class PantallaCarrito extends JFrame {
             switch (texto) {
 
                 case "Inicio":
-                    new PantallaInicioPedidoProgramado().setVisible(true);
+                {
+                    try {
+                        new PantallaInicioPedidoProgramado(pizzaBO).setVisible(true);
+                    } catch (PersistenciaException ex) {
+                        Logger.getLogger(PantallaCarrito.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
                     dispose();
                     break;
+
 
                 case "Carrito":
                     break;
 
                 case "Mis pedidos":
-                    new PantallaMisPedidos().setVisible(true);
+                    new PantallaMisPedidos(pizzaBO).setVisible(true);
                     dispose();
                     break;
 
@@ -419,6 +429,5 @@ public class PantallaCarrito extends JFrame {
             this.precio = precio;
         }
     }
-    
-    
+
 }
