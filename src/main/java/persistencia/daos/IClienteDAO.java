@@ -70,21 +70,6 @@ public interface IClienteDAO {
      */
     List<Cliente> consultarClientes() throws PersistenciaException;
     
-    /**
-     * Obtener al cliente registrado a cierto telefono.
-     * 
-     * Se debe ingresar un telefono valido para la busqueda y en base a esto, se
-     * encontrara al cliente asociado a ese telefono
-     *
-     * @param telefono
-     * @return el cliente asociado al telefono
-     * @throws PersistenciaException si el telefono es invalido o si ocurre
-     * un error la realizar la busqueda.
-     */
-    Cliente obtenerClientePorTelefono(String telefono) throws PersistenciaException;
-   
-    
-    
     
 }
 
