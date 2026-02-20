@@ -70,6 +70,8 @@ public interface IClienteDAO {
      */
     List<Cliente> consultarClientes() throws PersistenciaException;
     
+    Cliente buscarClientePorTelefono(String telefono) throws PersistenciaException;
+    
     
 }
 

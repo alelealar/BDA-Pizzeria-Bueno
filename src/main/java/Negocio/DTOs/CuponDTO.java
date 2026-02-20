@@ -16,11 +16,11 @@ import java.time.LocalDate;
 
 
 public class CuponDTO {
-    private int idCupon;
+    private String idCupon;
     private double porcentajeDescuento;
     private LocalDate vigencia;
 
-    public CuponDTO(int idCupon, double porcentajeDescuento, LocalDate vigencia) {
+    public CuponDTO(String idCupon, double porcentajeDescuento, LocalDate vigencia) {
         this.idCupon = idCupon;
         this.porcentajeDescuento = porcentajeDescuento;
         this.vigencia = vigencia;
@@ -29,11 +29,11 @@ public class CuponDTO {
     public CuponDTO() {
     }
 
-    public int getIdCupon() {
+    public String getIdCupon() {
         return idCupon;
     }
 
-    public void setIdCupon(int idCupon) {
+    public void setIdCupon(String idCupon) {
         this.idCupon = idCupon;
     }
 
@@ -52,7 +52,5 @@ public class CuponDTO {
     public void setVigencia(LocalDate vigencia) {
         this.vigencia = vigencia;
     }
-    
-    
-    
+ 
 }

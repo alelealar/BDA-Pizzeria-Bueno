@@ -15,15 +15,8 @@ import persistencia.excepciones.PersistenciaException;
  * @author Paulina Michel Guevara Cervantez - 00000262724
  */
 public interface ICuponDAO {
-    
-    
-    Cupon agregarCupon(Cupon cupon) throws PersistenciaException;
      
-    Cupon obtenerCuponPorId(int id) throws PersistenciaException;
+    Cupon obtenerCuponPorId(String id) throws PersistenciaException;
     
-    Cupon actualizarCupon(Cupon cupon) throws PersistenciaException;
-    
-    List<Cupon> obtenerCupones() throws PersistenciaException;
-    
-    List<Cupon> obtenerCuponesPorDescuento() throws PersistenciaException;
+    Cupon incrementarUsosCupon(Cupon cupon) throws PersistenciaException;
 }

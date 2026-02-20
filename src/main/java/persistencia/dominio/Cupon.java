@@ -1,6 +1,7 @@
 package persistencia.dominio;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Clase que representa un Cupón de descuento dentro del sistema.
@@ -27,13 +28,13 @@ public class Cupon {
     /**
      * Identificador único del cupón.
      */
-    private int idCupon;
+    private String idCupon;
 
     /**
      * Cantidad de usos permitidos o registrados para los cupones. Este atributo
      * es compartido por todas las instancias de la clase.
      */
-    private static int cantidadUsos;
+    private int cantidadUsos;
 
     /**
      * Porcentaje de descuento que aplica el cupón. Se expresa como un valor
@@ -45,7 +46,7 @@ public class Cupon {
      * Fecha de vigencia del cupón. Indica hasta qué fecha el cupón puede ser
      * utilizado.
      */
-    private LocalDate vigencia;
+    private LocalDateTime vigencia;
     
     /**
      * Constructor por omisión.
@@ -59,11 +60,13 @@ public class Cupon {
      * @param idCupon identificador único del cupón
      * @param porcentajeDescuento porcentaje de descuento aplicado
      * @param vigencia fecha límite de uso del cupón
+     * @param cantidadUsos
      */
-    public Cupon(int idCupon, double porcentajeDescuento, LocalDate vigencia) {
+    public Cupon(String idCupon, double porcentajeDescuento, LocalDateTime vigencia, int cantUsos) {
         this.idCupon = idCupon;
         this.porcentajeDescuento = porcentajeDescuento;
         this.vigencia = vigencia;
+        this.cantidadUsos = cantUsos;
     }
 
     /**
@@ -73,7 +76,7 @@ public class Cupon {
      * @param porcentajeDescuento porcentaje de descuento aplicado
      * @param vigencia fecha límite de uso del cupón
      */
-    public Cupon(double porcentajeDescuento, LocalDate vigencia) {
+    public Cupon(double porcentajeDescuento, LocalDateTime vigencia) {
         this.porcentajeDescuento = porcentajeDescuento;
         this.vigencia = vigencia;
     }
@@ -83,7 +86,7 @@ public class Cupon {
      *
      * @return identificador del cupón
      */
-    public int getIdCupon() {
+    public String getIdCupon() {
         return idCupon;
     }
 
@@ -92,7 +95,7 @@ public class Cupon {
      *
      * @param idCupon nuevo identificador
      */
-    public void setIdCupon(int idCupon) {
+    public void setIdCupon(String idCupon) {
         this.idCupon = idCupon;
     }
 
@@ -101,7 +104,7 @@ public class Cupon {
      *
      * @return cantidad de usos
      */
-    public static int getCantidadUsos() {
+    public int getCantidadUsos() {
         return cantidadUsos;
     }
 
@@ -110,8 +113,8 @@ public class Cupon {
      *
      * @param cantidadUsos nueva cantidad de usos
      */
-    public static void setCantidadUsos(int cantidadUsos) {
-        Cupon.cantidadUsos = cantidadUsos;
+    public void setCantidadUsos(int cantidadUsos) {
+        this.cantidadUsos = cantidadUsos;
     }
 
     /**
@@ -137,7 +140,7 @@ public class Cupon {
      *
      * @return fecha de vigencia
      */
-    public LocalDate getVigencia() {
+    public LocalDateTime getVigencia() {
         return vigencia;
     }
 
@@ -146,7 +149,7 @@ public class Cupon {
      *
      * @param vigencia nueva fecha de vigencia
      */
-    public void setVigencia(LocalDate vigencia) {
+    public void setVigencia(LocalDateTime vigencia) {
         this.vigencia = vigencia;
     }
 

@@ -57,7 +57,7 @@ public class PedidoProgramadoDAO implements IPedidoProgramadoDAO{
         
         try(Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)){
             ps.setInt(1, pp.getNumPedido());
-            ps.setInt(2, pp.getCupon().getIdCupon());
+            ps.setString(2, pp.getCupon().getIdCupon());
             ps.setInt(3, pp.getCliente().getIdCliente());
             
             int filasInsertadas = ps.executeUpdate();
