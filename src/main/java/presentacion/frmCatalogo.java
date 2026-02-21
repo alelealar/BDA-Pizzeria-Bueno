@@ -1,11 +1,12 @@
 package presentacion;
 
+import java.awt.Color;
 import javax.swing.JPanel;
 import presentacion.vistas.panTarjetaPizza;
 
 /**
  *
- * @author sando
+ * @author Brian
  */
 public class frmCatalogo extends javax.swing.JFrame {
 
@@ -15,27 +16,26 @@ public class frmCatalogo extends javax.swing.JFrame {
         initComponents();
         cargarPizzasEnElPanel();
     }
+
     private void cargarPizzasEnElPanel() {
-        // 1. Le decimos a tu panPizzas que use formato de cuadrícula
-        // (0 filas, 3 columnas, 15px de espacio horizontal, 15px de espacio vertical)
+        
         panPizzas.setLayout(new java.awt.GridLayout(0, 3, 15, 15));
         
-        // 2. Simulamos que tenemos un arreglo o base de datos con nombres
         String[] nombresPizzas = {"La Papi-Margarita", "La Papi-Pepperoni", "Hawaiana", "Mexicana", "Vegetariana"};
-        
-        // 3. Recorremos la lista y creamos una tarjeta por cada pizza
+
+        // Recorremos la lista y creamos una tarjeta por cada pizza
         for (String nombre : nombresPizzas) {
             // Creamos un nuevo panel tarjeta
             panTarjetaPizza nuevaTarjeta = new panTarjetaPizza();
-            
+
             // Le pasamos los datos
             nuevaTarjeta.setDatosPizza(nombre);
-            
-            // La agregamos a tu panPizzas vacío
+
+            // La agregamos al panel
             panPizzas.add(nuevaTarjeta);
         }
-        
-        // 4. Actualizamos el panel para que Swing dibuje los cambios en pantalla
+
+        // Actualizamos el panel para que Swing dibuje los cambios en pantalla
         panPizzas.revalidate();
         panPizzas.repaint();
     }
@@ -53,115 +53,215 @@ public class frmCatalogo extends javax.swing.JFrame {
         lblLogo = new javax.swing.JLabel();
         lblTituloLogo = new javax.swing.JLabel();
         panNavegacion = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        btnInicio = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        btnActualizar = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        btnCarrito = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        btnMispedidos = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        btnPE = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
         panPizzas = new javax.swing.JPanel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setLocationByPlatform(true);
+        setResizable(false);
 
         panLogo.setBackground(new java.awt.Color(237, 96, 66));
 
         lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo.jpeg"))); // NOI18N
         lblLogo.setText("jLabel1");
 
-        lblTituloLogo.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 150)); // NOI18N
+        lblTituloLogo.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 100)); // NOI18N
         lblTituloLogo.setForeground(new java.awt.Color(255, 255, 255));
         lblTituloLogo.setText("PAPIZZA");
 
         panNavegacion.setBackground(new java.awt.Color(255, 92, 56));
+        panNavegacion.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButton1.setBackground(new java.awt.Color(255, 92, 56));
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Inicio");
-        jButton1.setBorder(null);
-        jButton1.setBorderPainted(false);
-        jButton1.setContentAreaFilled(false);
-        jButton1.setFocusPainted(false);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+        btnInicio.setBackground(new java.awt.Color(255, 92, 56));
+        btnInicio.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnInicioMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnInicioMouseExited(evt);
             }
         });
 
-        jButton2.setBackground(new java.awt.Color(255, 92, 56));
-        jButton2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("Actualizar");
-        jButton2.setBorder(null);
-        jButton2.setBorderPainted(false);
-        jButton2.setContentAreaFilled(false);
-        jButton2.setFocusPainted(false);
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Inicio");
+        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        jButton3.setBackground(new java.awt.Color(255, 92, 56));
-        jButton3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jButton3.setText("Carrito");
-        jButton3.setBorder(null);
-        jButton3.setBorderPainted(false);
-        jButton3.setContentAreaFilled(false);
-        jButton3.setFocusPainted(false);
-
-        jButton4.setBackground(new java.awt.Color(255, 92, 56));
-        jButton4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jButton4.setForeground(new java.awt.Color(255, 255, 255));
-        jButton4.setText("Mis pedidos");
-        jButton4.setBorder(null);
-        jButton4.setBorderPainted(false);
-        jButton4.setContentAreaFilled(false);
-        jButton4.setFocusPainted(false);
-
-        javax.swing.GroupLayout panNavegacionLayout = new javax.swing.GroupLayout(panNavegacion);
-        panNavegacion.setLayout(panNavegacionLayout);
-        panNavegacionLayout.setHorizontalGroup(
-            panNavegacionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panNavegacionLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29))
+        javax.swing.GroupLayout btnInicioLayout = new javax.swing.GroupLayout(btnInicio);
+        btnInicio.setLayout(btnInicioLayout);
+        btnInicioLayout.setHorizontalGroup(
+            btnInicioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
         );
-        panNavegacionLayout.setVerticalGroup(
-            panNavegacionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)
-            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        btnInicioLayout.setVerticalGroup(
+            btnInicioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
         );
+
+        panNavegacion.add(btnInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, -2, 100, 60));
+
+        btnActualizar.setBackground(new java.awt.Color(255, 92, 56));
+        btnActualizar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnActualizarMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnActualizarMouseExited(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Actualizar");
+        jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        javax.swing.GroupLayout btnActualizarLayout = new javax.swing.GroupLayout(btnActualizar);
+        btnActualizar.setLayout(btnActualizarLayout);
+        btnActualizarLayout.setHorizontalGroup(
+            btnActualizarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
+        );
+        btnActualizarLayout.setVerticalGroup(
+            btnActualizarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btnActualizarLayout.createSequentialGroup()
+                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        panNavegacion.add(btnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(814, -4, -1, 70));
+
+        btnCarrito.setBackground(new java.awt.Color(255, 92, 56));
+        btnCarrito.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnCarritoMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnCarritoMouseExited(evt);
+            }
+        });
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("Carrito");
+        jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        javax.swing.GroupLayout btnCarritoLayout = new javax.swing.GroupLayout(btnCarrito);
+        btnCarrito.setLayout(btnCarritoLayout);
+        btnCarritoLayout.setHorizontalGroup(
+            btnCarritoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
+        );
+        btnCarritoLayout.setVerticalGroup(
+            btnCarritoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, btnCarritoLayout.createSequentialGroup()
+                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        panNavegacion.add(btnCarrito, new org.netbeans.lib.awtextra.AbsoluteConstraints(943, -4, -1, 70));
+
+        btnMispedidos.setBackground(new java.awt.Color(255, 92, 56));
+        btnMispedidos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnMispedidosMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnMispedidosMouseExited(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel6.setText("Mis pedidos");
+        jLabel6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        javax.swing.GroupLayout btnMispedidosLayout = new javax.swing.GroupLayout(btnMispedidos);
+        btnMispedidos.setLayout(btnMispedidosLayout);
+        btnMispedidosLayout.setHorizontalGroup(
+            btnMispedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+        );
+        btnMispedidosLayout.setVerticalGroup(
+            btnMispedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btnMispedidosLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        panNavegacion.add(btnMispedidos, new org.netbeans.lib.awtextra.AbsoluteConstraints(1069, -6, 130, 70));
+
+        btnPE.setBackground(new java.awt.Color(255, 92, 56));
+        btnPE.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnPEMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnPEMouseExited(evt);
+            }
+        });
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("Pedido Express");
+        jLabel3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        javax.swing.GroupLayout btnPELayout = new javax.swing.GroupLayout(btnPE);
+        btnPE.setLayout(btnPELayout);
+        btnPELayout.setHorizontalGroup(
+            btnPELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+        );
+        btnPELayout.setVerticalGroup(
+            btnPELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btnPELayout.createSequentialGroup()
+                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        panNavegacion.add(btnPE, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 2, 150, 60));
 
         javax.swing.GroupLayout panLogoLayout = new javax.swing.GroupLayout(panLogo);
         panLogo.setLayout(panLogoLayout);
         panLogoLayout.setHorizontalGroup(
             panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panLogoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(lblTituloLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 1265, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(45, Short.MAX_VALUE))
-            .addComponent(panNavegacion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panLogoLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblTituloLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(panNavegacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         panLogoLayout.setVerticalGroup(
             panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panLogoLayout.createSequentialGroup()
-                .addGroup(panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(panLogoLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(lblTituloLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panNavegacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblLogo)
+                    .addComponent(lblTituloLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addComponent(panNavegacion, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        panPizzas.setBackground(new java.awt.Color(254, 242, 242));
+        panPizzas.setBackground(new java.awt.Color(255, 232, 216));
 
         javax.swing.GroupLayout panPizzasLayout = new javax.swing.GroupLayout(panPizzas);
         panPizzas.setLayout(panPizzasLayout);
@@ -171,7 +271,7 @@ public class frmCatalogo extends javax.swing.JFrame {
         );
         panPizzasLayout.setVerticalGroup(
             panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 762, Short.MAX_VALUE)
+            .addGap(0, 541, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -185,7 +285,7 @@ public class frmCatalogo extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(panLogo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(panPizzas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -193,9 +293,45 @@ public class frmCatalogo extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void btnInicioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInicioMouseEntered
+        btnInicio.setBackground(Color.decode("#E82F07"));
+    }//GEN-LAST:event_btnInicioMouseEntered
+
+    private void btnInicioMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInicioMouseExited
+        btnInicio.setBackground(Color.decode("#FF5C38"));
+    }//GEN-LAST:event_btnInicioMouseExited
+
+    private void btnActualizarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnActualizarMouseEntered
+        btnActualizar.setBackground(Color.decode("#E82F07"));
+    }//GEN-LAST:event_btnActualizarMouseEntered
+
+    private void btnActualizarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnActualizarMouseExited
+        btnActualizar.setBackground(Color.decode("#FF5C38"));
+    }//GEN-LAST:event_btnActualizarMouseExited
+
+    private void btnCarritoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCarritoMouseEntered
+        btnCarrito.setBackground(Color.decode("#E82F07"));
+    }//GEN-LAST:event_btnCarritoMouseEntered
+
+    private void btnCarritoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCarritoMouseExited
+        btnCarrito.setBackground(Color.decode("#FF5C38"));
+    }//GEN-LAST:event_btnCarritoMouseExited
+
+    private void btnMispedidosMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMispedidosMouseEntered
+        btnMispedidos.setBackground(Color.decode("#E82F07"));
+    }//GEN-LAST:event_btnMispedidosMouseEntered
+
+    private void btnMispedidosMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMispedidosMouseExited
+        btnMispedidos.setBackground(Color.decode("#FF5C38"));
+    }//GEN-LAST:event_btnMispedidosMouseExited
+
+    private void btnPEMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPEMouseEntered
+        btnCarrito.setBackground(Color.decode("#FF5C38"));
+    }//GEN-LAST:event_btnPEMouseEntered
+
+    private void btnPEMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPEMouseExited
+        btnCarrito.setBackground(Color.decode("#FF5C38"));
+    }//GEN-LAST:event_btnPEMouseExited
 
     /**
      * @param args the command line arguments
@@ -223,10 +359,16 @@ public class frmCatalogo extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JPanel btnActualizar;
+    private javax.swing.JPanel btnCarrito;
+    private javax.swing.JPanel btnInicio;
+    private javax.swing.JPanel btnMispedidos;
+    private javax.swing.JPanel btnPE;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel lblLogo;
     private javax.swing.JLabel lblTituloLogo;
     private javax.swing.JPanel panLogo;

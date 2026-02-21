@@ -1,8 +1,10 @@
 package presentacion.vistas;
 
+import java.awt.Dimension;
+
 /**
  *
- * @author sando
+ * @author Brian
  */
 public class panTarjetaPizza extends javax.swing.JPanel {
 
@@ -10,19 +12,19 @@ public class panTarjetaPizza extends javax.swing.JPanel {
      * Creates new form panTarjetaPizza
      */
     public panTarjetaPizza() {
+
         initComponents();
 
     }
-    
+
     public void setDatosPizza(String nombrePizza) {
-        // Aquí cambiamos el texto de tu etiqueta
+        // Aquí cambiamos el texto
         lblNombrePizza.setText(nombrePizza);
-        
-        // Aquí podrías agregar la lógica para la imagen después:
+
         // ImageIcon icono = new ImageIcon("ruta...");
         // lblImagenPizza.setIcon(icono);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
