@@ -38,21 +38,6 @@ public class frmCarrito extends javax.swing.JFrame {
         Pizza pizza3 = new Pizza("Hawaiian Punch", "Mediano", "!!!", 123);
         Pizza pizza4 = new Pizza("Mar y Tierra", "Mediano", "!!!", 123);
 
-        Pedido pedido1 = new Pedido("Sin tanto caldo que no traigo cuchara", "ACTIVO", LocalDate.now(), LocalDate.now());
-        Pedido pedido2 = new Pedido("Ya me canse de hacer interfaces", "ACTIVO", LocalDate.now(), LocalDate.now());
-        Pedido pedido3 = new Pedido("Ponle queso-badon", "ACTIVO", LocalDate.now(), LocalDate.now());
-        Pedido pedido4 = new Pedido("Quitale la orilla", "ACTIVO", LocalDate.now(), LocalDate.now());
-
-        DetallePedido detalle1 = new DetallePedido(pizza1.getPrecio(), pedido1.getNota(), 3, pedido1, pizza1);
-        DetallePedido detalle2 = new DetallePedido(pizza2.getPrecio(), pedido2.getNota(), 2, pedido2, pizza2);
-        DetallePedido detalle3 = new DetallePedido(pizza3.getPrecio(), pedido3.getNota(), 6, pedido3, pizza3);
-        DetallePedido detalle4 = new DetallePedido(pizza4.getPrecio(), pedido4.getNota(), 1, pedido4, pizza4);
-
-        pedidos.add(detalle1);
-        pedidos.add(detalle2);
-        pedidos.add(detalle3);
-        pedidos.add(detalle4);
-
         //Recorremos la lista y creamos una tarjeta por cada pizza
         for (DetallePedido pedido : pedidos) {
             panPedido nuevaTarjeta = new panPedido(pedido, this);

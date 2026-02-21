@@ -213,8 +213,43 @@ public class ClienteDAO implements IClienteDAO {
             }
 
         } catch (SQLException ex) {
-            LOG.severe("Error SQL al insertar al cliente" + ex);
-            throw new PersistenciaException("Error al insertar al cliente en la base de datos", ex);
+            LOG.severe("Error SQL al buscar cliente por teléfono: " + ex);
+            throw new PersistenciaException("Error al encontrar  al cliente en la base de datos", ex);
+        }
+    }
+    
+    @Override
+    public Cliente buscarClientePorTelefono(String telefono) throws PersistenciaException {
+        String comandoSQL = """
+                            SELECT
+                            	idUsuario, 
+                                nombres, 
+                                apellidoPaterno, 
+                                apellidoMaterno, 
+                                fechaNacimiento, 
+                                idDomicilioCliente
+                            FROM clientes as cl
+                            INNER JOIN telefonosclientes as tel on tel.idCliente = cl.idUsuario
+                            WHERE tel.telefono = ?;
+                            """;
+
+        try (Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
+
+            ps.setString(1, telefono);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                if (!rs.next()) {
+                    LOG.log(Level.WARNING, "No se encontró el Cliente con id {0}", telefono);
+                    throw new PersistenciaException("No existe el cliente con el ID proporcionado.");
+                }
+
+                return extraerCliente(rs);
+            }
+
+        } catch (SQLException ex) {
+            LOG.severe("Error SQL al buscar cliente por teléfono: " + ex);
+            throw new PersistenciaException("Error al encontrar al cliente en la base de datos", ex);
         }
     }
 

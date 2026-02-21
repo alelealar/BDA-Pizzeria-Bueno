@@ -1,6 +1,7 @@
 package persistencia.dominio;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Clase base que representa un Pedido dentro del sistema.
@@ -35,19 +36,24 @@ public class Pedido {
     /**
      * Fecha y hora en que se realizó el pedido.
      */
-    private LocalDate fechaHoraPedido;
+    private LocalDateTime fechaHoraPedido;
 
     /**
      * Fecha y hora programada para la entrega del pedido.
      */
-    private LocalDate fechaHoraEntrega;
+    private LocalDateTime fechaHoraEntrega;
+    
+    public enum Tipo{
+        PROGRAMADO, EXPRESS
+    }
+    private Tipo tipo;
 
     /**
      * Constructor por omisión.
      */
     public Pedido() {
     }
-
+    
     /**
      * Constructor completo que incluye identificador.
      *
@@ -56,16 +62,25 @@ public class Pedido {
      * @param estadoActual estado actual del pedido
      * @param fechaHoraPedido fecha y hora del pedido
      * @param fechaHoraEntrega fecha y hora de entrega
+     * @param tipo
      */
-    public Pedido(int idPedido, String nota, String estadoActual,
-            LocalDate fechaHoraPedido, LocalDate fechaHoraEntrega) {
+    public Pedido(int idPedido, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, Tipo tipo) {    
+        this.idPedido = idPedido;
+        this.nota = nota;
+        this.estadoActual = estadoActual;
+        this.fechaHoraPedido = fechaHoraPedido;
+        this.fechaHoraEntrega = fechaHoraEntrega;
+        this.tipo = tipo;
+    }
+
+    public Pedido(int idPedido, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega) {
         this.idPedido = idPedido;
         this.nota = nota;
         this.estadoActual = estadoActual;
         this.fechaHoraPedido = fechaHoraPedido;
         this.fechaHoraEntrega = fechaHoraEntrega;
     }
-
+    
     /**
      * Constructor sin identificador.
      *
@@ -73,14 +88,16 @@ public class Pedido {
      * @param estadoActual estado actual del pedido
      * @param fechaHoraPedido fecha y hora del pedido
      * @param fechaHoraEntrega fecha y hora de entrega
+     * @param tipo
      */
-    public Pedido(String nota, String estadoActual,
-            LocalDate fechaHoraPedido, LocalDate fechaHoraEntrega) {
+    public Pedido(String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, Tipo tipo) {    
         this.nota = nota;
         this.estadoActual = estadoActual;
         this.fechaHoraPedido = fechaHoraPedido;
         this.fechaHoraEntrega = fechaHoraEntrega;
+        this.tipo = tipo;
     }
+    
 
     /**
      * @return identificador del pedido
@@ -127,30 +144,39 @@ public class Pedido {
     /**
      * @return fecha y hora del pedido
      */
-    public LocalDate getFechaHoraPedido() {
+    public LocalDateTime getFechaHoraPedido() {
         return fechaHoraPedido;
     }
 
     /**
      * @param fechaHoraPedido nueva fecha y hora del pedido
      */
-    public void setFechaHoraPedido(LocalDate fechaHoraPedido) {
+    public void setFechaHoraPedido(LocalDateTime fechaHoraPedido) {
         this.fechaHoraPedido = fechaHoraPedido;
     }
 
     /**
      * @return fecha y hora de entrega
      */
-    public LocalDate getFechaHoraEntrega() {
+    public LocalDateTime getFechaHoraEntrega() {
         return fechaHoraEntrega;
     }
 
     /**
      * @param fechaHoraEntrega nueva fecha y hora de entrega
      */
-    public void setFechaHoraEntrega(LocalDate fechaHoraEntrega) {
+    public void setFechaHoraEntrega(LocalDateTime fechaHoraEntrega) {
         this.fechaHoraEntrega = fechaHoraEntrega;
     }
+
+    public Tipo getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Tipo tipo) {
+        this.tipo = tipo;
+    }
+
 
     /**
      * Devuelve una representación en cadena del pedido.

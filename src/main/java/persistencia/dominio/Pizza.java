@@ -40,11 +40,15 @@ public class Pizza {
      * Precio base de la pizza.
      */
     private double precio;
-
-    /**
-     * Lista de ingredientes de la pizza.
-     */
-    private List<PizzaIngrediente> ingredientes;
+        
+    public enum EstadoPizza {
+        DISPONIBLE, NO_DISPONIBLE
+    }
+    
+    private EstadoPizza estado;
+    
+    private String rutaImagen;
+ 
 
     /**
      * Constructor por omisión.
@@ -68,7 +72,6 @@ public class Pizza {
         this.tamanio = tamanio;
         this.descripcion = descripcion;
         this.precio = precio;
-        this.ingredientes = new ArrayList<>();
     }
 
     /**
@@ -85,7 +88,6 @@ public class Pizza {
         this.tamanio = tamanio;
         this.descripcion = descripcion;
         this.precio = precio;
-        this.ingredientes = new ArrayList<>();
     }
 
     /**
@@ -158,10 +160,21 @@ public class Pizza {
         this.precio = precio;
     }
 
-    /**
-     * @return lista de ingredientes
-     */
-    public List<PizzaIngrediente> getIngredientes() {
-        return ingredientes;
+    public EstadoPizza getEstado() {
+        return estado;
     }
+
+    public void setEstado(EstadoPizza estado) {
+        this.estado = estado;
+    }
+
+    public String getRutaImagen() {
+        return rutaImagen;
+    }
+
+    public void setRutaImagen(String rutaImagen) {
+        this.rutaImagen = rutaImagen;
+    }
+    
+    
 }

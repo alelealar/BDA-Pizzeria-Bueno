@@ -1,6 +1,7 @@
 package persistencia.dominio;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Clase que representa un Pedido Programado.
@@ -49,10 +50,8 @@ public class PedidoProgramado extends Pedido {
      * @param fechaHoraPedido fecha y hora del pedido
      * @param fechaHoraEntrega fecha y hora de entrega
      */
-    public PedidoProgramado(int numPedido, Cliente cliente, Cupon cupon,
-            int idPedido, String nota, String estadoActual,
-            LocalDate fechaHoraPedido, LocalDate fechaHoraEntrega) {
-        super(idPedido, nota, estadoActual, fechaHoraPedido, fechaHoraEntrega);
+    public PedidoProgramado(int numPedido, Cliente cliente, Cupon cupon, int idPedido, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, Tipo tipo) {
+        super(idPedido, nota, estadoActual, fechaHoraPedido, fechaHoraEntrega, tipo);
         this.numPedido = numPedido;
         this.cliente = cliente;
         this.cupon = cupon;
@@ -69,10 +68,8 @@ public class PedidoProgramado extends Pedido {
      * @param fechaHoraPedido fecha y hora del pedido
      * @param fechaHoraEntrega fecha y hora de entrega
      */
-    public PedidoProgramado(int numPedido, Cliente cliente, Cupon cupon,
-            String nota, String estadoActual,
-            LocalDate fechaHoraPedido, LocalDate fechaHoraEntrega) {
-        super(nota, estadoActual, fechaHoraPedido, fechaHoraEntrega);
+    public PedidoProgramado(int numPedido, Cliente cliente, Cupon cupon, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, Tipo tipo) {  
+        super(nota, estadoActual, fechaHoraPedido, fechaHoraEntrega, tipo);
         this.numPedido = numPedido;
         this.cliente = cliente;
         this.cupon = cupon;

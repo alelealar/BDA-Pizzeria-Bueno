@@ -6,6 +6,7 @@ package persistencia.daos;
 
 import Negocio.DTOs.PizzaDTO;
 import java.util.List;
+import persistencia.dominio.Pizza;
 import persistencia.excepciones.PersistenciaException;
 
 /**
@@ -14,6 +15,7 @@ import persistencia.excepciones.PersistenciaException;
  */
 public interface IPizzaDAO {
 
-    public List<PizzaDTO> obtenerProductos() throws PersistenciaException;
+    public List<Pizza> obtenerPizzas() throws PersistenciaException;
+    public Pizza obtenerPizzaPorId(int id) throws PersistenciaException;
     
 }
