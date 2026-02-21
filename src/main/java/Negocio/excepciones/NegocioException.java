@@ -35,4 +35,8 @@ public class NegocioException extends Exception {
     public NegocioException(Throwable cause) {
         super(cause);
     }
+
+    public NegocioException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
