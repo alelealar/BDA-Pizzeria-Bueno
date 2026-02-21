@@ -4,6 +4,7 @@
  */
 package persistencia.daos;
 
+import Negocio.DTOs.CuponDTO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,7 +37,7 @@ public class CuponDAO implements ICuponDAO{
      * Logger para registrar información relevante durante operaciones de
      * persistencia.
      */
-    private static final Logger LOG = Logger.getLogger(ClienteDAO.class.getName());
+    private static final Logger LOG = Logger.getLogger(CuponDAO.class.getName());
 
     /**
      * Constructor que inicializa la dependencia de conexión.
@@ -100,6 +101,7 @@ public class CuponDAO implements ICuponDAO{
             throw new PersistenciaException("Hubo un error al utilizar el cupón", ex);
         }
     }
+    
     
     public Cupon extraerCupon(ResultSet rs) throws PersistenciaException {
         try {

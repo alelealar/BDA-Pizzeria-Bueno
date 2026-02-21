@@ -1,4 +1,4 @@
-package persistencia.daos;
+    package persistencia.daos;
 
 import Negocio.DTOs.PedidoDTO;
 import java.sql.Connection;
@@ -72,8 +72,8 @@ public class PedidoDAO implements IPedidoDAO {
         try (Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, pedido.getEstadoActual());
-            ps.setDate(2, java.sql.Date.valueOf(pedido.getFechaHoraPedido()));
-            ps.setDate(3, java.sql.Date.valueOf(pedido.getFechaHoraEntrega()));
+            ps.setTimestamp(2, java.sql.Timestamp.valueOf(pedido.getFechaHoraPedido()));
+            ps.setTimestamp(3, java.sql.Timestamp.valueOf(pedido.getFechaHoraEntrega()));
             ps.setString(4, pedido.getNota());
 
             int filasInsertadas = ps.executeUpdate();
@@ -120,8 +120,8 @@ public class PedidoDAO implements IPedidoDAO {
         try (Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
 
             ps.setString(1, pedido.getEstadoActual());
-            ps.setDate(2, java.sql.Date.valueOf(pedido.getFechaHoraPedido()));
-            ps.setDate(3, java.sql.Date.valueOf(pedido.getFechaHoraEntrega()));
+            ps.setTimestamp(2, java.sql.Timestamp.valueOf(pedido.getFechaHoraPedido()));
+            ps.setTimestamp(3, java.sql.Timestamp.valueOf(pedido.getFechaHoraEntrega()));
             ps.setString(4, pedido.getNota());
             ps.setInt(5, pedido.getIdPedido());
 
@@ -175,6 +175,7 @@ public class PedidoDAO implements IPedidoDAO {
             throw new PersistenciaException("Error al buscar el pedido en la base de datos", ex);
         }
     }
+    
 
     /**
      * Extrae la información de un ResultSet y construye un objeto Pedido con
@@ -193,8 +194,8 @@ public class PedidoDAO implements IPedidoDAO {
             Date fechaHoraPedido = rs.getDate("fechaHoraPedido");
             Date fechaHoraEntrega = rs.getDate("fechaHoraEntrega");
 
-            pedido.setFechaHoraPedido(fechaHoraPedido.toLocalDate());
-            pedido.setFechaHoraEntrega(fechaHoraEntrega.toLocalDate());
+            pedido.setFechaHoraPedido(rs.getTimestamp("fechaHoraPedido").toLocalDateTime());
+            pedido.setFechaHoraEntrega(rs.getTimestamp("fechaHoraEntrega").toLocalDateTime());
             pedido.setNota(rs.getString("nota"));
 
             return pedido;
@@ -204,4 +205,21 @@ public class PedidoDAO implements IPedidoDAO {
             throw new PersistenciaException("Error al extraer el pedido.");
         }
     }
+
+    @Override
+    public Pedido consultarPedidosPorCliente(int idCliente) throws PersistenciaException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Pedido consultarPedidosPorTelefono(String telefono) throws PersistenciaException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Pedido consultarPorRangoDeFechas(LocalDate fechaInicio, LocalDate fechaFin) throws PersistenciaException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+   
 }

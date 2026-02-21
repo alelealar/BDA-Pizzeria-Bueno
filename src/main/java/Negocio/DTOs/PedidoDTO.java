@@ -14,6 +14,7 @@ import java.time.LocalDate;
  */
 public class PedidoDTO {
 
+    private int idPedido;
     /**
      * Nota adicional del pedido.
      */
@@ -34,6 +35,12 @@ public class PedidoDTO {
      */
     private LocalDate fechaHoraEntrega;
 
+    public enum Tipo{
+        PROGRAMADO, EXPRESS
+    }
+    private Tipo tipo;
+    
+    
     /**
      * Constructor por omisión.
      */
@@ -43,16 +50,36 @@ public class PedidoDTO {
     /**
      * Constructor completo que incluye identificador.
      *
+     * @param idPedido
      * @param nota nota adicional
      * @param estadoActual estado actual del pedido
      * @param fechaHoraPedido fecha y hora del pedido
      * @param fechaHoraEntrega fecha y hora de entrega
+     * @param tipo
      */
-    public PedidoDTO(String nota, String estadoActual, LocalDate fechaHoraPedido, LocalDate fechaHoraEntrega) {
+    public PedidoDTO(int idPedido, String nota, String estadoActual, LocalDate fechaHoraPedido, LocalDate fechaHoraEntrega, Tipo tipo) {    
+        this.idPedido = idPedido;
         this.nota = nota;
         this.estadoActual = estadoActual;
         this.fechaHoraPedido = fechaHoraPedido;
         this.fechaHoraEntrega = fechaHoraEntrega;
+        this.tipo = tipo;
+    }
+
+    public PedidoDTO(String nota, String estadoActual, LocalDate fechaHoraPedido, LocalDate fechaHoraEntrega, Tipo tipo) {
+        this.nota = nota;
+        this.estadoActual = estadoActual;
+        this.fechaHoraPedido = fechaHoraPedido;
+        this.fechaHoraEntrega = fechaHoraEntrega;
+        this.tipo = tipo;
+    }
+
+    public int getIdPedido() {
+        return idPedido;
+    }
+
+    public void setIdPedido(int idPedido) {
+        this.idPedido = idPedido;
     }
 
     /**
@@ -110,5 +137,15 @@ public class PedidoDTO {
     public void setFechaHoraEntrega(LocalDate fechaHoraEntrega) {
         this.fechaHoraEntrega = fechaHoraEntrega;
     }
+
+    public Tipo getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Tipo tipo) {
+        this.tipo = tipo;
+    }
+    
+    
 
 }

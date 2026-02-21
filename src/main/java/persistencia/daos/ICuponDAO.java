@@ -4,6 +4,7 @@
  */
 package persistencia.daos;
 
+import Negocio.DTOs.CuponDTO;
 import java.util.List;
 import persistencia.dominio.Cupon;
 import persistencia.excepciones.PersistenciaException;

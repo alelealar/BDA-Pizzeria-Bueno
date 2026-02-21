@@ -6,6 +6,7 @@
 package Negocio.DTOs;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -18,13 +19,16 @@ import java.time.LocalDate;
 public class CuponDTO {
     private String idCupon;
     private double porcentajeDescuento;
-    private LocalDate vigencia;
+    private LocalDateTime vigencia;
+    private int cantidadUsos;
 
-    public CuponDTO(String idCupon, double porcentajeDescuento, LocalDate vigencia) {
+    public CuponDTO(String idCupon, double porcentajeDescuento, LocalDateTime vigencia, int cantidadUsos) {
         this.idCupon = idCupon;
         this.porcentajeDescuento = porcentajeDescuento;
         this.vigencia = vigencia;
+        this.cantidadUsos = cantidadUsos;
     }
+
 
     public CuponDTO() {
     }
@@ -45,12 +49,21 @@ public class CuponDTO {
         this.porcentajeDescuento = porcentajeDescuento;
     }
 
-    public LocalDate getVigencia() {
+    public LocalDateTime getVigencia() {
         return vigencia;
     }
 
-    public void setVigencia(LocalDate vigencia) {
+    public void setVigencia(LocalDateTime vigencia) {
         this.vigencia = vigencia;
     }
+
+    public int getCantidadUsos() {
+        return cantidadUsos;
+    }
+
+    public void setCantidadUsos(int cantidadUsos) {
+        this.cantidadUsos = cantidadUsos;
+    }
  
+    
 }

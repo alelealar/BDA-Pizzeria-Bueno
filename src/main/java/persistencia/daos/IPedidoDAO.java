@@ -1,6 +1,7 @@
 package persistencia.daos;
 
 import Negocio.DTOs.PedidoDTO;
+import java.time.LocalDate;
 import persistencia.dominio.Pedido;
 import persistencia.excepciones.PersistenciaException;
 
@@ -47,4 +48,11 @@ public interface IPedidoDAO {
      * error
      */
     public Pedido buscarPedidoPorId(int id) throws PersistenciaException;
+    
+    public Pedido consultarPedidosPorCliente(int idCliente) throws PersistenciaException;
+    
+    public Pedido consultarPedidosPorTelefono(String telefono) throws PersistenciaException; 
+    
+    public Pedido consultarPorRangoDeFechas(LocalDate fechaInicio, LocalDate fechaFin) throws PersistenciaException;
+    
 }

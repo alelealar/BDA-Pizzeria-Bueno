@@ -1,6 +1,7 @@
 package persistencia.dominio;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Clase que representa un Pedido Express.
@@ -19,7 +20,7 @@ public class PedidoExpress extends Pedido {
     /**
      * PIN de seguridad del pedido express.
      */
-    private int pin;
+    private String pin;
 
     /**
      * Folio identificador del pedido express.
@@ -43,9 +44,9 @@ public class PedidoExpress extends Pedido {
      * @param fechaHoraPedido fecha y hora del pedido
      * @param fechaHoraEntrega fecha y hora de entrega
      */
-    public PedidoExpress(int pin, String folio, int idPedido, String nota,
-            String estadoActual, LocalDate fechaHoraPedido,
-            LocalDate fechaHoraEntrega) {
+    public PedidoExpress(String pin, String folio, int idPedido, String nota,
+            String estadoActual, LocalDateTime fechaHoraPedido,
+            LocalDateTime fechaHoraEntrega) {
         super(idPedido, nota, estadoActual, fechaHoraPedido, fechaHoraEntrega);
         this.pin = pin;
         this.folio = folio;
@@ -61,10 +62,8 @@ public class PedidoExpress extends Pedido {
      * @param fechaHoraPedido fecha y hora del pedido
      * @param fechaHoraEntrega fecha y hora de entrega
      */
-    public PedidoExpress(int pin, String folio, String nota,
-            String estadoActual, LocalDate fechaHoraPedido,
-            LocalDate fechaHoraEntrega) {
-        super(nota, estadoActual, fechaHoraPedido, fechaHoraEntrega);
+    public PedidoExpress(String pin, String folio, String nota,String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, Tipo tipo) {
+        super(nota, estadoActual, fechaHoraPedido, fechaHoraEntrega, tipo);
         this.pin = pin;
         this.folio = folio;
     }
@@ -72,14 +71,14 @@ public class PedidoExpress extends Pedido {
     /**
      * @return PIN del pedido
      */
-    public int getPin() {
+    public String getPin() {
         return pin;
     }
 
     /**
      * @param pin nuevo PIN
      */
-    public void setPin(int pin) {
+    public void setPin(String pin) {
         this.pin = pin;
     }
 

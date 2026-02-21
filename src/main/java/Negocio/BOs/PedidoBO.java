@@ -6,6 +6,7 @@ import persistencia.dominio.Pedido;
 import persistencia.excepciones.PersistenciaException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,7 +56,7 @@ public class PedidoBO implements IPedidoBO {
             throw new NegocioException("La fecha del pedido es obligatoria.");
         }
 
-        if (pedido.getFechaHoraPedido().isAfter(LocalDate.now())) {
+        if (pedido.getFechaHoraPedido().isAfter(LocalDateTime.now())) {
             throw new NegocioException("La fecha del pedido no puede ser futura.");
         }
 

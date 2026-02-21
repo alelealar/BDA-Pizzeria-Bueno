@@ -6,6 +6,7 @@ package Negocio.BOs;
 
 import Negocio.DTOs.PizzaDTO;
 import java.util.List;
+import persistencia.dominio.Pizza;
 import persistencia.excepciones.PersistenciaException;
 
 /**

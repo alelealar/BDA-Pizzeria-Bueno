@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -136,13 +137,16 @@ public class PantallaMisPedidos extends JFrame {
         listaPedidos = new ArrayList<>();
 
         listaPedidos.add(new Pedido(1001, "Sin cebolla", "PENDIENTE",
-                LocalDate.of(2026, 2, 14), LocalDate.of(2026, 2, 15)));
+                LocalDateTime.of(2026, 2, 14, 10, 30),
+                LocalDateTime.of(2026, 2, 15, 12, 0)));
 
         listaPedidos.add(new Pedido(1002, "Extra queso", "ENTREGADO",
-                LocalDate.of(2026, 2, 10), LocalDate.of(2026, 2, 10)));
+                LocalDateTime.of(2026, 2, 10, 12, 0),
+                LocalDateTime.of(2026, 2, 10, 13, 0)));
 
         listaPedidos.add(new Pedido(1003, "Sin piña", "CANCELADO",
-                LocalDate.of(2026, 2, 5), LocalDate.of(2026, 2, 6)));
+                LocalDateTime.of(2026, 2, 5, 9, 0),
+                LocalDateTime.of(2026, 2, 6, 11, 0)));
     }
 
     // FILTROS 
@@ -181,15 +185,19 @@ public class PantallaMisPedidos extends JFrame {
         List<Pedido> filtrados = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        LocalDate inicio = null;
-        LocalDate fin = null;
+        LocalDateTime inicio = null;
+        LocalDateTime fin = null;
 
         try {
-            if (!txtFechaInicio.getText().isEmpty())
-                inicio = LocalDate.parse(txtFechaInicio.getText(), formatter);
+            if (!txtFechaInicio.getText().isEmpty()){
+                LocalDate fechaInicio = LocalDate.parse(txtFechaInicio.getText(), formatter);
+                inicio = fechaInicio.atStartOfDay();
+            }
 
-            if (!txtFechaFin.getText().isEmpty())
-                fin = LocalDate.parse(txtFechaFin.getText(), formatter);
+            if (!txtFechaFin.getText().isEmpty()){
+                LocalDate fechaFin = LocalDate.parse(txtFechaFin.getText(), formatter);
+                fin = fechaFin.atTime(23, 59, 59);
+            }
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Formato de fecha incorrecto");

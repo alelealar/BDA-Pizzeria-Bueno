@@ -17,15 +17,24 @@ public class PizzaDTO {
     private String tamanio;
     private String descripcion;
     private double precio;
-    private List<String> nombreIngredientes;
+    private String rutaImagen;
+    public enum EstadoPizza {
+        DISPONIBLE,
+        NO_DISPONIBLE
+    }
 
-    public PizzaDTO(String nombre, String tamanio, String descripcion, double precio, List<String> nombreIngredientes) {
+    private EstadoPizza estado;
+
+    public PizzaDTO(String nombre, String tamanio, String descripcion, double precio, String rutaImagen, EstadoPizza estado) {
         this.nombre = nombre;
         this.tamanio = tamanio;
         this.descripcion = descripcion;
         this.precio = precio;
-        this.nombreIngredientes = nombreIngredientes;
+        this.rutaImagen = rutaImagen;
+        this.estado = estado;
     }
+
+    
 
     public PizzaDTO() {
     }
@@ -62,17 +71,23 @@ public class PizzaDTO {
         this.precio = precio;
     }
 
-    public List<String> getNombreIngredientes() {
-        return nombreIngredientes;
+    public String getRutaImagen() {
+        return rutaImagen;
     }
 
-    public void setNombreIngredientes(List<String> nombreIngredientes) {
-        this.nombreIngredientes = nombreIngredientes;
+    public void setRutaImagen(String rutaImagen) {
+        this.rutaImagen = rutaImagen;
+    }
+
+    public EstadoPizza getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoPizza estado) {
+        this.estado = estado;
     }
     
     
-    
-    
-    
+
     
 }
