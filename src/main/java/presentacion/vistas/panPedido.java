@@ -8,6 +8,7 @@ import Negocio.DTOs.DetalleCarritoDTO;
 import java.awt.Color;
 import java.awt.Dimension;
 import presentacion.frmCarrito;
+import presentacion.frmCarritoExpress;
 
 /**
  *
@@ -32,6 +33,17 @@ public class panPedido extends javax.swing.JPanel {
         setPreferredSize(new Dimension(600, 200));
         setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
     }
+    
+    public panPedido(DetalleCarritoDTO detalle, frmCarritoExpress carritoExpress) {
+        initComponents();
+        this.detalle = detalle;
+        this.carrito = carrito;
+        setDatosPizza();
+        cargarInfo();
+        setPreferredSize(new Dimension(600, 200));
+        setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
+    }
+    
 
     public void setDatosPizza() {
 

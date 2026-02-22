@@ -1,70 +1,50 @@
 package presentacion;
 
 import Negocio.DTOs.DetalleCarritoDTO;
-import java.awt.BorderLayout;
+import Negocio.DTOs.DetallePedidoDTO;
 import java.awt.Color;
-import java.awt.HeadlessException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import negocio.bos.CarritoBO;
+import persistencia.dominio.DetallePedido;
+import persistencia.dominio.Pedido;
+import persistencia.dominio.Pizza;
 import presentacion.vistas.panPedido;
+import presentacion.vistas.panTarjetaPizza;
 
 /**
  *
  * @author Brian
  */
-public class frmCarrito extends javax.swing.JFrame {
+public class frmCarritoExpress extends javax.swing.JFrame {
 
     private List<DetalleCarritoDTO> pedidos;
     private double total;
 
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmCarrito.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmCarritoExpress.class.getName());
 
-    private int idUsuario;
-
-    public frmCarrito() {
-    }
-
-    public frmCarrito(int idUsuario) {
-        this.idUsuario = idUsuario;
+    public frmCarritoExpress() {
+        this.pedidos = new ArrayList<>();
         initComponents();
-        panPedidos.setLayout(new BoxLayout(panPedidos, BoxLayout.Y_AXIS));
-        cargarCarrito();
-    }
-
-    private void cargarCarrito() {
-        try {
-            CarritoBO carritoBO = new CarritoBO();
-
-            pedidos = carritoBO.obtenerCarrito(idUsuario);
-
-            cargarPedidosEnElPanel();
-            cargarPedidoTextArea();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void cargarPedidosEnElPanel() {
+        panPedidos.setLayout(new BoxLayout(panPedidos, BoxLayout.Y_AXIS));
 
-        panPedidos.removeAll();
-
+        //Recorremos la lista y creamos una tarjeta por cada pizza
         for (DetalleCarritoDTO pedido : pedidos) {
-
-            panPedido tarjeta = new panPedido(pedido, this);
-
-            panPedidos.add(tarjeta);
+            panPedido nuevaTarjeta = new panPedido(pedido, this);
+            panPedidos.add(nuevaTarjeta);
         }
 
-        panPedidos.revalidate();
-        panPedidos.repaint();
+        //Actualizamos el panel para que Swing dibuje los cambios en pantalla
+        panPizzas.revalidate();
+        panPizzas.repaint();
     }
 
-    public void eliminarPanel(DetalleCarritoDTO detalle) {
+    public void eliminarPanel(DetallePedido detalle) {
 
         pedidos.remove(detalle);
 
@@ -80,17 +60,16 @@ public class frmCarrito extends javax.swing.JFrame {
     }
 
     public void cargarPedidoTextArea() {
-
-        try {
-            CarritoBO carritoBO = new CarritoBO();
-
-            double total = carritoBO.calcularTotal(idUsuario);
-
-            txaDetallePedidos.setText("Total: $" + total);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        total = 0;
+//        txaDetallePedidos.setText("");
+//        txaDetallePedidos.append("Resumen del pedido\n\n");
+//        for (DetalleCarritoDTO pedido : pedidos) {
+//            txaDetallePedidos.append("x" + String.valueOf(pedido.getCantidad()) + "" + pedido.getPizza().getNombre() + "\n");
+//            txaDetallePedidos.append("+" + "$" + String.valueOf(pedido.getPrecio() * pedido.getCantidad()) + "\n");
+//            txaDetallePedidos.append("     ●Nota: " + pedido.getNota() + "\n\n");
+//            total += pedido.getPrecio() * pedido.getCantidad();
+//        }
+//        txaDetallePedidos.append("\n Total: " + String.valueOf(total));
     }
 
     /**
@@ -108,14 +87,10 @@ public class frmCarrito extends javax.swing.JFrame {
         panNavegacion = new javax.swing.JPanel();
         btnInicio = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        btnActualizar = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
         btnCarrito = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        btnMispedidos = new javax.swing.JPanel();
+        btnMenu = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        btnPE = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
         panPizzas = new javax.swing.JPanel();
         txtCupon = new javax.swing.JTextField();
         btnValidar1 = new javax.swing.JPanel();
@@ -125,7 +100,6 @@ public class frmCarrito extends javax.swing.JFrame {
         panPedidos = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txaDetallePedidos = new javax.swing.JTextArea();
-        btnOrdenar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setLocationByPlatform(true);
@@ -145,6 +119,9 @@ public class frmCarrito extends javax.swing.JFrame {
 
         btnInicio.setBackground(new java.awt.Color(255, 92, 56));
         btnInicio.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnInicioMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnInicioMouseEntered(evt);
             }
@@ -157,7 +134,7 @@ public class frmCarrito extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Inicio");
-        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout btnInicioLayout = new javax.swing.GroupLayout(btnInicio);
         btnInicio.setLayout(btnInicioLayout);
@@ -170,41 +147,13 @@ public class frmCarrito extends javax.swing.JFrame {
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
         );
 
-        panNavegacion.add(btnInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, -2, 100, 60));
-
-        btnActualizar.setBackground(new java.awt.Color(255, 92, 56));
-        btnActualizar.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnActualizarMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnActualizarMouseExited(evt);
-            }
-        });
-
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("Actualizar");
-        jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
-        javax.swing.GroupLayout btnActualizarLayout = new javax.swing.GroupLayout(btnActualizar);
-        btnActualizar.setLayout(btnActualizarLayout);
-        btnActualizarLayout.setHorizontalGroup(
-            btnActualizarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
-        );
-        btnActualizarLayout.setVerticalGroup(
-            btnActualizarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btnActualizarLayout.createSequentialGroup()
-                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        panNavegacion.add(btnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(814, -4, -1, 70));
+        panNavegacion.add(btnInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(950, 0, 100, 60));
 
         btnCarrito.setBackground(new java.awt.Color(255, 92, 56));
         btnCarrito.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCarritoMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnCarritoMouseEntered(evt);
             }
@@ -217,7 +166,7 @@ public class frmCarrito extends javax.swing.JFrame {
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Carrito");
-        jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout btnCarritoLayout = new javax.swing.GroupLayout(btnCarrito);
         btnCarrito.setLayout(btnCarritoLayout);
@@ -232,82 +181,55 @@ public class frmCarrito extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        panNavegacion.add(btnCarrito, new org.netbeans.lib.awtextra.AbsoluteConstraints(943, -4, -1, 70));
+        panNavegacion.add(btnCarrito, new org.netbeans.lib.awtextra.AbsoluteConstraints(1060, 0, -1, 70));
 
-        btnMispedidos.setBackground(new java.awt.Color(255, 92, 56));
-        btnMispedidos.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnMenu.setBackground(new java.awt.Color(255, 92, 56));
+        btnMenu.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnMenuMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnMispedidosMouseEntered(evt);
+                btnMenuMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnMispedidosMouseExited(evt);
+                btnMenuMouseExited(evt);
             }
         });
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel6.setText("Mis pedidos");
-        jLabel6.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jLabel6.setText("Menu Principal");
+        jLabel6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        javax.swing.GroupLayout btnMispedidosLayout = new javax.swing.GroupLayout(btnMispedidos);
-        btnMispedidos.setLayout(btnMispedidosLayout);
-        btnMispedidosLayout.setHorizontalGroup(
-            btnMispedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+        javax.swing.GroupLayout btnMenuLayout = new javax.swing.GroupLayout(btnMenu);
+        btnMenu.setLayout(btnMenuLayout);
+        btnMenuLayout.setHorizontalGroup(
+            btnMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
         );
-        btnMispedidosLayout.setVerticalGroup(
-            btnMispedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btnMispedidosLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        panNavegacion.add(btnMispedidos, new org.netbeans.lib.awtextra.AbsoluteConstraints(1069, -6, 130, 70));
-
-        btnPE.setBackground(new java.awt.Color(255, 92, 56));
-        btnPE.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnPEMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnPEMouseExited(evt);
-            }
-        });
-
-        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setText("Pedido Express");
-        jLabel4.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
-        javax.swing.GroupLayout btnPELayout = new javax.swing.GroupLayout(btnPE);
-        btnPE.setLayout(btnPELayout);
-        btnPELayout.setHorizontalGroup(
-            btnPELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-        );
-        btnPELayout.setVerticalGroup(
-            btnPELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
+        btnMenuLayout.setVerticalGroup(
+            btnMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btnMenuLayout.createSequentialGroup()
+                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        panNavegacion.add(btnPE, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 2, 150, 60));
+        panNavegacion.add(btnMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 0, -1, 60));
 
         javax.swing.GroupLayout panLogoLayout = new javax.swing.GroupLayout(panLogo);
         panLogo.setLayout(panLogoLayout);
         panLogoLayout.setHorizontalGroup(
             panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panLogoLayout.createSequentialGroup()
-                .addGroup(panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panLogoLayout.createSequentialGroup()
-                        .addContainerGap()
+                .addContainerGap()
+                .addGroup(panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panLogoLayout.createSequentialGroup()
                         .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(lblTituloLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(panNavegacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(lblTituloLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 546, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 509, Short.MAX_VALUE))
+                    .addComponent(panNavegacion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         panLogoLayout.setVerticalGroup(
             panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -390,13 +312,6 @@ public class frmCarrito extends javax.swing.JFrame {
         txaDetallePedidos.setRows(5);
         jScrollPane1.setViewportView(txaDetallePedidos);
 
-        btnOrdenar.setText("Ordenar");
-        btnOrdenar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnOrdenarActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout panPizzasLayout = new javax.swing.GroupLayout(panPizzas);
         panPizzas.setLayout(panPizzasLayout);
         panPizzasLayout.setHorizontalGroup(
@@ -407,27 +322,19 @@ public class frmCarrito extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panPizzasLayout.createSequentialGroup()
-                        .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panPizzasLayout.createSequentialGroup()
-                                .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtCupon, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(3, 3, 3)
-                                .addComponent(btnValidar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(25, 25, 25))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panPizzasLayout.createSequentialGroup()
-                        .addComponent(btnOrdenar, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(95, 95, 95))))
+                        .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCupon, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(3, 3, 3)
+                        .addComponent(btnValidar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(25, 25, 25))
         );
         panPizzasLayout.setVerticalGroup(
             panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panPizzasLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panPizzasLayout.createSequentialGroup()
-                        .addComponent(jScrollPane2)
-                        .addGap(16, 16, 16))
                     .addGroup(panPizzasLayout.createSequentialGroup()
                         .addGap(11, 11, 11)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -437,9 +344,10 @@ public class frmCarrito extends javax.swing.JFrame {
                             .addComponent(txtCupon))
                         .addGap(0, 0, 0)
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
-                        .addComponent(btnOrdenar, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(45, 45, 45))))
+                        .addContainerGap(141, Short.MAX_VALUE))
+                    .addGroup(panPizzasLayout.createSequentialGroup()
+                        .addComponent(jScrollPane2)
+                        .addGap(16, 16, 16))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -460,38 +368,6 @@ public class frmCarrito extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnInicioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInicioMouseEntered
-        btnInicio.setBackground(Color.decode("#E82F07"));
-    }//GEN-LAST:event_btnInicioMouseEntered
-
-    private void btnInicioMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInicioMouseExited
-        btnInicio.setBackground(Color.decode("#FF5C38"));
-    }//GEN-LAST:event_btnInicioMouseExited
-
-    private void btnActualizarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnActualizarMouseEntered
-        btnActualizar.setBackground(Color.decode("#E82F07"));
-    }//GEN-LAST:event_btnActualizarMouseEntered
-
-    private void btnActualizarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnActualizarMouseExited
-        btnActualizar.setBackground(Color.decode("#FF5C38"));
-    }//GEN-LAST:event_btnActualizarMouseExited
-
-    private void btnCarritoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCarritoMouseEntered
-        btnCarrito.setBackground(Color.decode("#E82F07"));
-    }//GEN-LAST:event_btnCarritoMouseEntered
-
-    private void btnCarritoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCarritoMouseExited
-        btnCarrito.setBackground(Color.decode("#FF5C38"));
-    }//GEN-LAST:event_btnCarritoMouseExited
-
-    private void btnMispedidosMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMispedidosMouseEntered
-        btnMispedidos.setBackground(Color.decode("#E82F07"));
-    }//GEN-LAST:event_btnMispedidosMouseEntered
-
-    private void btnMispedidosMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMispedidosMouseExited
-        btnMispedidos.setBackground(Color.decode("#FF5C38"));
-    }//GEN-LAST:event_btnMispedidosMouseExited
 
     private void txtCuponMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtCuponMousePressed
 
@@ -523,17 +399,47 @@ public class frmCarrito extends javax.swing.JFrame {
         btnValidar1.setBackground(Color.decode("#FF876D"));
     }//GEN-LAST:event_btnValidar1MouseExited
 
-    private void btnPEMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPEMouseEntered
-        btnCarrito.setBackground(Color.decode("#FF5C38"));
-    }//GEN-LAST:event_btnPEMouseEntered
+    private void btnInicioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInicioMouseClicked
+        frmPedidoExpress pedido = new frmPedidoExpress();
+        pedido.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnInicioMouseClicked
 
-    private void btnPEMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPEMouseExited
-        btnCarrito.setBackground(Color.decode("#FF5C38"));
-    }//GEN-LAST:event_btnPEMouseExited
+    private void btnInicioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInicioMouseEntered
+        btnInicio.setBackground(Color.decode("#E82F07"));
+    }//GEN-LAST:event_btnInicioMouseEntered
 
-    private void btnOrdenarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrdenarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnOrdenarActionPerformed
+    private void btnInicioMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInicioMouseExited
+        btnInicio.setBackground(Color.decode("#FF5C38"));
+    }//GEN-LAST:event_btnInicioMouseExited
+
+    private void btnCarritoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCarritoMouseClicked
+        frmCarritoExpress carrito = new frmCarritoExpress();
+        carrito.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnCarritoMouseClicked
+
+    private void btnCarritoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCarritoMouseEntered
+        btnCarrito.setBackground(Color.decode("#E82F07"));
+    }//GEN-LAST:event_btnCarritoMouseEntered
+
+    private void btnCarritoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCarritoMouseExited
+        btnCarrito.setBackground(Color.decode("#FF5C38"));
+    }//GEN-LAST:event_btnCarritoMouseExited
+
+    private void btnMenuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMenuMouseClicked
+        frmInicio inicio = new frmInicio();
+        inicio.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnMenuMouseClicked
+
+    private void btnMenuMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMenuMouseEntered
+        btnMenu.setBackground(Color.decode("#E82F07"));
+    }//GEN-LAST:event_btnMenuMouseEntered
+
+    private void btnMenuMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMenuMouseExited
+        btnMenu.setBackground(Color.decode("#FF5C38"));
+    }//GEN-LAST:event_btnMenuMouseExited
 
     /**
      * @param args the command line arguments
@@ -557,21 +463,16 @@ public class frmCarrito extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new frmCarrito(1).setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new frmCarritoExpress().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel btnActualizar;
     private javax.swing.JPanel btnCarrito;
     private javax.swing.JPanel btnInicio;
-    private javax.swing.JPanel btnMispedidos;
-    private javax.swing.JButton btnOrdenar;
-    private javax.swing.JPanel btnPE;
+    private javax.swing.JPanel btnMenu;
     private javax.swing.JPanel btnValidar1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
