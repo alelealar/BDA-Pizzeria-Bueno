@@ -51,17 +51,23 @@ public class frmCarrito extends javax.swing.JFrame {
 
     private void cargarPedidosEnElPanel() {
 
-        panPedidos.removeAll();
-
-        for (DetalleCarritoDTO pedido : pedidos) {
-
-            panPedido tarjeta = new panPedido(pedido, this);
-
-            panPedidos.add(tarjeta);
-        }
-
-        panPedidos.revalidate();
-        panPedidos.repaint();
+//        panPedidos.removeAll();
+//
+//        for (DetalleCarritoDTO pedido : pedidos) {
+//
+//            panPedido tarjeta = new panPedido(pedido, this);
+//
+//            panPedidos.add(tarjeta);
+//            //Recorremos la lista y creamos una tarjeta por cada pizza
+//            for (DetallePedido pedido : pedidos) {
+//                panPedido nuevaTarjeta = new panPedido(pedido, this);
+//                panPedidos.add(nuevaTarjeta);
+//
+//            }
+//
+//            panPedidos.revalidate();
+//            panPedidos.repaint();
+//        }
     }
 
     public void eliminarPanel(DetalleCarritoDTO detalle) {
