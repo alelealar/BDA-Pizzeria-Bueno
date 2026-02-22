@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import persistencia.conexion.ConexionBD;
 import persistencia.conexion.IConexionBD;
 import persistencia.dominio.Pizza;
 import persistencia.excepciones.PersistenciaException;
@@ -43,6 +44,10 @@ public class PizzaDAO implements IPizzaDAO {
      */
     public PizzaDAO(IConexionBD conexionBD) {
         this.conexionBD = conexionBD;
+    }
+
+    public PizzaDAO() {
+        this.conexionBD = new ConexionBD();
     }
     
     public List<Pizza> obtenerPizzas() throws PersistenciaException {
@@ -112,6 +117,7 @@ public class PizzaDAO implements IPizzaDAO {
     private Pizza extraerPizza(ResultSet rs) throws PersistenciaException {
         try {
            Pizza pizza = new Pizza();
+           pizza.setIdPizza(rs.getInt("idPizza"));
            pizza.setNombre(rs.getString("nombre"));
            pizza.setTamanio(rs.getString("Tamaño"));
            pizza.setDescripcion(rs.getString("descripcion"));

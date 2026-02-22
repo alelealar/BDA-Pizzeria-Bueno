@@ -1,6 +1,8 @@
 package presentacion.vistas;
 
-import java.awt.Dimension;
+import javax.swing.JOptionPane;
+import Negocio.DTOs.PizzaDTO;
+import negocio.bos.CarritoBO;
 
 /**
  *
@@ -8,22 +10,26 @@ import java.awt.Dimension;
  */
 public class panTarjetaPizza extends javax.swing.JPanel {
 
+    private PizzaDTO pizza;
+
     /**
      * Creates new form panTarjetaPizza
      */
     public panTarjetaPizza() {
-
         initComponents();
-
     }
 
-    public void setDatosPizza(String nombrePizza) {
-        // Aquí cambiamos el texto
-        lblNombrePizza.setText(nombrePizza);
-
-        // ImageIcon icono = new ImageIcon("ruta...");
-        // lblImagenPizza.setIcon(icono);
+    public void setDatosPizza(PizzaDTO pizza) {
+        this.pizza = pizza;
+        lblNombrePizza.setText(pizza.getNombre());
     }
+
+    private Runnable accionAgregar;
+
+    public void setAccionAgregar(Runnable accion) {
+        this.accionAgregar = accion;
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -36,7 +42,7 @@ public class panTarjetaPizza extends javax.swing.JPanel {
 
         lblImagenPizza = new javax.swing.JLabel();
         lblNombrePizza = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnAgregar = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(254, 242, 242));
 
@@ -45,15 +51,20 @@ public class panTarjetaPizza extends javax.swing.JPanel {
         lblNombrePizza.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         lblNombrePizza.setText("jLabel2");
 
-        jButton1.setBackground(new java.awt.Color(255, 92, 56));
-        jButton1.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("+Añadir");
-        jButton1.setBorder(null);
-        jButton1.setFocusPainted(false);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnAgregar.setBackground(new java.awt.Color(255, 92, 56));
+        btnAgregar.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        btnAgregar.setForeground(new java.awt.Color(255, 255, 255));
+        btnAgregar.setText("+Añadir");
+        btnAgregar.setBorder(null);
+        btnAgregar.setFocusPainted(false);
+        btnAgregar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnAgregarMouseClicked(evt);
+            }
+        });
+        btnAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnAgregarActionPerformed(evt);
             }
         });
 
@@ -67,7 +78,7 @@ public class panTarjetaPizza extends javax.swing.JPanel {
                         .addGap(14, 14, 14)
                         .addComponent(lblNombrePizza, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(lblImagenPizza, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -79,19 +90,26 @@ public class panTarjetaPizza extends javax.swing.JPanel {
                 .addComponent(lblImagenPizza)
                 .addGap(204, 204, 204)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblNombrePizza))
                 .addGap(10, 10, 10))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        if(accionAgregar != null){
+            accionAgregar.run();
+        }
+
+    }//GEN-LAST:event_btnAgregarActionPerformed
+
+    private void btnAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarMouseClicked
+
+    }//GEN-LAST:event_btnAgregarMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnAgregar;
     private javax.swing.JLabel lblImagenPizza;
     private javax.swing.JLabel lblNombrePizza;
     // End of variables declaration//GEN-END:variables

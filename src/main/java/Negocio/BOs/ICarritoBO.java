@@ -23,4 +23,5 @@ public interface ICarritoBO {
     public void eliminarProducto(int idUsuario, int idPizza, String tamanio) throws NegocioException;
     
     public void disminuirCantidad(int idUsuario, int idPizza, String tamanio) throws NegocioException;
+    
 }

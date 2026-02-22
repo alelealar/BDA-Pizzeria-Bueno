@@ -4,17 +4,9 @@
  */
 package presentacion.vistas;
 
+import Negocio.DTOs.DetalleCarritoDTO;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Image;
-import java.io.IOException;
-import java.net.URL;
-import javax.imageio.ImageIO;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import persistencia.dominio.DetallePedido;
-import persistencia.dominio.Pedido;
 import presentacion.frmCarrito;
 
 /**
@@ -23,7 +15,7 @@ import presentacion.frmCarrito;
  */
 public class panPedido extends javax.swing.JPanel {
 
-    private DetallePedido detalle;
+    private DetalleCarritoDTO detalle;
     private frmCarrito carrito;
 
     /**
@@ -31,7 +23,7 @@ public class panPedido extends javax.swing.JPanel {
      *
      * @param detalle
      */
-    public panPedido(DetallePedido detalle, frmCarrito carrito) {
+    public panPedido(DetalleCarritoDTO detalle, frmCarrito carrito) {
         initComponents();
         this.detalle = detalle;
         this.carrito = carrito;
@@ -43,10 +35,9 @@ public class panPedido extends javax.swing.JPanel {
 
     public void setDatosPizza() {
 
-        // Aquí cambiamos el texto
-        lblNombrePizza.setText(detalle.getPizza().getNombre());
+        lblNombrePizza.setText(detalle.getNombrePizza());
 
-        switch (detalle.getPizza().getNombre()) {
+        switch (detalle.getNombrePizza()) {
             case "La Papi-Margarita":
                 lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/papiPizza.jpg")));
                 break;
@@ -75,9 +66,10 @@ public class panPedido extends javax.swing.JPanel {
                 lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/suprema.jpg")));
                 break;
             default:
-                throw new AssertionError();
+                lblImagen.setIcon(null);
         }
-        lblPrecioPizza.setText("$" + String.valueOf(detalle.getPizza().getPrecio()) + " MXN");
+
+        lblPrecioPizza.setText("$" + detalle.getPrecioUnitario() + " MXN");
         lblCantidad.setText(String.valueOf(detalle.getCantidad()));
     }
 
@@ -89,10 +81,12 @@ public class panPedido extends javax.swing.JPanel {
     }
 
     public void disminuirCantidadPedido() {
-        detalle.setCantidad(detalle.getCantidad() - 1);
-        lblCantidad.setText(String.valueOf(detalle.getCantidad()));
-        cargarInfo();
-        carrito.cargarPedidoTextArea();
+        if (detalle.getCantidad() > 1) {
+            detalle.setCantidad(detalle.getCantidad() - 1);
+            lblCantidad.setText(String.valueOf(detalle.getCantidad()));
+            cargarInfo();
+            carrito.cargarPedidoTextArea();
+        }
     }
 
     public void cargarInfo() {

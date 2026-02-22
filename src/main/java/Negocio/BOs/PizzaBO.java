@@ -5,9 +5,13 @@
 package Negocio.BOs;
 
 import Negocio.DTOs.PizzaDTO;
+import Negocio.excepciones.NegocioException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import persistencia.daos.IPizzaDAO;
+import persistencia.daos.PizzaDAO;
 import persistencia.dominio.Pizza;
 import persistencia.excepciones.PersistenciaException;
 
@@ -23,15 +27,25 @@ public class PizzaBO implements IPizzaBO {
     public PizzaBO(IPizzaDAO pizzaDAO) {
         this.pizzaDAO = pizzaDAO;
     }
+    
+    public PizzaBO() {
+        this.pizzaDAO = new PizzaDAO();
+    }
 
     @Override
-    public List<PizzaDTO> obtenerProductos() throws PersistenciaException {
-        List<Pizza> pizzas = pizzaDAO.obtenerPizzas(); 
+    public List<PizzaDTO> obtenerProductos() throws NegocioException {
+        List<Pizza> pizzas = null; 
+        try {
+            pizzas = pizzaDAO.obtenerPizzas();
+        } catch (PersistenciaException ex) {
+            Logger.getLogger(PizzaBO.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         List<PizzaDTO> dtos = new ArrayList<>();
         
         for (Pizza p : pizzas) {
             PizzaDTO dto = new PizzaDTO();
+            dto.setIdPizza(p.getIdPizza());
             dto.setNombre(p.getNombre());
             dto.setTamanio(p.getTamanio());
             dto.setDescripcion(p.getDescripcion());

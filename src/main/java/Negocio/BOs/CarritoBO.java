@@ -3,7 +3,6 @@ package negocio.bos;
 import Negocio.DTOs.DetalleCarritoDTO;
 import Negocio.excepciones.NegocioException;
 import Negocio.BOs.ICarritoBO;
-
 import persistencia.daos.ICarritoDAO;
 import persistencia.daos.IDetalleCarritoDAO;
 import persistencia.daos.IPizzaDAO;
@@ -14,9 +13,14 @@ import persistencia.excepciones.PersistenciaException;
 
 import java.util.ArrayList;
 import java.util.List;
+import persistencia.conexion.ConexionBD;
+import persistencia.conexion.IConexionBD;
+import persistencia.daos.CarritoDAO;
+import persistencia.daos.DetalleCarritoDAO;
+import persistencia.daos.PizzaDAO;
 
 public class CarritoBO implements ICarritoBO {
-    
+
     private final ICarritoDAO carritoDAO;
     private final IDetalleCarritoDAO detalleDAO;
     private final IPizzaDAO pizzaDAO;
@@ -27,10 +31,21 @@ public class CarritoBO implements ICarritoBO {
         this.pizzaDAO = pizzaDAO;
     }
 
+    public CarritoBO() {
+
+        IConexionBD conexion = new ConexionBD();
+
+        this.carritoDAO = new CarritoDAO(conexion);
+        this.detalleDAO = new DetalleCarritoDAO(conexion);
+        this.pizzaDAO = new PizzaDAO(conexion);
+    }
+
     @Override
     public void agregarProducto(int idUsuario, int idPizza, String tamanio, int cantidad, String nota) throws NegocioException {
 
-        if (cantidad <= 0) throw new NegocioException("La cantidad debe ser mayor a 0");
+        if (cantidad <= 0) {
+            throw new NegocioException("La cantidad debe ser mayor a 0");
+        }
 
         try {
 
@@ -68,7 +83,9 @@ public class CarritoBO implements ICarritoBO {
         try {
 
             Carrito carrito = carritoDAO.obtenerCarritoActivoPorUsuario(idUsuario);
-            if (carrito == null) return List.of();
+            if (carrito == null) {
+                return List.of();
+            }
 
             List<DetalleCarrito> detalles = detalleDAO.obtenerDetallesPorCarrito(carrito.getIdCarrito());
             List<DetalleCarritoDTO> lista = new ArrayList<>();
@@ -98,10 +115,14 @@ public class CarritoBO implements ICarritoBO {
         try {
 
             Carrito carrito = carritoDAO.obtenerCarritoActivoPorUsuario(idUsuario);
-            if (carrito == null) return;
+            if (carrito == null) {
+                return;
+            }
 
             DetalleCarrito detalle = detalleDAO.obtenerDetalle(carrito.getIdCarrito(), idPizza, tamanio);
-            if (detalle != null) detalleDAO.eliminarDetallesPorCarrito(detalle.getIdDetalleCarrito());
+            if (detalle != null) {
+                detalleDAO.eliminarDetallesPorCarrito(detalle.getIdDetalleCarrito());
+            }
 
         } catch (PersistenciaException e) {
             throw new NegocioException("Error al eliminar producto del carrito", e);
@@ -114,10 +135,14 @@ public class CarritoBO implements ICarritoBO {
         try {
 
             Carrito carrito = carritoDAO.obtenerCarritoActivoPorUsuario(idUsuario);
-            if (carrito == null) return;
+            if (carrito == null) {
+                return;
+            }
 
             DetalleCarrito detalle = detalleDAO.obtenerDetalle(carrito.getIdCarrito(), idPizza, tamanio);
-            if (detalle == null) return;
+            if (detalle == null) {
+                return;
+            }
 
             int nuevaCantidad = detalle.getCantidad() - 1;
 
@@ -131,4 +156,5 @@ public class CarritoBO implements ICarritoBO {
             throw new NegocioException("Error al disminuir cantidad", e);
         }
     }
+
 }

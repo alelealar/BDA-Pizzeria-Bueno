@@ -12,7 +12,8 @@ import java.util.List;
  * @author Alejandra Leal Armenta - 00000262719
  * @author Paulina Michel Guevara Cervantez - 00000262724
  */
-public class PizzaDTO {
+public class PizzaDTO { 
+    private int idPizza;
     private String nombre;
     private String tamanio;
     private String descripcion;
@@ -25,7 +26,8 @@ public class PizzaDTO {
 
     private EstadoPizza estado;
 
-    public PizzaDTO(String nombre, String tamanio, String descripcion, double precio, String rutaImagen, EstadoPizza estado) {
+    public PizzaDTO(int idPizza, String nombre, String tamanio, String descripcion, double precio, String rutaImagen, EstadoPizza estado) {
+        this.idPizza = idPizza;
         this.nombre = nombre;
         this.tamanio = tamanio;
         this.descripcion = descripcion;
@@ -34,9 +36,15 @@ public class PizzaDTO {
         this.estado = estado;
     }
 
-    
-
     public PizzaDTO() {
+    }
+
+    public int getIdPizza() {
+        return idPizza;
+    }
+
+    public void setIdPizza(int idPizza) {
+        this.idPizza = idPizza;
     }
 
     public String getNombre() {

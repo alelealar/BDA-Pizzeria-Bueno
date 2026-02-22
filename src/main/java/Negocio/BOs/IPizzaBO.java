@@ -5,9 +5,8 @@
 package Negocio.BOs;
 
 import Negocio.DTOs.PizzaDTO;
+import Negocio.excepciones.NegocioException;
 import java.util.List;
-import persistencia.dominio.Pizza;
-import persistencia.excepciones.PersistenciaException;
 
 /**
  *
@@ -15,6 +14,6 @@ import persistencia.excepciones.PersistenciaException;
  */
 public interface IPizzaBO {
     
-    public List<PizzaDTO> obtenerProductos() throws PersistenciaException;
+    public List<PizzaDTO> obtenerProductos() throws NegocioException;
     
 }

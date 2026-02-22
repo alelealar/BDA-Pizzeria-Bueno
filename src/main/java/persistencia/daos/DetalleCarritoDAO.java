@@ -47,7 +47,7 @@ public class DetalleCarritoDAO implements IDetalleCarritoDAO {
 
     @Override
     public void agregarProducto(DetalleCarrito detalle) throws PersistenciaException {
-
+        System.out.println("ID Pizza enviado: " + detalle.getIdPizza());
         String comandoSQL = """
             INSERT INTO DetallesCarrito (idCarrito, idPizza, cantidad, nota)
             VALUES (?, ?, ?, ?);
@@ -76,7 +76,7 @@ public class DetalleCarritoDAO implements IDetalleCarritoDAO {
         String comandoSQL = """
         SELECT idDetalleCarrito, idCarrito, idPizza, tamaño, cantidad, nota
         FROM DetallesCarrito
-        WHERE idCarrito = ? AND idPizza = ? AND tamanio = ?;
+        WHERE idCarrito = ? AND idPizza = ? AND tamaño = ?;
         """;
 
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
@@ -161,7 +161,7 @@ public class DetalleCarritoDAO implements IDetalleCarritoDAO {
     public List<DetalleCarrito> obtenerDetallesPorCarrito(int idCarrito) throws PersistenciaException {
 
         String comandoSQL = """
-        SELECT idDetalleCarrito, idCarrito, idPizza, tamanio, cantidad, nota
+        SELECT idDetalleCarrito, idCarrito, idPizza, tamaño, cantidad, nota
         FROM DetallesCarrito
         WHERE idCarrito = ?;
         """;

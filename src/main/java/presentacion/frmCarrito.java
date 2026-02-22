@@ -1,16 +1,15 @@
 package presentacion;
 
+import Negocio.DTOs.DetalleCarritoDTO;
+import java.awt.BorderLayout;
 import java.awt.Color;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import persistencia.dominio.DetallePedido;
-import persistencia.dominio.Pedido;
-import persistencia.dominio.Pizza;
+import negocio.bos.CarritoBO;
 import presentacion.vistas.panPedido;
-import presentacion.vistas.panTarjetaPizza;
 
 /**
  *
@@ -18,44 +17,56 @@ import presentacion.vistas.panTarjetaPizza;
  */
 public class frmCarrito extends javax.swing.JFrame {
 
-    private List<DetallePedido> pedidos;
+    private List<DetalleCarritoDTO> pedidos;
     private double total;
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmCarrito.class.getName());
 
-    public frmCarrito() {
-        this.pedidos = new ArrayList<>();
+    private int idUsuario;
+
+    public frmCarrito(int idUsuario) {
+        this.idUsuario = idUsuario;
         initComponents();
-        cargarPedidosEnElPanel();
-        cargarPedidoTextArea();
+        panPedidos.setLayout(new BoxLayout(panPedidos, BoxLayout.Y_AXIS));
+        cargarCarrito();
+    }
+
+    private void cargarCarrito() {
+        try {
+            CarritoBO carritoBO = new CarritoBO();
+
+            pedidos = carritoBO.obtenerCarrito(idUsuario);
+
+            cargarPedidosEnElPanel();
+            cargarPedidoTextArea();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void cargarPedidosEnElPanel() {
-        panPedidos.setLayout(new BoxLayout(panPedidos, BoxLayout.Y_AXIS));
 
-        Pizza pizza1 = new Pizza("La Papi-Margarita", "Mediano", "!!!", 123);
-        Pizza pizza2 = new Pizza("Pepperoni Supreme", "Mediano", "!!!", 123);
-        Pizza pizza3 = new Pizza("Hawaiian Punch", "Mediano", "!!!", 123);
-        Pizza pizza4 = new Pizza("Mar y Tierra", "Mediano", "!!!", 123);
+        panPedidos.removeAll();
 
-        //Recorremos la lista y creamos una tarjeta por cada pizza
-        for (DetallePedido pedido : pedidos) {
-            panPedido nuevaTarjeta = new panPedido(pedido, this);
-            panPedidos.add(nuevaTarjeta);
+        for (DetalleCarritoDTO pedido : pedidos) {
+
+            panPedido tarjeta = new panPedido(pedido, this);
+
+            panPedidos.add(tarjeta);
         }
 
-        //Actualizamos el panel para que Swing dibuje los cambios en pantalla
-        panPizzas.revalidate();
-        panPizzas.repaint();
+        panPedidos.revalidate();
+        panPedidos.repaint();
     }
 
-    public void eliminarPanel(DetallePedido detalle) {
+    public void eliminarPanel(DetalleCarritoDTO detalle) {
 
         pedidos.remove(detalle);
 
         panPedidos.removeAll();
 
-        for (DetallePedido pedido : pedidos) {
+        for (DetalleCarritoDTO pedido : pedidos) {
             panPedido nuevaTarjeta = new panPedido(pedido, this);
             panPedidos.add(nuevaTarjeta);
         }
@@ -65,16 +76,17 @@ public class frmCarrito extends javax.swing.JFrame {
     }
 
     public void cargarPedidoTextArea() {
-        total = 0;
-        txaDetallePedidos.setText("");
-        txaDetallePedidos.append("Resumen del pedido\n\n");
-        for (DetallePedido pedido : pedidos) {
-            txaDetallePedidos.append("x" + String.valueOf(pedido.getCantidad()) + "" + pedido.getPizza().getNombre() + "\n");
-            txaDetallePedidos.append("+" + "$" + String.valueOf(pedido.getPrecio() * pedido.getCantidad()) + "\n");
-            txaDetallePedidos.append("     ●Nota: " + pedido.getNota() + "\n\n");
-            total += pedido.getPrecio() * pedido.getCantidad();
+
+        try {
+            CarritoBO carritoBO = new CarritoBO();
+
+            double total = carritoBO.calcularTotal(idUsuario);
+
+            txaDetallePedidos.setText("Total: $" + total);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        txaDetallePedidos.append("\n Total: " +String.valueOf(total));
     }
 
     /**
@@ -109,6 +121,7 @@ public class frmCarrito extends javax.swing.JFrame {
         panPedidos = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txaDetallePedidos = new javax.swing.JTextArea();
+        btnOrdenar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setLocationByPlatform(true);
@@ -140,7 +153,7 @@ public class frmCarrito extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Inicio");
-        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout btnInicioLayout = new javax.swing.GroupLayout(btnInicio);
         btnInicio.setLayout(btnInicioLayout);
@@ -169,7 +182,7 @@ public class frmCarrito extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Actualizar");
-        jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout btnActualizarLayout = new javax.swing.GroupLayout(btnActualizar);
         btnActualizar.setLayout(btnActualizarLayout);
@@ -200,7 +213,7 @@ public class frmCarrito extends javax.swing.JFrame {
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Carrito");
-        jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout btnCarritoLayout = new javax.swing.GroupLayout(btnCarrito);
         btnCarrito.setLayout(btnCarritoLayout);
@@ -231,7 +244,7 @@ public class frmCarrito extends javax.swing.JFrame {
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Mis pedidos");
-        jLabel6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel6.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout btnMispedidosLayout = new javax.swing.GroupLayout(btnMispedidos);
         btnMispedidos.setLayout(btnMispedidosLayout);
@@ -263,7 +276,7 @@ public class frmCarrito extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Pedido Express");
-        jLabel4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel4.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout btnPELayout = new javax.swing.GroupLayout(btnPE);
         btnPE.setLayout(btnPELayout);
@@ -373,6 +386,13 @@ public class frmCarrito extends javax.swing.JFrame {
         txaDetallePedidos.setRows(5);
         jScrollPane1.setViewportView(txaDetallePedidos);
 
+        btnOrdenar.setText("Ordenar");
+        btnOrdenar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOrdenarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panPizzasLayout = new javax.swing.GroupLayout(panPizzas);
         panPizzas.setLayout(panPizzasLayout);
         panPizzasLayout.setHorizontalGroup(
@@ -383,19 +403,27 @@ public class frmCarrito extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panPizzasLayout.createSequentialGroup()
-                        .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCupon, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(3, 3, 3)
-                        .addComponent(btnValidar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(25, 25, 25))
+                        .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panPizzasLayout.createSequentialGroup()
+                                .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtCupon, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(3, 3, 3)
+                                .addComponent(btnValidar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(25, 25, 25))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panPizzasLayout.createSequentialGroup()
+                        .addComponent(btnOrdenar, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(95, 95, 95))))
         );
         panPizzasLayout.setVerticalGroup(
             panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panPizzasLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panPizzasLayout.createSequentialGroup()
+                        .addComponent(jScrollPane2)
+                        .addGap(16, 16, 16))
                     .addGroup(panPizzasLayout.createSequentialGroup()
                         .addGap(11, 11, 11)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -405,10 +433,9 @@ public class frmCarrito extends javax.swing.JFrame {
                             .addComponent(txtCupon))
                         .addGap(0, 0, 0)
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(141, Short.MAX_VALUE))
-                    .addGroup(panPizzasLayout.createSequentialGroup()
-                        .addComponent(jScrollPane2)
-                        .addGap(16, 16, 16))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                        .addComponent(btnOrdenar, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(45, 45, 45))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -500,6 +527,10 @@ public class frmCarrito extends javax.swing.JFrame {
         btnCarrito.setBackground(Color.decode("#FF5C38"));
     }//GEN-LAST:event_btnPEMouseExited
 
+    private void btnOrdenarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrdenarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnOrdenarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -522,7 +553,7 @@ public class frmCarrito extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new frmCarrito().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new frmCarrito(1).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -530,8 +561,8 @@ public class frmCarrito extends javax.swing.JFrame {
     private javax.swing.JPanel btnCarrito;
     private javax.swing.JPanel btnInicio;
     private javax.swing.JPanel btnMispedidos;
+    private javax.swing.JButton btnOrdenar;
     private javax.swing.JPanel btnPE;
-    private javax.swing.JPanel btnValidar;
     private javax.swing.JPanel btnValidar1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

@@ -1,7 +1,15 @@
 package presentacion;
 
+import Negocio.BOs.IPizzaBO;
+import Negocio.BOs.PizzaBO;
+import Negocio.DTOs.PizzaDTO;
+import Negocio.Fabrica.FabricaBOs;
+import Negocio.excepciones.NegocioException;
 import java.awt.Color;
+import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import negocio.bos.CarritoBO;
 import presentacion.vistas.panTarjetaPizza;
 
 /**
@@ -12,30 +20,58 @@ public class frmCatalogo extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmCatalogo.class.getName());
 
+    private int idUsuario;
+    private CarritoBO carritoBO = new CarritoBO();
+
     public frmCatalogo() {
         initComponents();
         cargarPizzasEnElPanel();
     }
 
+    public frmCatalogo(int idUsuario) {
+        initComponents();
+        this.idUsuario = idUsuario;
+    }
+
     private void cargarPizzasEnElPanel() {
-        
+
+        panPizzas.removeAll();
         panPizzas.setLayout(new java.awt.GridLayout(0, 3, 15, 15));
-        
-        String[] nombresPizzas = {"La Papi-Margarita", "La Papi-Pepperoni", "Hawaiana", "Mexicana", "Vegetariana"};
 
-        // Recorremos la lista y creamos una tarjeta por cada pizza
-        for (String nombre : nombresPizzas) {
-            // Creamos un nuevo panel tarjeta
-            panTarjetaPizza nuevaTarjeta = new panTarjetaPizza();
+        try {
+            IPizzaBO productoBO = new PizzaBO();
 
-            // Le pasamos los datos
-            nuevaTarjeta.setDatosPizza(nombre);
+            List<PizzaDTO> pizzas = productoBO.obtenerProductos();
 
-            // La agregamos al panel
-            panPizzas.add(nuevaTarjeta);
+            for (PizzaDTO pizza : pizzas) {
+
+                panTarjetaPizza tarjeta = new panTarjetaPizza();
+                tarjeta.setDatosPizza(pizza);
+
+                tarjeta.setAccionAgregar(() -> {
+                    try {
+                        carritoBO.agregarProducto(
+                                1,
+                                pizza.getIdPizza(),
+                                "Grande",
+                                1,
+                                ""
+                        );
+
+                        JOptionPane.showMessageDialog(this, "Producto agregado al carrito");
+
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(this, e.getMessage());
+                    }
+                });
+
+                panPizzas.add(tarjeta);
+            }
+
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         }
 
-        // Actualizamos el panel para que Swing dibuje los cambios en pantalla
         panPizzas.revalidate();
         panPizzas.repaint();
     }
@@ -95,7 +131,7 @@ public class frmCatalogo extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Inicio");
-        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout btnInicioLayout = new javax.swing.GroupLayout(btnInicio);
         btnInicio.setLayout(btnInicioLayout);
@@ -124,7 +160,7 @@ public class frmCatalogo extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Actualizar");
-        jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout btnActualizarLayout = new javax.swing.GroupLayout(btnActualizar);
         btnActualizar.setLayout(btnActualizarLayout);
@@ -155,7 +191,7 @@ public class frmCatalogo extends javax.swing.JFrame {
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Carrito");
-        jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout btnCarritoLayout = new javax.swing.GroupLayout(btnCarrito);
         btnCarrito.setLayout(btnCarritoLayout);
@@ -186,7 +222,7 @@ public class frmCatalogo extends javax.swing.JFrame {
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Mis pedidos");
-        jLabel6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel6.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout btnMispedidosLayout = new javax.swing.GroupLayout(btnMispedidos);
         btnMispedidos.setLayout(btnMispedidosLayout);
@@ -218,7 +254,7 @@ public class frmCatalogo extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Pedido Express");
-        jLabel3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel3.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout btnPELayout = new javax.swing.GroupLayout(btnPE);
         btnPE.setLayout(btnPELayout);
