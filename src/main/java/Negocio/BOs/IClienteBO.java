@@ -5,6 +5,10 @@
 
 package Negocio.BOs;
 
+import Negocio.excepciones.NegocioException;
+import persistencia.dominio.Cliente;
+import persistencia.dominio.Telefono;
+
 /**
  *
  * @author Brian Kaleb Sandoval Rodríguez - 00000262741
@@ -13,4 +17,11 @@ package Negocio.BOs;
  */
 public interface IClienteBO {
 
+    public Cliente registrarCliente(Cliente cliente) throws NegocioException;
+    
+    public void agregarTelefono(int idCliente, Telefono telefono) throws NegocioException;
+    
+    public void eliminarTelefono(int idCliente, Telefono telefono) throws NegocioException;
+
+    
 }

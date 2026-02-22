@@ -5,6 +5,7 @@
 
 package persistencia.DAOS;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -80,46 +81,43 @@ public class ClienteDAO implements IClienteDAO {
      */
     @Override
     public Cliente agregarCliente(Cliente cliente) throws PersistenciaException {
-        String comandoSQL = """
-                            INSERT INTO clientes
-                            	(nombres, apellidoPaterno, apellidoMaterno, fechaNacimiento, idDomicilioCliente)
-                            VALUES
-                            	(?, ?, ?, ?, ?);
-                            """;
-        try (Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
+        String procedimientoSQL = "{CALL SP_REGISTRAR_CLIENTE(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
 
-            ps.setString(1, cliente.getNombres());
-            ps.setString(2, cliente.getApellidoPaterno());
+        try (Connection conn = this.conexionBD.crearConexion();CallableStatement cs = conn.prepareCall(procedimientoSQL)) {
+            
+            // Parámetros de entrada
+            cs.setString(1, cliente.getNombreUsuario());
+            cs.setString(2, cliente.getContraseniaUsuario());
+            cs.setString(3, cliente.getRolUsuario());
+            cs.setString(4, cliente.getNombres());
+            cs.setString(5, cliente.getApellidoPaterno());
 
             if (cliente.getApellidoMaterno() != null) {
-                ps.setString(3, cliente.getApellidoMaterno());
+                cs.setString(6, cliente.getApellidoMaterno());
             } else {
-                ps.setNull(3, Types.VARCHAR);
+                cs.setNull(6, Types.VARCHAR);
             }
 
-            ps.setDate(4, Date.valueOf(cliente.getFechaNacimiento()));
-            ps.setInt(5, cliente.getDomicilio().getIdDomicilio());
+            cs.setDate(7, Date.valueOf(cliente.getFechaNacimiento()));
 
-            int filasInsertadas = ps.executeUpdate();
-            if (filasInsertadas == 0) {
-                LOG.warning("No se pudo insertar al cliente: " + cliente);
-                throw new PersistenciaException("No se logró agregar al cliente.");
-            }
+            cs.setString(8, cliente.getDomicilio().getCalle());
+            cs.setString(9, cliente.getDomicilio().getNumero());
+            cs.setString(10, cliente.getDomicilio().getColonia());
+            cs.setString(11, cliente.getDomicilio().getCodigoPostal());
 
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    cliente.setIdCliente(rs.getInt(1));
-                } else {
-                    throw new PersistenciaException("Error al obtener el ID generado del nuevo cliente.");
-                }
-            }
+            cs.registerOutParameter(12, Types.INTEGER);
 
-            LOG.info("Cliente insertado con éxito. ID: " + cliente.getIdCliente());
+            cs.execute();
+
+            int idGenerado = cs.getInt(12);
+            cliente.setIdCliente(idGenerado);
+
+            LOG.info("Cliente registrado con éxito. ID: " + idGenerado);
             return cliente;
 
         } catch (SQLException ex) {
-            LOG.severe("Error SQL al insertar al cliente" + ex);
-            throw new PersistenciaException("Error al insertar al cliente en la base de datos", ex);
+            LOG.severe("Error SQL al registrar al cliente: " + ex);
+            throw new PersistenciaException("No se pudo registrar el cliente. Verifica los datos e inténtalo de nuevo.", ex);
         }
     }
 

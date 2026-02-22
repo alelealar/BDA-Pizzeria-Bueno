@@ -6,6 +6,7 @@ package Negocio.BOs;
 
 import Negocio.DTOs.UsuarioDTO;
 import Negocio.excepciones.NegocioException;
+import persistencia.excepciones.PersistenciaException;
 
 /**
  *
@@ -13,6 +14,6 @@ import Negocio.excepciones.NegocioException;
  */
 public interface IUsuarioBO {
     
-    UsuarioDTO iniciarSesion(String usuario, String contrasenia) throws NegocioException;
+    UsuarioDTO iniciarSesion(String usuario, String contraseña) throws NegocioException;
     
 }

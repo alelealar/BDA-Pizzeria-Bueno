@@ -6,6 +6,7 @@ package Negocio.BOs;
 
 import Negocio.DTOs.UsuarioDTO;
 import Negocio.excepciones.NegocioException;
+import java.util.logging.Logger;
 import persistencia.daos.IUsuarioDAO;
 import persistencia.excepciones.PersistenciaException;
 
@@ -15,33 +16,35 @@ import persistencia.excepciones.PersistenciaException;
  */
 public class UsuarioBO implements IUsuarioBO {
     
-    private final IUsuarioDAO usuarioDAO;
+    private IUsuarioDAO usuarioDAO;
+    private static final Logger LOG = Logger.getLogger(UsuarioBO.class.getName());
 
-    public UsuarioBO(IUsuarioDAO usuarioDAO) {
-        this.usuarioDAO = usuarioDAO;
-    }
+    public UsuarioBO(IUsuarioDAO usuario) {
+        this.usuarioDAO = usuario; //asignamos valor al DAO
+    }   
 
     @Override
-    public UsuarioDTO iniciarSesion(String usuario, String contrasenia) throws NegocioException {
-        if (usuario == null || usuario.isBlank()) {
-            throw new NegocioException("El usuario es obligatorio");
-        }
+    public UsuarioDTO iniciarSesion(String usuario, String contrasena) throws NegocioException {
 
-        if (contrasenia == null || contrasenia.isBlank()) {
-            throw new NegocioException("La contraseña es obligatoria");
+        if(usuario == null || usuario.isBlank()) {
+            throw new NegocioException("Usuario vacío");
+        }
+        if(contrasena == null || contrasena.isBlank()){
+            throw new NegocioException("Contraseña vacía");
         }
 
         try {
-            UsuarioDTO usuarioDTO = usuarioDAO.iniciarSesion(usuario, contrasenia);
+            UsuarioDTO user = usuarioDAO.iniciarSesion(usuario, contrasena);
 
-            if (usuarioDTO == null) {
+            if (user == null) {
                 throw new NegocioException("Usuario o contraseña incorrectos");
             }
 
-            return usuarioDTO;
-
+            return user; // Si todo bien, regresas el usuario logueado
         } catch (PersistenciaException e) {
-            throw new NegocioException("Error al validar credenciales", e);
+            throw new NegocioException("Error de sistema: " + e.getMessage());
         }
+
     }
+
 }

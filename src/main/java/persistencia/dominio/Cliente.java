@@ -2,6 +2,7 @@ package persistencia.dominio;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.List;
 
 /**
  * Clase que representa la entidad Cliente dentro del sistema.
@@ -61,6 +62,8 @@ public class Cliente extends Usuario {
      * Domicilio asociado al cliente. Representa una relación de composición.
      */
     private Domicilio domicilio;
+    
+    private List<Telefono> telefonos;
 
     /**
      * Constructor por omisión.
@@ -83,7 +86,7 @@ public class Cliente extends Usuario {
      * @param rolUsuario rol asignado dentro del sistema
      */
     public Cliente(String nombres, String apellidoPaterno, String apellidoMaterno,
-            String estado, LocalDate fechaNacimiento, Domicilio domicilio,
+            String estado, LocalDate fechaNacimiento, Domicilio domicilio, List<Telefono> telefonos,
             int idUsuario, String contraseniaUsuario,
             String nombreUsuario, String rolUsuario) {
         super(idUsuario, contraseniaUsuario, nombreUsuario, rolUsuario);
@@ -93,6 +96,7 @@ public class Cliente extends Usuario {
         this.estado = estado;
         this.fechaNacimiento = fechaNacimiento;
         this.domicilio = domicilio;
+        this.telefonos = telefonos;
     }
 
     /**
@@ -109,7 +113,7 @@ public class Cliente extends Usuario {
      * @param rolUsuario rol dentro del sistema
      */
     public Cliente(String nombres, String apellidoPaterno, String apellidoMaterno,
-            String estado, LocalDate fechaNacimiento, Domicilio domicilio,
+            String estado, LocalDate fechaNacimiento, Domicilio domicilio, List<Telefono> telefonos,
             String contraseniaUsuario, String nombreUsuario, String rolUsuario) {
         super(contraseniaUsuario, nombreUsuario, rolUsuario);
         this.nombres = nombres;
@@ -118,6 +122,7 @@ public class Cliente extends Usuario {
         this.estado = estado;
         this.fechaNacimiento = fechaNacimiento;
         this.domicilio = domicilio;
+        this.telefonos = telefonos;
     }
 
     /**
@@ -243,6 +248,16 @@ public class Cliente extends Usuario {
     public void setDomicilio(Domicilio domicilio) {
         this.domicilio = domicilio;
     }
+
+    public List<Telefono> getTelefonos() {
+        return telefonos;
+    }
+
+    public void setTelefonos(List<Telefono> telefonos) {
+        this.telefonos = telefonos;
+    }
+    
+    
 
     /**
      * Calcula la edad actual del cliente.
