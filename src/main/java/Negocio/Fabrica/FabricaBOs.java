@@ -4,17 +4,16 @@
  */
 package Negocio.Fabrica;
 
-import Negocio.BOs.PedidoBO;
-import persitencia.fabrica.FabricaDAO;
-
 /**
  *
  * @author Brian
  */
 public class FabricaBOs {
+
     
-    public PedidoBO obtenerPedidoBO(){
-        PedidoBO pedidoBO = new PedidoBO(FabricaDAO.obtenerPedidoDAO());
-        return pedidoBO;
-    }
+//    public PedidoBO obtenerPedidoBO() {
+//        PedidoBO pedidoBO = new PedidoBO(FabricaDAO.obtenerPedidoDAO());
+//        return pedidoBO;
+//    }
+
 }

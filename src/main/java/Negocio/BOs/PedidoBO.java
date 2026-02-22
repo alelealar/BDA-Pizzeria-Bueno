@@ -33,7 +33,7 @@ public class PedidoBO implements IPedidoBO {
             throw new NegocioException("El pedido no puede ser nulo.");
         }
 
-        // ⚠ Si id es int, lo normal es que venga en 0 cuando es nuevo
+        // Si id es int, lo normal es que venga en 0 cuando es nuevo
         if (pedido.getIdPedido() > 0) {
             throw new NegocioException("El pedido no debe tener un id asignado.");
         }

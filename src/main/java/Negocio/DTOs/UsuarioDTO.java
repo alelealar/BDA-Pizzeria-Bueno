@@ -13,10 +13,12 @@ package Negocio.DTOs;
 public class UsuarioDTO {
     private int idUsuario;
     private String nombreUsuario;
+    private String rol;
 
-    public UsuarioDTO(int idUsuario, String nombreUsuario) {
+    public UsuarioDTO(int idUsuario, String nombreUsuario, String rol) {
         this.idUsuario = idUsuario;
         this.nombreUsuario = nombreUsuario;
+        this.rol = rol;
     }
 
     public UsuarioDTO() {
@@ -37,6 +39,12 @@ public class UsuarioDTO {
     public void setNombreUsuario(String nombreUsuario) {
         this.nombreUsuario = nombreUsuario;
     }
-    
-    
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
 }
