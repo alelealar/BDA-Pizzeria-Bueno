@@ -49,6 +49,7 @@ public class CuponDAO implements ICuponDAO{
         this.conexionBD = conexionBD;
     }
 
+
     @Override
     public Cupon obtenerCuponPorId(String id) throws PersistenciaException {
         String comandoSQL = """

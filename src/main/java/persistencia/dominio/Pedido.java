@@ -72,14 +72,6 @@ public class Pedido {
         this.fechaHoraEntrega = fechaHoraEntrega;
         this.tipo = tipo;
     }
-
-    public Pedido(int idPedido, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega) {
-        this.idPedido = idPedido;
-        this.nota = nota;
-        this.estadoActual = estadoActual;
-        this.fechaHoraPedido = fechaHoraPedido;
-        this.fechaHoraEntrega = fechaHoraEntrega;
-    }
     
     /**
      * Constructor sin identificador.

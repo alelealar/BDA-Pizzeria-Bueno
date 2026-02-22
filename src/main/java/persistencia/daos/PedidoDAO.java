@@ -6,7 +6,10 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.conexion.IConexionBD;
@@ -197,6 +200,12 @@ public class PedidoDAO implements IPedidoDAO {
             pedido.setFechaHoraPedido(rs.getTimestamp("fechaHoraPedido").toLocalDateTime());
             pedido.setFechaHoraEntrega(rs.getTimestamp("fechaHoraEntrega").toLocalDateTime());
             pedido.setNota(rs.getString("nota"));
+            
+            if ("PROGRAMADO".equalsIgnoreCase(rs.getString("tipo"))) {
+                pedido.setTipo(Pedido.Tipo.PROGRAMADO);
+            } else {
+                pedido.setTipo(Pedido.Tipo.EXPRESS);
+            }
 
             return pedido;
 
@@ -206,19 +215,40 @@ public class PedidoDAO implements IPedidoDAO {
         }
     }
 
+    
     @Override
-    public Pedido consultarPedidosPorCliente(int idCliente) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Pedido consultarPedidosPorTelefono(String telefono) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Pedido consultarPorRangoDeFechas(LocalDate fechaInicio, LocalDate fechaFin) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public List<Pedido> consultarPorRangoDeFechas(LocalDate fechaInicio, LocalDate fechaFin) throws PersistenciaException {
+        List<Pedido> pedidos = new ArrayList<>();
+        String comandoSQL = """
+                            SELECT
+                                idPedido, 
+                                estadoActual, 
+                                fechaHoraPedido, 
+                                fechaHoraEntrega, 
+                                nota, 
+                                tipo
+                            FROM pedidos
+                            WHERE fechaHoraPedido >= ?
+                              AND fechaHoraPedido < ?;
+                            """;
+        
+        try(Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)){
+            
+            ps.setObject(1, fechaInicio);
+            ps.setObject(2, fechaFin);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Pedido p = extraerPedido(rs);
+                    pedidos.add(p);
+                }
+            }
+            return pedidos;
+            
+        } catch (SQLException ex) {
+            LOG.severe("Error al consultar pedidos por rango de fechas: "+ex);
+            throw new PersistenciaException("Error al consultar pedidos por rango de fechas");
+        }
     }
 
    

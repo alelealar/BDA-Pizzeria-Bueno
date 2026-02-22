@@ -43,11 +43,12 @@ public class PedidoExpress extends Pedido {
      * @param estadoActual estado actual
      * @param fechaHoraPedido fecha y hora del pedido
      * @param fechaHoraEntrega fecha y hora de entrega
+     * @param tipo
      */
     public PedidoExpress(String pin, String folio, int idPedido, String nota,
             String estadoActual, LocalDateTime fechaHoraPedido,
-            LocalDateTime fechaHoraEntrega) {
-        super(idPedido, nota, estadoActual, fechaHoraPedido, fechaHoraEntrega);
+            LocalDateTime fechaHoraEntrega, Tipo tipo) {
+        super(idPedido, nota, estadoActual, fechaHoraPedido, fechaHoraEntrega, tipo);
         this.pin = pin;
         this.folio = folio;
     }

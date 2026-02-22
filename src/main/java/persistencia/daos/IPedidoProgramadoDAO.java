@@ -22,23 +22,5 @@ public interface IPedidoProgramadoDAO {
     
     List<PedidoProgramado> obtenerPedidosPorCliente(int idCliente) throws PersistenciaException;
     
-    List<PedidoProgramado> obtenerPedidosPorTelefono(String telefono) throws PersistenciaException;
-    
-    List<PedidoProgramado> obtenerPedidosPorEstado(String estado) throws PersistenciaException;
-    
-    List<PedidoProgramado> obtenerPedidosPorPeriodo(java.util.Date fechaInicio, java.util.Date fechaFin) throws PersistenciaException;
-
-    int contarPedidosActivosPorCliente(int idCliente) throws PersistenciaException;
-   
-    void actualizarEstado(int idPedido, String nuevoEstado) throws PersistenciaException;
-
-    void marcarComoListo(int idPedido) throws PersistenciaException;
-
-    void marcarComoEntregado(int idPedido) throws PersistenciaException;
-
-    void cancelarPedido(int idPedido) throws PersistenciaException;
-    
-    
-    
-    
+    List<PedidoProgramado> obtenerPedidosPorTelefono(String telefono) throws PersistenciaException;   
 }
