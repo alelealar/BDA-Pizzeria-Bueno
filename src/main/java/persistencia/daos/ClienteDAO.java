@@ -81,31 +81,30 @@ public class ClienteDAO implements IClienteDAO {
      */
     @Override
     public Cliente agregarCliente(Cliente cliente) throws PersistenciaException {
-        String procedimientoSQL = "{CALL SP_REGISTRAR_CLIENTE(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+        String procedimientoSQL = "{CALL SP_REGISTRAR_CLIENTE(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
 
-        try (Connection conn = this.conexionBD.crearConexion();CallableStatement cs = conn.prepareCall(procedimientoSQL)) {
+        try (Connection conn = this.conexionBD.crearConexion(); CallableStatement cs = conn.prepareCall(procedimientoSQL)) {
             
             // Parámetros de entrada
             cs.setString(1, cliente.getNombreUsuario());
             cs.setString(2, cliente.getContraseniaUsuario());
-            cs.setString(3, cliente.getRolUsuario());
-            cs.setString(4, cliente.getNombres());
-            cs.setString(5, cliente.getApellidoPaterno());
+            cs.setString(3, cliente.getNombres());
+            cs.setString(4, cliente.getApellidoPaterno());
 
             if (cliente.getApellidoMaterno() != null) {
-                cs.setString(6, cliente.getApellidoMaterno());
+                cs.setString(5, cliente.getApellidoMaterno());
             } else {
-                cs.setNull(6, Types.VARCHAR);
+                cs.setNull(5, Types.VARCHAR);
             }
 
-            cs.setDate(7, Date.valueOf(cliente.getFechaNacimiento()));
+            cs.setDate(6, Date.valueOf(cliente.getFechaNacimiento()));
 
-            cs.setString(8, cliente.getDomicilio().getCalle());
-            cs.setString(9, cliente.getDomicilio().getNumero());
-            cs.setString(10, cliente.getDomicilio().getColonia());
-            cs.setString(11, cliente.getDomicilio().getCodigoPostal());
+            cs.setString(7, cliente.getDomicilio().getCalle());
+            cs.setString(8, cliente.getDomicilio().getNumero());
+            cs.setString(9, cliente.getDomicilio().getColonia());
+            cs.setString(10, cliente.getDomicilio().getCodigoPostal());
 
-            cs.registerOutParameter(12, Types.INTEGER);
+            cs.registerOutParameter(11, Types.INTEGER);
 
             cs.execute();
 

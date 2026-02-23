@@ -24,13 +24,13 @@ import presentacion.vistas.panTarjetaPizza;
  *
  * @author Brian
  */
-public class frmRegistrarse extends javax.swing.JFrame {
+public class frmActualizarCliente extends javax.swing.JFrame {
 
     private ClienteBO clienteBO;
 
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmRegistrarse.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmActualizarCliente.class.getName());
 
-    public frmRegistrarse() {
+    public frmActualizarCliente() {
         this.clienteBO = FabricaDAO.getClienteBO();
         initComponents();
 
@@ -892,14 +892,14 @@ public class frmRegistrarse extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRegistraeseMouseEntered
 
     private void btnRegistraeseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRegistraeseMouseClicked
-      
+      /*
         try{
             int dia = Integer.parseInt(txtDia.getText());
             int mes = Integer.parseInt(txtMes.getText());
             int anio = Integer.parseInt(txtAnio.getText());
             ClienteDTO clienteCreado = new ClienteDTO(txtNombre.getText(), txtApellido.getText(), txtCalle.getText(), txtNumero.getText(), txtColonia.getText(), txtCP.getText(), dia, mes, anio);
  
-            ClienteDTO clienteDTO = clienteBO.registrarCliente(clienteCreado, txtUsuario.getText(), txtConfirmacionContraseña.getText());
+            ClienteDTO clienteDTO = clienteBO.registrarCliente(clienteCreado);
             frmAvisos aviso = new frmAvisos("Registro completado exitosamente!");
             aviso.setVisible(true);
         } catch (NegocioException ex) {
@@ -907,6 +907,7 @@ public class frmRegistrarse extends javax.swing.JFrame {
         }catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Ingrese valores numéricos válidos para fecha");
         }
+        */
         
     }//GEN-LAST:event_btnRegistraeseMouseClicked
 
@@ -954,7 +955,7 @@ public class frmRegistrarse extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new frmRegistrarse().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new frmActualizarCliente().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

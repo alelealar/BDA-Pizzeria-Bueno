@@ -5,6 +5,7 @@
 
 package Negocio.BOs;
 
+import Negocio.DTOs.ClienteDTO;
 import Negocio.excepciones.NegocioException;
 import persistencia.dominio.Cliente;
 import persistencia.dominio.Telefono;
@@ -17,7 +18,7 @@ import persistencia.dominio.Telefono;
  */
 public interface IClienteBO {
 
-    public Cliente registrarCliente(Cliente cliente) throws NegocioException;
+    ClienteDTO registrarCliente(ClienteDTO cliente, String usuario, String contrasena) throws NegocioException;
     
     public void agregarTelefono(int idCliente, Telefono telefono) throws NegocioException;
     

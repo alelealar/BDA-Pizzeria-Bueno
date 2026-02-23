@@ -1,4 +1,4 @@
-package presentacion;
+    package presentacion;
 
 import Negocio.BOs.IPizzaBO;
 import Negocio.BOs.PizzaBO;
@@ -10,7 +10,6 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import negocio.bos.CarritoBO;
-import persistencia.fabrica.FabricaDAO;
 import presentacion.vistas.panTarjetaPizza;
 
 /**

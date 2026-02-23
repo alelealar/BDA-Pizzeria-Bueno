@@ -4,12 +4,16 @@
  */
 package persitencia.fabrica;
 
+import Negocio.BOs.ClienteBO;
+import Negocio.BOs.UsuarioBO;
 import persistencia.DAOS.ClienteDAO;
 import persistencia.DAOS.IClienteDAO;
 import persistencia.conexion.ConexionBD;
 import persistencia.conexion.IConexionBD;
 import persistencia.daos.IPedidoDAO;
+import persistencia.daos.IUsuarioDAO;
 import persistencia.daos.PedidoDAO;
+import persistencia.daos.UsuarioDAO;
 
 /**
  *
@@ -29,5 +33,16 @@ public class FabricaDAO {
         IClienteDAO clienteDAO = new ClienteDAO(conexion);
         return clienteDAO;
     }
+    
+    public static UsuarioBO getUsuarioBO() {
+        UsuarioDAO usuarioDAO = new UsuarioDAO(conexion);
+        return new UsuarioBO(usuarioDAO);
+    }
+    
+    public static ClienteBO getClienteBO(){
+        ClienteDAO clienteDAO = new ClienteDAO(conexion);
+        return new ClienteBO(clienteDAO);
+    }
+ 
 
 }

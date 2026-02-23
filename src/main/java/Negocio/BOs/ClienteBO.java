@@ -5,13 +5,17 @@
 
 package Negocio.BOs;
 
+import Negocio.DTOs.ClienteDTO;
+import Negocio.DTOs.UsuarioDTO;
 import Negocio.excepciones.NegocioException;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.DAOS.IClienteDAO;
 import persistencia.dominio.Cliente;
+import persistencia.dominio.Domicilio;
 import persistencia.dominio.Telefono;
 import persistencia.excepciones.PersistenciaException;
 
@@ -30,65 +34,113 @@ public class ClienteBO implements IClienteBO{
         this.clienteDAO = tecnico;
     }
     
-    public Cliente registrarCliente(Cliente cliente) throws NegocioException {
-        
+    public ClienteDTO registrarCliente(ClienteDTO cliente, String usuario, String contrasena) throws NegocioException {
+        if (cliente == null) {
+            LOG.warning("Cliente nulo");
+            throw new IllegalArgumentException("El cliente no puede ser nulo");
+        }
+
         if (cliente.getNombres() == null || cliente.getNombres().isBlank()) {
-            LOG.warning("El campo nombre se dejó vacio");
+            LOG.warning("El campo nombre se dejó vacío");
             throw new IllegalArgumentException("El nombre del cliente es obligatorio");
         }
-        
-        if (cliente.getApellidoPaterno() == null || cliente.getApellidoPaterno().isBlank()) {
-            LOG.warning("El campo apellido paterno se dejó vacio");
-            throw new IllegalArgumentException("El apellido paterno del cliente es obligatorio");
+
+        if (cliente.getCalle() != null && !cliente.getCalle().isBlank()) {
+            if (cliente.getNumero() == null || cliente.getNumero().isBlank()
+                    || cliente.getColonia() == null || cliente.getColonia().isBlank()
+                    || cliente.getCP() == null || cliente.getCP().isBlank()) {
+                LOG.warning("Domicilio incompleto");
+                throw new NegocioException("Debe proporcionar el domicilio completo si empieza a llenarlo");
+            }
         }
-        
-        if(cliente.getFechaNacimiento().isAfter(LocalDate.now())){
-            LOG.warning("Fecha de nacimiento erronea");
-            throw new IllegalArgumentException("Favor de ingresar una fecha de nacimiento válida");
-        }
-        
-        if(cliente.getFechaNacimiento() == null){
-            LOG.warning("Campoi fecha de nacimiento vacío");
-            throw new IllegalArgumentException("El campo fecha de nacimiento es obligatorio.");
-        }
-        
-        if(cliente.getDomicilio() == null){
-            LOG.warning("El campo apellido paterno se dejó vacio");
-            throw new IllegalArgumentException("El apellido paterno del cliente es obligatorio");
-        }
-        
+
+        LocalDate fechaNacimiento;
         try {
-            return clienteDAO.agregarCliente(cliente);
+            fechaNacimiento = LocalDate.of(cliente.getAnio(), cliente.getMesNum(), cliente.getDia());
+        } catch (DateTimeException e) {
+            LOG.warning("Fecha de nacimiento inválida");
+            throw new NegocioException("La fecha de nacimiento no es válida.");
+        }
+
+        if (fechaNacimiento.isAfter(LocalDate.now())) {
+            LOG.warning("Fecha de nacimiento futura");
+            throw new NegocioException("La fecha de nacimiento no puede ser posterior a hoy.");
+        }
+        
+        if(usuario.isBlank() || usuario == null){
+            LOG.warning("no se ingreso usuario, error");
+            throw new NegocioException("Ingrese un usuario");
+        }
+        
+        if(contrasena.isBlank() || contrasena == null){
+            LOG.warning("No se ingreso ninguna contraseña");
+            throw new NegocioException("Contraseña obligatoria.");
+        }
+
+        try {
+            Cliente clienteDominio = mapearDTOaDominio(cliente);
+
+            Cliente clienteRegistrado = clienteDAO.agregarCliente(clienteDominio);
+
+            ClienteDTO resultado = mapearDominioaDTO(clienteRegistrado);
+
+            return resultado;
+
         } catch (PersistenciaException ex) {
-            LOG.severe("Error al insertar añ cliente en la BD");
+            LOG.severe("Error al insertar al cliente en la BD");
             throw new NegocioException("No se pudo registrar al cliente. Intente más tarde.", ex);
         }
     }
 
-    public Cliente actualizarCliente(Cliente cliente) throws NegocioException {
-        // Validaciones de negocio
-        if (cliente.getIdCliente() <= 0) {
-            throw new IllegalArgumentException("Cliente inválido");
+    public ClienteDTO actualizarCliente(ClienteDTO cliente) throws NegocioException {
+        if (cliente == null) {
+            LOG.warning("Cliente nulo");
+            throw new IllegalArgumentException("El cliente no puede ser nulo");
+        }
+
+        if (cliente.getNombres() == null || cliente.getNombres().isBlank()) {
+            LOG.warning("El campo nombre se dejó vacío");
+            throw new IllegalArgumentException("El nombre del cliente es obligatorio");
+        }
+
+        if (cliente.getCalle() != null && !cliente.getCalle().isBlank()) {
+            if (cliente.getNumero() == null || cliente.getNumero().isBlank()
+                    || cliente.getColonia() == null || cliente.getColonia().isBlank()
+                    || cliente.getCP() == null || cliente.getCP().isBlank()) {
+                LOG.warning("Domicilio incompleto");
+                throw new NegocioException("Debe proporcionar el domicilio completo si empieza a llenarlo");
+            }
         }
 
         try {
-            return clienteDAO.actualizarCliente(cliente);
+            Cliente clienteDominio = mapearDTOaDominio(cliente);
+
+            Cliente clienteActualizado = clienteDAO.actualizarCliente(clienteDominio);
+
+            ClienteDTO resultado = mapearDominioaDTO(clienteActualizado);
+
+            return resultado;
+
         } catch (PersistenciaException ex) {
-            Logger.getLogger(ClienteBO.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.severe("Error al actualizar el cliente en la BD");
+            throw new NegocioException("No se pudo actualizar al cliente. Intente más tarde.", ex);
         }
-        return null;
     }
 
     public Cliente obtenerClientePorId(int id) throws NegocioException {
+        /*
         if(id < 0){
             LOG.warning("id invalido. Menor a 0");
             throw new NegocioException("El id es invalido. Ingrese un id mayor a 0");
         }
         try {
-            return clienteDAO.buscarClientePorId(id);
+            Cliente cliente = 
+            mapearDTOaDominio(dto);
+            return 
         } catch (PersistenciaException ex) {
             Logger.getLogger(ClienteBO.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return null;*/
         return null;
     }
 
@@ -100,5 +152,44 @@ public class ClienteBO implements IClienteBO{
     @Override
     public void eliminarTelefono(int idCliente, Telefono telefono) throws NegocioException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    
+    private Cliente mapearDTOaDominio(ClienteDTO dto) {
+        Cliente cliente = new Cliente();
+        cliente.setIdCliente(dto.getIdCliente());
+        cliente.setNombres(dto.getNombres());
+        cliente.setApellidoPaterno(dto.getApellidoPaterno());
+        
+        LocalDate fechaNacimiento = LocalDate.of(dto.getAnio(), dto.getMesNum(), dto.getDia());
+        cliente.setFechaNacimiento(fechaNacimiento);
+
+        Domicilio domicilio = new Domicilio();
+        domicilio.setCalle(dto.getCalle());
+        domicilio.setNumero(dto.getNumero());
+        domicilio.setColonia(dto.getColonia());
+        domicilio.setCodigoPostal(dto.getCP());
+
+        cliente.setDomicilio(domicilio);
+
+        return cliente;
+    }
+
+    // Convierte de Dominio a DTO
+    private ClienteDTO mapearDominioaDTO(Cliente cliente) {
+        ClienteDTO dto = new ClienteDTO();
+        dto.setIdCliente(cliente.getIdCliente());
+        dto.setNombres(cliente.getNombres());
+        dto.setApellidoPaterno(cliente.getApellidoPaterno());
+        cliente.setFechaNacimiento(cliente.getFechaNacimiento());
+
+        Domicilio domicilio = cliente.getDomicilio();
+        if (domicilio != null) {
+            dto.setCalle(domicilio.getCalle());
+            dto.setNumero(domicilio.getNumero());
+            dto.setColonia(domicilio.getColonia());
+            dto.setCP(domicilio.getCodigoPostal());
+        }
+
+        return dto;
     }
 }

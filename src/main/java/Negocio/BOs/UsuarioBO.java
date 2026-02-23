@@ -20,7 +20,7 @@ public class UsuarioBO implements IUsuarioBO {
     private static final Logger LOG = Logger.getLogger(UsuarioBO.class.getName());
 
     public UsuarioBO(IUsuarioDAO usuario) {
-        this.usuarioDAO = usuario; //asignamos valor al DAO
+        this.usuarioDAO = usuario; 
     }   
 
     @Override

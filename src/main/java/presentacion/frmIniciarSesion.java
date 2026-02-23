@@ -1,14 +1,20 @@
 package presentacion;
 
+import Negocio.BOs.UsuarioBO;
+import Negocio.DTOs.UsuarioDTO;
+import Negocio.excepciones.NegocioException;
 import java.awt.Color;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BoxLayout;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import persistencia.daos.UsuarioDAO;
 import persistencia.dominio.DetallePedido;
 import persistencia.dominio.Pedido;
 import persistencia.dominio.Pizza;
+import persitencia.fabrica.FabricaDAO;
 import presentacion.vistas.panPedido;
 import presentacion.vistas.panTarjetaPizza;
 
@@ -18,12 +24,12 @@ import presentacion.vistas.panTarjetaPizza;
  */
 public class frmIniciarSesion extends javax.swing.JFrame {
 
-    private List<DetallePedido> pedidos;
+    private UsuarioBO usuarioBO;
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmIniciarSesion.class.getName());
 
     public frmIniciarSesion() {
-        this.pedidos = new ArrayList<>();
+        this.usuarioBO = FabricaDAO.getUsuarioBO();
         initComponents();
 
     }
@@ -384,7 +390,17 @@ public class frmIniciarSesion extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVolverMouseExited
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
-        // TODO add your handling code here:
+        String usuario = txtUsuario.getText();
+        String contrasena = String.valueOf(txtPassword.getPassword());
+        
+        try {
+            UsuarioDTO usuarioDTO = usuarioBO.iniciarSesion(usuario, contrasena);
+
+            JOptionPane.showMessageDialog(this, "Bienvenido " + usuarioDTO.getNombreUsuario());             
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+
     }//GEN-LAST:event_jLabel4MouseClicked
 
     private void btnRegistrateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRegistrateMouseClicked
