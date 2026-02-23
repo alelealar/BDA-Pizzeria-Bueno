@@ -2,11 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package Negocio.DTOs;
 
 import persistencia.dominio.Pedido;
-
 
 /**
  *
@@ -14,9 +12,8 @@ import persistencia.dominio.Pedido;
  * @author Alejandra Leal Armenta - 00000262719
  * @author Paulina Michel Guevara Cervantez - 00000262724
  */
-
-
 public class DetallePedidoDTO {
+
     private int idDetallePedido;
     private double precio;
     private String nota;
@@ -24,6 +21,13 @@ public class DetallePedidoDTO {
     private double subtotal;
     private int idPedido;
     private int idPizza;
+    private String nombreProducto;
+
+    public DetallePedidoDTO(int idPizza, String nombreProducto, double precio) {
+        this.idPizza = idPizza;
+        this.nombreProducto = nombreProducto;
+        this.precio = precio;
+    }
 
     public DetallePedidoDTO(int idDetallePedido, double precio, String nota, int cantidad, double subtotal, int idPedido, int idPizza) {
         this.idDetallePedido = idDetallePedido;
@@ -46,8 +50,6 @@ public class DetallePedidoDTO {
 
     public DetallePedidoDTO() {
     }
-    
-    
 
     public int getIdDetallePedido() {
         return idDetallePedido;
@@ -73,6 +75,14 @@ public class DetallePedidoDTO {
         this.nota = nota;
     }
 
+    public String getNombreProducto() {
+        return nombreProducto;
+    }
+
+    public void setNombreProducto(String nombreProducto) {
+        this.nombreProducto = nombreProducto;
+    }
+    
     public int getCantidad() {
         return cantidad;
     }
@@ -104,7 +114,5 @@ public class DetallePedidoDTO {
     public void setIdPizza(int idPizza) {
         this.idPizza = idPizza;
     }
-    
-    
-    
+
 }

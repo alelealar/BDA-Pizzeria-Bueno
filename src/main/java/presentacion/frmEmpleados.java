@@ -6,6 +6,18 @@ import java.util.List;
 import javax.swing.JPanel;
 import persistencia.dominio.Pizza;
 import presentacion.vistas.panTarjetaPizza;
+import Negocio.BOs.IPedidoBO;
+import Negocio.BOs.PedidoBO;
+import Negocio.DTOs.PedidoDetalleDTO;
+import Negocio.DTOs.PedidoTablaDTO;
+import Negocio.excepciones.NegocioException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import persistencia.daos.PedidoDAO; // tu implementación real
+import javax.swing.table.DefaultTableModel;
+import persistencia.conexion.ConexionBD;
+import persistencia.conexion.IConexionBD;
 
 /**
  *
@@ -15,8 +27,38 @@ public class frmEmpleados extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmEmpleados.class.getName());
 
+    private IPedidoBO pedidoBO;
+
+    private List<PedidoTablaDTO> listaPedidosActual = new ArrayList<>();
+
     public frmEmpleados() {
         initComponents();
+
+        btnCambiarEstado.setEnabled(false);
+
+        tablaPedidos.getSelectionModel().addListSelectionListener(e -> validarBoton());
+
+        IConexionBD conexion = new ConexionBD();
+        pedidoBO = new PedidoBO(new PedidoDAO(conexion));
+
+        cargarTabla();
+    }
+
+    private void validarBoton() {
+        if (listaPedidosActual == null || tablaPedidos.getSelectedRow() == -1) {
+            btnCambiarEstado.setEnabled(false);
+            return;
+        }
+
+        int fila = tablaPedidos.getSelectedRow();
+        PedidoTablaDTO pedido = listaPedidosActual.get(fila);
+        String estado = pedido.getEstado();
+
+        if (estado.equals("PENDIENTE") || estado.equals("LISTO")) {
+            btnCambiarEstado.setEnabled(true);
+        } else {
+            btnCambiarEstado.setEnabled(false);
+        }
     }
 
     /**
@@ -33,9 +75,9 @@ public class frmEmpleados extends javax.swing.JFrame {
         lblTituloLogo = new javax.swing.JLabel();
         panPizzas = new javax.swing.JPanel();
         txtBuscador = new javax.swing.JTextField();
-        btnAceptar = new javax.swing.JPanel();
+        btnCambiarEstado = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        btnvolver = new javax.swing.JPanel();
+        btnDetalles = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaPedidos = new javax.swing.JTable();
@@ -62,7 +104,7 @@ public class frmEmpleados extends javax.swing.JFrame {
                 .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(lblTituloLogo)
-                .addGap(0, 729, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panLogoLayout.setVerticalGroup(
             panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -97,17 +139,22 @@ public class frmEmpleados extends javax.swing.JFrame {
                 txtBuscadorMouseReleased(evt);
             }
         });
+        txtBuscador.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtBuscadorKeyReleased(evt);
+            }
+        });
 
-        btnAceptar.setBackground(new java.awt.Color(44, 44, 44));
-        btnAceptar.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnCambiarEstado.setBackground(new java.awt.Color(44, 44, 44));
+        btnCambiarEstado.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnAceptarMouseClicked(evt);
+                btnCambiarEstadoMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnAceptarMouseEntered(evt);
+                btnCambiarEstadoMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnAceptarMouseExited(evt);
+                btnCambiarEstadoMouseExited(evt);
             }
         });
 
@@ -116,33 +163,33 @@ public class frmEmpleados extends javax.swing.JFrame {
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Cambiar Estado");
 
-        javax.swing.GroupLayout btnAceptarLayout = new javax.swing.GroupLayout(btnAceptar);
-        btnAceptar.setLayout(btnAceptarLayout);
-        btnAceptarLayout.setHorizontalGroup(
-            btnAceptarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, btnAceptarLayout.createSequentialGroup()
+        javax.swing.GroupLayout btnCambiarEstadoLayout = new javax.swing.GroupLayout(btnCambiarEstado);
+        btnCambiarEstado.setLayout(btnCambiarEstadoLayout);
+        btnCambiarEstadoLayout.setHorizontalGroup(
+            btnCambiarEstadoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btnCambiarEstadoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        btnAceptarLayout.setVerticalGroup(
-            btnAceptarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btnAceptarLayout.createSequentialGroup()
+        btnCambiarEstadoLayout.setVerticalGroup(
+            btnCambiarEstadoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btnCambiarEstadoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
+                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        btnvolver.setBackground(new java.awt.Color(44, 44, 44));
-        btnvolver.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnDetalles.setBackground(new java.awt.Color(44, 44, 44));
+        btnDetalles.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnvolverMouseClicked(evt);
+                btnDetallesMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnvolverMouseEntered(evt);
+                btnDetallesMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnvolverMouseExited(evt);
+                btnDetallesMouseExited(evt);
             }
         });
 
@@ -151,18 +198,18 @@ public class frmEmpleados extends javax.swing.JFrame {
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Detalles");
 
-        javax.swing.GroupLayout btnvolverLayout = new javax.swing.GroupLayout(btnvolver);
-        btnvolver.setLayout(btnvolverLayout);
-        btnvolverLayout.setHorizontalGroup(
-            btnvolverLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, btnvolverLayout.createSequentialGroup()
+        javax.swing.GroupLayout btnDetallesLayout = new javax.swing.GroupLayout(btnDetalles);
+        btnDetalles.setLayout(btnDetallesLayout);
+        btnDetallesLayout.setHorizontalGroup(
+            btnDetallesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, btnDetallesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        btnvolverLayout.setVerticalGroup(
-            btnvolverLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btnvolverLayout.createSequentialGroup()
+        btnDetallesLayout.setVerticalGroup(
+            btnDetallesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btnDetallesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
                 .addContainerGap())
@@ -192,10 +239,10 @@ public class frmEmpleados extends javax.swing.JFrame {
                     .addComponent(jScrollPane1)
                     .addGroup(panPizzasLayout.createSequentialGroup()
                         .addComponent(txtBuscador, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnvolver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 341, Short.MAX_VALUE)
+                        .addComponent(btnDetalles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(52, 52, 52)
-                        .addComponent(btnAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnCambiarEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(27, 27, 27))
         );
         panPizzasLayout.setVerticalGroup(
@@ -208,8 +255,8 @@ public class frmEmpleados extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panPizzasLayout.createSequentialGroup()
                         .addGap(16, 16, 16)
                         .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnAceptar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnvolver, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(btnCambiarEstado, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnDetalles, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(31, 31, 31)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(27, Short.MAX_VALUE))
@@ -256,29 +303,211 @@ public class frmEmpleados extends javax.swing.JFrame {
 
     }//GEN-LAST:event_txtBuscadorMouseReleased
 
-    private void btnAceptarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAceptarMouseClicked
-        this.dispose();
-    }//GEN-LAST:event_btnAceptarMouseClicked
+    private void btnCambiarEstadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCambiarEstadoMouseClicked
+        cambiarEstado();
+    }//GEN-LAST:event_btnCambiarEstadoMouseClicked
 
-    private void btnAceptarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAceptarMouseEntered
-        btnAceptar.setBackground(Color.decode("#525252"));
-    }//GEN-LAST:event_btnAceptarMouseEntered
+    private void btnCambiarEstadoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCambiarEstadoMouseEntered
+        btnCambiarEstado.setBackground(Color.decode("#525252"));
+    }//GEN-LAST:event_btnCambiarEstadoMouseEntered
 
-    private void btnAceptarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAceptarMouseExited
-        btnAceptar.setBackground(Color.decode("#2c2c2c"));
-    }//GEN-LAST:event_btnAceptarMouseExited
+    private void btnCambiarEstadoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCambiarEstadoMouseExited
+        btnCambiarEstado.setBackground(Color.decode("#2c2c2c"));
+    }//GEN-LAST:event_btnCambiarEstadoMouseExited
 
-    private void btnvolverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnvolverMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnvolverMouseClicked
+    private void btnDetallesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDetallesMouseClicked
+        try {
+            int fila = tablaPedidos.getSelectedRow();
+            if (fila == -1) {
+                JOptionPane.showMessageDialog(this, "Selecciona un pedido");
+                return;
+            }
 
-    private void btnvolverMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnvolverMouseEntered
-        btnvolver.setBackground(Color.decode("#525252"));
-    }//GEN-LAST:event_btnvolverMouseEntered
+            PedidoTablaDTO pedidoSeleccionado = listaPedidosActual.get(fila);
+            int idPedido = pedidoSeleccionado.getIdPedido(); // aquí ya tienes el ID
 
-    private void btnvolverMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnvolverMouseExited
-        btnvolver.setBackground(Color.decode("#2c2c2c"));
-    }//GEN-LAST:event_btnvolverMouseExited
+            PedidoDetalleDTO detalle = pedidoBO.obtenerDetallePedido(idPedido);
+
+            frmDetallePedido dialog = new frmDetallePedido(this, true, detalle);
+            dialog.setLocationRelativeTo(this);
+            dialog.setVisible(true);
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmEmpleados.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnDetallesMouseClicked
+
+    private void btnDetallesMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDetallesMouseEntered
+        btnDetalles.setBackground(Color.decode("#525252"));
+    }//GEN-LAST:event_btnDetallesMouseEntered
+
+    private void btnDetallesMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDetallesMouseExited
+        btnDetalles.setBackground(Color.decode("#2c2c2c"));
+    }//GEN-LAST:event_btnDetallesMouseExited
+
+    private void txtBuscadorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscadorKeyReleased
+        String texto = txtBuscador.getText().trim();
+
+        try {
+            if (texto.isEmpty() || texto.equals("Buscar por nombre o teléfono")) {
+                llenarTabla(pedidoBO.obtenerPedidosTabla());
+            } else {
+                llenarTabla(pedidoBO.obtenerPedidosFiltrados(texto));
+            }
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(this, "Error al filtrar pedidos");
+        }
+
+    }//GEN-LAST:event_txtBuscadorKeyReleased
+
+    private void cargarTabla() {
+
+        try {
+
+            List<PedidoTablaDTO> pedidos = pedidoBO.obtenerPedidosTabla();
+            llenarTabla(pedidos);
+
+        } catch (NegocioException ex) {
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Error al cargar pedidos: " + ex.getMessage(),
+                    "Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
+    private void llenarTabla(List<PedidoTablaDTO> pedidos) {
+
+        this.listaPedidosActual = pedidos;
+
+        DefaultTableModel modelo = (DefaultTableModel) tablaPedidos.getModel();
+        modelo.setRowCount(0);
+
+        for (PedidoTablaDTO p : pedidos) {
+
+            Object[] fila = {
+                p.getFolio(),
+                p.getCliente(),
+                p.getTelefono(),
+                p.getFechaHora().format(
+                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+                ),
+                p.getTotal(),
+                p.getEstado(),
+            };
+
+            modelo.addRow(fila);
+        }
+    }
+
+    private void cambiarEstado() {
+
+        int fila = tablaPedidos.getSelectedRow();
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this, "Selecciona un pedido");
+            return;
+        }
+
+        PedidoTablaDTO pedidoSeleccionado = listaPedidosActual.get(fila);
+        int idPedido = pedidoSeleccionado.getIdPedido();
+        String estadoActual = pedidoSeleccionado.getEstado();
+
+        // Si ya es estado final no permitir cambios
+        if (estadoActual.equals("ENTREGADO")
+                || estadoActual.equals("CANCELADO")
+                || estadoActual.equals("NO ENTREGADO")) {
+
+            JOptionPane.showMessageDialog(this,
+                    "Este pedido ya está finalizado y no puede modificarse.");
+            return;
+        }
+
+        String[] estadosDisponibles;
+
+        if (estadoActual.equals("PENDIENTE")) {
+            estadosDisponibles = new String[]{"LISTO", "CANCELADO", "NO ENTREGADO"};
+        } else if (estadoActual.equals("LISTO")) {
+            estadosDisponibles = new String[]{"ENTREGADO", "CANCELADO", "NO ENTREGADO"};
+        } else {
+            return;
+        }
+
+        String nuevoEstado = (String) JOptionPane.showInputDialog(
+                this,
+                "Estado actual: " + estadoActual + "\nSelecciona el nuevo estado:",
+                "Cambiar Estado",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                estadosDisponibles,
+                estadosDisponibles[0]
+        );
+
+        if (nuevoEstado == null) {
+            return;
+        }
+
+        // Confirmación si cancela
+        if (nuevoEstado.equals("CANCELADO")) {
+            int confirmacion = JOptionPane.showConfirmDialog(
+                    this,
+                    "¿Estás seguro de cancelar este pedido?",
+                    "Confirmar cancelación",
+                    JOptionPane.YES_NO_OPTION
+            );
+            if (confirmacion != JOptionPane.YES_OPTION) {
+                return;
+            }
+        }
+
+        try {
+            // Antes de marcar ENTREGADO 
+            if (nuevoEstado.equals("ENTREGADO")) {
+
+                // Registrar el pago (puedes personalizar según tu BO/DAO)
+                int confirmarPago = JOptionPane.showConfirmDialog(
+                        this,
+                        "¿Se ha recibido el pago del pedido?",
+                        "Confirmar pago",
+                        JOptionPane.YES_NO_OPTION
+                );
+                if (confirmarPago != JOptionPane.YES_OPTION) {
+                    JOptionPane.showMessageDialog(this,
+                            "No se puede entregar un pedido sin registrar el pago.");
+                    return;
+                }
+
+                // Si es pedido EXPRESS, pedir folio y PIN
+                if (pedidoSeleccionado.getTipo().equalsIgnoreCase("EXPRESS")) {
+                    String folio = JOptionPane.showInputDialog(this, "Ingresa el folio del cliente:");
+                    if (folio == null || folio.isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "Folio requerido para pedido EXPRESS.");
+                        return;
+                    }
+                    String pin = JOptionPane.showInputDialog(this, "Ingresa el PIN de seguridad:");
+                    if (pin == null || pin.isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "PIN requerido para pedido EXPRESS.");
+                        return;
+                    }
+
+                    // Validar folio y PIN con la base de datos
+                    boolean valido = pedidoBO.validarFolioYPIN(idPedido, folio, pin);
+                    if (!valido) {
+                        JOptionPane.showMessageDialog(this,
+                                "Folio o PIN incorrectos, no se puede entregar el pedido.");
+                        return;
+                    }
+                }
+            }
+
+            // Cambiar estado en la base de datos
+            pedidoBO.cambiarEstado(idPedido, nuevoEstado);
+            JOptionPane.showMessageDialog(this, "Estado actualizado correctamente.");
+            cargarTabla();
+
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -306,8 +535,8 @@ public class frmEmpleados extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel btnAceptar;
-    private javax.swing.JPanel btnvolver;
+    private javax.swing.JPanel btnCambiarEstado;
+    private javax.swing.JPanel btnDetalles;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
