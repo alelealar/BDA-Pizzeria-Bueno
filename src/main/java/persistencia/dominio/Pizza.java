@@ -40,15 +40,14 @@ public class Pizza {
      * Precio base de la pizza.
      */
     private double precio;
-        
+
     public enum EstadoPizza {
         DISPONIBLE, NO_DISPONIBLE
     }
-    
+
     private EstadoPizza estado;
-    
+
     private String rutaImagen;
- 
 
     /**
      * Constructor por omisión.
@@ -175,6 +174,10 @@ public class Pizza {
     public void setRutaImagen(String rutaImagen) {
         this.rutaImagen = rutaImagen;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "Pizza{" + "idPizza=" + idPizza + ", nombre=" + nombre + ", tamanio=" + tamanio + ", descripcion=" + descripcion + ", precio=" + precio + ", estado=" + estado + ", rutaImagen=" + rutaImagen + '}';
+    }
+
 }

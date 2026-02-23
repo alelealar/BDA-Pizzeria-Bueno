@@ -2,6 +2,7 @@ package presentacion.vistas;
 
 import javax.swing.JOptionPane;
 import Negocio.DTOs.PizzaDTO;
+import java.awt.Color;
 import negocio.bos.CarritoBO;
 
 /**
@@ -22,6 +23,7 @@ public class panTarjetaPizza extends javax.swing.JPanel {
     public void setDatosPizza(PizzaDTO pizza) {
         this.pizza = pizza;
         lblNombrePizza.setText(pizza.getNombre());
+        lblImagenPizza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizza.getRutaImagen())));
     }
 
     private Runnable accionAgregar;
@@ -29,7 +31,6 @@ public class panTarjetaPizza extends javax.swing.JPanel {
     public void setAccionAgregar(Runnable accion) {
         this.accionAgregar = accion;
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -42,74 +43,82 @@ public class panTarjetaPizza extends javax.swing.JPanel {
 
         lblImagenPizza = new javax.swing.JLabel();
         lblNombrePizza = new javax.swing.JLabel();
-        btnAgregar = new javax.swing.JButton();
+        btnAgregar = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
 
-        setBackground(new java.awt.Color(254, 242, 242));
+        setBackground(new java.awt.Color(253, 207, 175));
 
-        lblImagenPizza.setText("jLabel1");
+        lblImagenPizza.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
-        lblNombrePizza.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblNombrePizza.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         lblNombrePizza.setText("jLabel2");
 
         btnAgregar.setBackground(new java.awt.Color(255, 92, 56));
-        btnAgregar.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        btnAgregar.setForeground(new java.awt.Color(255, 255, 255));
-        btnAgregar.setText("+Añadir");
-        btnAgregar.setBorder(null);
-        btnAgregar.setFocusPainted(false);
         btnAgregar.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnAgregarMouseClicked(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnAgregarMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnAgregarMouseExited(evt);
             }
         });
-        btnAgregar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAgregarActionPerformed(evt);
-            }
-        });
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("+Añadir");
+
+        javax.swing.GroupLayout btnAgregarLayout = new javax.swing.GroupLayout(btnAgregar);
+        btnAgregar.setLayout(btnAgregarLayout);
+        btnAgregarLayout.setHorizontalGroup(
+            btnAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+        );
+        btnAgregarLayout.setVerticalGroup(
+            btnAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(lblNombrePizza, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(lblImagenPizza, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addComponent(lblNombrePizza, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                .addGap(26, 26, 26)
+                .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblImagenPizza, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(lblImagenPizza)
-                .addGap(204, 204, 204)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblNombrePizza))
-                .addGap(10, 10, 10))
+                .addComponent(lblImagenPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblNombrePizza)
+                        .addGap(7, 7, 7))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                        .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
-        if(accionAgregar != null){
-            accionAgregar.run();
-        }
+    private void btnAgregarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarMouseEntered
+        btnAgregar.setBackground(Color.decode("#E82F07"));
+    }//GEN-LAST:event_btnAgregarMouseEntered
 
-    }//GEN-LAST:event_btnAgregarActionPerformed
-
-    private void btnAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarMouseClicked
-
-    }//GEN-LAST:event_btnAgregarMouseClicked
+    private void btnAgregarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarMouseExited
+        btnAgregar.setBackground(Color.decode("#FF5C38"));
+    }//GEN-LAST:event_btnAgregarMouseExited
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAgregar;
+    private javax.swing.JPanel btnAgregar;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblImagenPizza;
     private javax.swing.JLabel lblNombrePizza;
     // End of variables declaration//GEN-END:variables

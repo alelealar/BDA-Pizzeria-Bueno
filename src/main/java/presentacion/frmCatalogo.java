@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import negocio.bos.CarritoBO;
+import persistencia.fabrica.FabricaDAO;
 import presentacion.vistas.panTarjetaPizza;
 
 /**
@@ -22,9 +23,12 @@ public class frmCatalogo extends javax.swing.JFrame {
 
     private int idUsuario;
     private CarritoBO carritoBO = new CarritoBO();
+    private FabricaBOs fabricaBOs = new FabricaBOs();
+    private IPizzaBO pizzaBO;
 
     public frmCatalogo() {
         initComponents();
+        this.pizzaBO = fabricaBOs.obtenerProductos();
         cargarPizzasEnElPanel();
     }
 
@@ -36,42 +40,22 @@ public class frmCatalogo extends javax.swing.JFrame {
     private void cargarPizzasEnElPanel() {
 
         panPizzas.removeAll();
-        panPizzas.setLayout(new java.awt.GridLayout(0, 3, 15, 15));
+        panPizzas.setLayout(new java.awt.GridLayout(0, 2, 15, 15));
 
         try {
-            IPizzaBO productoBO = new PizzaBO();
-
-            List<PizzaDTO> pizzas = productoBO.obtenerProductos();
+            List<PizzaDTO> pizzas = pizzaBO.obtenerProductos();
 
             for (PizzaDTO pizza : pizzas) {
-
-                panTarjetaPizza tarjeta = new panTarjetaPizza();
-                tarjeta.setDatosPizza(pizza);
-
-                tarjeta.setAccionAgregar(() -> {
-                    try {
-                        carritoBO.agregarProducto(
-                                1,
-                                pizza.getIdPizza(),
-                                "Grande",
-                                1,
-                                ""
-                        );
-
-                        JOptionPane.showMessageDialog(this, "Producto agregado al carrito");
-
-                    } catch (Exception e) {
-                        JOptionPane.showMessageDialog(this, e.getMessage());
-                    }
-                });
-
-                panPizzas.add(tarjeta);
+                if (pizza.getEstado() == PizzaDTO.EstadoPizza.DISPONIBLE) {
+                    panTarjetaPizza tarjeta = new panTarjetaPizza();
+                    tarjeta.setDatosPizza(pizza);
+                    panPizzas.add(tarjeta);
+                }
             }
 
         } catch (NegocioException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
+            System.getLogger(frmCatalogo.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
-
         panPizzas.revalidate();
         panPizzas.repaint();
     }
@@ -99,6 +83,7 @@ public class frmCatalogo extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         btnPE = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
         panPizzas = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -307,22 +292,24 @@ public class frmCatalogo extends javax.swing.JFrame {
         );
         panPizzasLayout.setVerticalGroup(
             panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 541, Short.MAX_VALUE)
+            .addGap(0, 533, Short.MAX_VALUE)
         );
+
+        jScrollPane1.setViewportView(panPizzas);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(panPizzas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(panLogo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(panPizzas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 535, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -405,6 +392,7 @@ public class frmCatalogo extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblLogo;
     private javax.swing.JLabel lblTituloLogo;
     private javax.swing.JPanel panLogo;

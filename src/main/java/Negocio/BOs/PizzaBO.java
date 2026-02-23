@@ -19,48 +19,51 @@ import persistencia.excepciones.PersistenciaException;
  *
  * @author RAYMUNDO
  */
-
 public class PizzaBO implements IPizzaBO {
 
     private final IPizzaDAO pizzaDAO;
+    private final Logger LOG = Logger.getLogger(PizzaBO.class.getName());
 
     public PizzaBO(IPizzaDAO pizzaDAO) {
         this.pizzaDAO = pizzaDAO;
     }
-    
+
     public PizzaBO() {
         this.pizzaDAO = new PizzaDAO();
     }
 
     @Override
     public List<PizzaDTO> obtenerProductos() throws NegocioException {
-        List<Pizza> pizzas = null; 
+        List<Pizza> pizzas;
         try {
             pizzas = pizzaDAO.obtenerPizzas();
+            List<PizzaDTO> dtos = new ArrayList<>();
+
+            for (Pizza p : pizzas) {
+                PizzaDTO dto = new PizzaDTO();
+                dto.setIdPizza(p.getIdPizza());
+                dto.setNombre(p.getNombre());
+                dto.setTamanio(p.getTamanio());
+                dto.setDescripcion(p.getDescripcion());
+                dto.setPrecio(p.getPrecio());
+                dto.setRutaImagen(p.getRutaImagen());
+
+                if (p.getEstado() == Pizza.EstadoPizza.DISPONIBLE) {
+                    dto.setEstado(PizzaDTO.EstadoPizza.DISPONIBLE);
+                } else {
+                    dto.setEstado(PizzaDTO.EstadoPizza.NO_DISPONIBLE);
+                }
+
+                LOG.info("Se obtuvo la lista: " + dto.toString());
+                dtos.add(dto);
+
+            }
+            return dtos;
         } catch (PersistenciaException ex) {
             Logger.getLogger(PizzaBO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NegocioException(ex);
         }
-        
-        List<PizzaDTO> dtos = new ArrayList<>();
-        
-        for (Pizza p : pizzas) {
-            PizzaDTO dto = new PizzaDTO();
-            dto.setIdPizza(p.getIdPizza());
-            dto.setNombre(p.getNombre());
-            dto.setTamanio(p.getTamanio());
-            dto.setDescripcion(p.getDescripcion());
-            dto.setPrecio(p.getPrecio());
-            
-            if (p.getEstado() == Pizza.EstadoPizza.DISPONIBLE) {
-                dto.setEstado(PizzaDTO.EstadoPizza.DISPONIBLE);
-            } else {
-                dto.setEstado(PizzaDTO.EstadoPizza.NO_DISPONIBLE);
-            }
-            
-            dtos.add(dto);
-        }
-    
+
         // 4. Devuelves la lista de DTOs. ¡Ahora sí la UI está protegida!
-        return dtos;
     }
 }

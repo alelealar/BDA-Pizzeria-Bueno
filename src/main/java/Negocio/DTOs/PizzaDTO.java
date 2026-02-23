@@ -94,8 +94,13 @@ public class PizzaDTO {
     public void setEstado(EstadoPizza estado) {
         this.estado = estado;
     }
-    
-    
 
+    @Override
+    public String toString() {
+        return "PizzaDTO{" + "idPizza=" + idPizza + ", nombre=" + nombre + ", tamanio=" + tamanio + ", descripcion=" + descripcion + ", precio=" + precio + ", rutaImagen=" + rutaImagen + ", estado=" + estado + '}';
+    }
+    
+    
+    
     
 }

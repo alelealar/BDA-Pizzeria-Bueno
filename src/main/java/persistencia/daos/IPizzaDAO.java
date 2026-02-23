@@ -16,6 +16,7 @@ import persistencia.excepciones.PersistenciaException;
 public interface IPizzaDAO {
 
     public List<Pizza> obtenerPizzas() throws PersistenciaException;
+
     public Pizza obtenerPizzaPorId(int id) throws PersistenciaException;
-    
+
 }
