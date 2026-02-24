@@ -17,14 +17,14 @@ public class frmDetallesPizza extends javax.swing.JFrame {
         initComponents();
     }
 
-    public void cargarInformacionPizza(PizzaDTO pizza) {
+public void cargarInformacionPizza(PizzaDTO pizza) {
         lblDescripcionPizza.setText(pizza.getDescripcion());
         lblTituloPïzza.setText(pizza.getNombre());
         lblImagenPizza.setIcon(new javax.swing.ImageIcon("/" + pizza.getRutaImagen()));
         jrbChica.setText(pizza.getTamanio() + ": $" + String.valueOf(pizza.getPrecio()) + " MXN");
         jrbMediana.setText(pizza.getTamanio() + ": $" + String.valueOf(pizza.getPrecio()) + " MXN");
         jrbGrande.setText(pizza.getTamanio() + ": $" + String.valueOf(pizza.getPrecio()) + " MXN");
-    }
+        }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -207,8 +207,9 @@ public class frmDetallesPizza extends javax.swing.JFrame {
                 .addComponent(btnAnadir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15))
             .addGroup(panPizzasLayout.createSequentialGroup()
+                .addGap(12, 12, 12)
                 .addComponent(lblImagenPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblIngredientesPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtNota, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -278,7 +279,7 @@ public class frmDetallesPizza extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAnadirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAnadirMouseClicked
-
+        frmCarrito carrito = new frmCarrito();
     }//GEN-LAST:event_btnAnadirMouseClicked
 
     private void btnAnadirMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAnadirMouseEntered
