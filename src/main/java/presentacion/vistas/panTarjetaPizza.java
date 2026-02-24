@@ -14,7 +14,8 @@ import presentacion.frmPedidoExpress;
  * @author Brian
  */
 public class panTarjetaPizza extends javax.swing.JPanel {
-    
+
+    private PizzaDTO pizzaFiltrada;
     private PizzaDTO pizza;
     private frmCatalogo catalogo;
     private frmPedidoExpress pedidoEx;
@@ -23,25 +24,26 @@ public class panTarjetaPizza extends javax.swing.JPanel {
      * Creates new form panTarjetaPizza
      */
     public panTarjetaPizza() {
+        this.pizza = pizza;
         initComponents();
     }
-    
-    public void setDatosPizza(PizzaDTO pizza, frmCatalogo catalogo) {
+
+    public void setDatosPizza(PizzaDTO pizzaFiltrada, frmCatalogo catalogo) {
         this.catalogo = catalogo;
-        this.pizza = pizza;
-        lblNombrePizza.setText(pizza.getNombre());
-        lblImagenPizza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizza.getRutaImagen())));
+        this.pizzaFiltrada = pizzaFiltrada;
+        lblNombrePizza.setText(pizzaFiltrada.getNombre());
+        lblImagenPizza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizzaFiltrada.getRutaImagen())));
     }
-    
-    public void setDatosPizza(PizzaDTO pizza, frmPedidoExpress pedidoEX) {
+
+    public void setDatosPizza(PizzaDTO pizzaFiltrada, frmPedidoExpress pedidoEX) {
         this.pedidoEx = pedidoEX;
-        this.pizza = pizza;
+        this.pizzaFiltrada = pizzaFiltrada;
         lblNombrePizza.setText(pizza.getNombre());
         lblImagenPizza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizza.getRutaImagen())));
     }
-    
+
     private Runnable accionAgregar;
-    
+
     public void setAccionAgregar(Runnable accion) {
         this.accionAgregar = accion;
     }
@@ -134,7 +136,7 @@ public class panTarjetaPizza extends javax.swing.JPanel {
 
     private void btnAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarMouseClicked
         frmDetallesPizza frmPizza = new frmDetallesPizza();
-        frmPizza.cargarInformacionPizza(pizza);
+        frmPizza.cargarInformacionPizza(pizzaFiltrada);
         frmPizza.setVisible(true);
         catalogo.dispose();
     }//GEN-LAST:event_btnAgregarMouseClicked

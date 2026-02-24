@@ -7,7 +7,11 @@ package Negocio.BOs;
 import Negocio.DTOs.PizzaDTO;
 import Negocio.excepciones.NegocioException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.daos.IPizzaDAO;
@@ -43,9 +47,8 @@ public class PizzaBO implements IPizzaBO {
                 PizzaDTO dto = new PizzaDTO();
                 dto.setIdPizza(p.getIdPizza());
                 dto.setNombre(p.getNombre());
-                dto.setTamanio(p.getTamanio());
+                dto.setVariante(p.getTamanio(), p.getPrecio());
                 dto.setDescripcion(p.getDescripcion());
-                dto.setPrecio(p.getPrecio());
                 dto.setRutaImagen(p.getRutaImagen());
 
                 if (p.getEstado() == Pizza.EstadoPizza.DISPONIBLE) {
@@ -54,7 +57,7 @@ public class PizzaBO implements IPizzaBO {
                     dto.setEstado(PizzaDTO.EstadoPizza.NO_DISPONIBLE);
                 }
 
-                LOG.info("Se obtuvo la lista: " + dto.toString());
+                LOG.info(() -> "Se obtuvo la lista: " + dto.toString());
                 dtos.add(dto);
 
             }
@@ -63,7 +66,6 @@ public class PizzaBO implements IPizzaBO {
             Logger.getLogger(PizzaBO.class.getName()).log(Level.SEVERE, null, ex);
             throw new NegocioException(ex);
         }
-
-        // 4. Devuelves la lista de DTOs. ¡Ahora sí la UI está protegida!
     }
+
 }

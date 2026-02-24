@@ -6,11 +6,14 @@ import Negocio.DTOs.PizzaDTO;
 import Negocio.Fabrica.FabricaBOs;
 import Negocio.excepciones.NegocioException;
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import negocio.bos.CarritoBO;
-import persitencia.fabrica.FabricaDAO;
+import persistencia.fabrica.FabricaDAO;
 import presentacion.vistas.panTarjetaPizza;
 
 /**
@@ -44,8 +47,10 @@ public class frmCatalogo extends javax.swing.JFrame {
 
         try {
             List<PizzaDTO> pizzas = pizzaBO.obtenerProductos();
+            List<PizzaDTO> pizzasFiltradas = filtrarPizzasUnicas(pizzas);
 
-            for (PizzaDTO pizza : pizzas) {
+            for (PizzaDTO pizza : pizzasFiltradas) {
+                System.out.println(pizza.toString());
                 if (pizza.getEstado() == PizzaDTO.EstadoPizza.DISPONIBLE) {
                     panTarjetaPizza tarjeta = new panTarjetaPizza();
                     tarjeta.setDatosPizza(pizza, this);
@@ -58,6 +63,35 @@ public class frmCatalogo extends javax.swing.JFrame {
         }
         panPizzas.revalidate();
         panPizzas.repaint();
+    }
+
+    public List<PizzaDTO> filtrarPizzasUnicas(List<PizzaDTO> listaConRepetidos) {
+        //creamos un mapa
+        Map<String, PizzaDTO> mapaPizzas = new LinkedHashMap<>();
+        
+        //iteramos en cada pizza
+        for (PizzaDTO p : listaConRepetidos) {
+            //obtenemos el nombre de la pizza que nos servira para filtrar
+            String nombre = p.getNombre();
+            
+            if (!mapaPizzas.containsKey(nombre)) {
+                PizzaDTO unico = new PizzaDTO();
+                unico.setNombre(nombre);
+                unico.setDescripcion(p.getDescripcion());
+                unico.setRutaImagen(p.getRutaImagen());
+                unico.setEstado(p.getEstado());
+                mapaPizzas.put(nombre, unico);
+            }
+
+            // Aquí es donde puede dar Null si no inicializaste las listas en la clase
+            // Tomamos el tamaño y precio que p traía del DAO (posicion 0)
+            if (!p.getTamanios().isEmpty()) {
+                String t = p.getTamanios().get(0);
+                double pr = p.getPrecios().get(0);
+                mapaPizzas.get(nombre).setVariante(t, pr);
+            }
+        }
+        return new ArrayList<>(mapaPizzas.values());
     }
 
     /**

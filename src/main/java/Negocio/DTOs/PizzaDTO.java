@@ -4,6 +4,7 @@
  */
 package Negocio.DTOs;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,28 +13,33 @@ import java.util.List;
  * @author Alejandra Leal Armenta - 00000262719
  * @author Paulina Michel Guevara Cervantez - 00000262724
  */
-public class PizzaDTO { 
+public class PizzaDTO {
+
     private int idPizza;
     private String nombre;
-    private String tamanio;
     private String descripcion;
-    private double precio;
     private String rutaImagen;
+
     public enum EstadoPizza {
         DISPONIBLE,
         NO_DISPONIBLE
     }
 
+    private List<String> tamanios = new ArrayList<>();
+    private List<Double> precios = new ArrayList<>();
     private EstadoPizza estado;
 
-    public PizzaDTO(int idPizza, String nombre, String tamanio, String descripcion, double precio, String rutaImagen, EstadoPizza estado) {
+    public PizzaDTO(int idPizza, String nombre, String descripcion, String rutaImagen, EstadoPizza estado) {
         this.idPizza = idPizza;
         this.nombre = nombre;
-        this.tamanio = tamanio;
         this.descripcion = descripcion;
-        this.precio = precio;
         this.rutaImagen = rutaImagen;
         this.estado = estado;
+    }
+
+    public void setVariante(String tamanio, double precio) {
+        this.tamanios.add(tamanio);
+        this.precios.add(precio);
     }
 
     public PizzaDTO() {
@@ -55,28 +61,12 @@ public class PizzaDTO {
         this.nombre = nombre;
     }
 
-    public String getTamanio() {
-        return tamanio;
-    }
-
-    public void setTamanio(String tamanio) {
-        this.tamanio = tamanio;
-    }
-
     public String getDescripcion() {
         return descripcion;
     }
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-
-    public double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
     }
 
     public String getRutaImagen() {
@@ -95,12 +85,17 @@ public class PizzaDTO {
         this.estado = estado;
     }
 
+    public List<String> getTamanios() {
+        return tamanios;
+    }
+
+    public List<Double> getPrecios() {
+        return precios;
+    }
+
     @Override
     public String toString() {
-        return "PizzaDTO{" + "idPizza=" + idPizza + ", nombre=" + nombre + ", tamanio=" + tamanio + ", descripcion=" + descripcion + ", precio=" + precio + ", rutaImagen=" + rutaImagen + ", estado=" + estado + '}';
+        return "PizzaDTO{" + "idPizza=" + idPizza + ", nombre=" + nombre + ", descripcion=" + descripcion + ", rutaImagen=" + rutaImagen + ", tamanios=" + tamanios + ", precios=" + precios + ", estado=" + estado + '}';
     }
-    
-    
-    
-    
+
 }
