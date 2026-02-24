@@ -1,6 +1,5 @@
 package Negocio.BOs;
 
-import Negocio.DTOs.PedidoDTO;
 import Negocio.DTOs.PedidoExpressDTO;
 import Negocio.excepciones.NegocioException;
 

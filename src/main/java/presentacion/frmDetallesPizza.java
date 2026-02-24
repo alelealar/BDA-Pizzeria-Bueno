@@ -17,7 +17,7 @@ public class frmDetallesPizza extends javax.swing.JFrame {
         initComponents();
     }
 
-    public void cargarInformacionPizza(PizzaDTO pizza) {
+public void cargarInformacionPizza(PizzaDTO pizza) {
         lblDescripcionPizza.setText(pizza.getDescripcion());
         lblTituloPïzza.setText(pizza.getNombre());
         lblImagenPizza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizza.getRutaImagen())));
@@ -41,6 +41,11 @@ public class frmDetallesPizza extends javax.swing.JFrame {
 
         }
     }
+        lblImagenPizza.setIcon(new javax.swing.ImageIcon("/" + pizza.getRutaImagen()));
+        jrbChica.setText(pizza.getTamanio() + ": $" + String.valueOf(pizza.getPrecio()) + " MXN");
+        jrbMediana.setText(pizza.getTamanio() + ": $" + String.valueOf(pizza.getPrecio()) + " MXN");
+        jrbGrande.setText(pizza.getTamanio() + ": $" + String.valueOf(pizza.getPrecio()) + " MXN");
+        }
 
     /**
      * This method is called from within the constructor to initialize the form.
