@@ -20,6 +20,8 @@ public interface IClienteBO {
 
     ClienteDTO registrarCliente(ClienteDTO cliente, String usuario, String contrasena) throws NegocioException;
     
+    ClienteDTO actualizarCliente(ClienteDTO cliente) throws NegocioException;
+    
     public void agregarTelefono(int idCliente, Telefono telefono) throws NegocioException;
     
     public void eliminarTelefono(int idCliente, Telefono telefono) throws NegocioException;

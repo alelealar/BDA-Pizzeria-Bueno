@@ -1,7 +1,9 @@
 package presentacion;
 
 import Negocio.BOs.ClienteBO;
+import Negocio.BOs.IClienteBO;
 import Negocio.DTOs.ClienteDTO;
+import Negocio.Fabrica.FabricaBOs;
 import Negocio.excepciones.NegocioException;
 import java.awt.Color;
 import java.time.LocalDate;
@@ -25,13 +27,12 @@ import presentacion.vistas.panTarjetaPizza;
  * @author Brian
  */
 public class frmActualizarCliente extends javax.swing.JFrame {
-
-    private ClienteBO clienteBO;
+    private IClienteBO clienteBO;
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmActualizarCliente.class.getName());
 
     public frmActualizarCliente() {
-        this.clienteBO = FabricaDAO.getClienteBO();
+        this.clienteBO = FabricaBOs.obtenerCliente();
         initComponents();
 
     }
@@ -75,14 +76,9 @@ public class frmActualizarCliente extends javax.swing.JFrame {
         txtMes = new javax.swing.JTextField();
         txtAnio = new javax.swing.JTextField();
         jSeparator3 = new javax.swing.JSeparator();
-        txtUsuario = new javax.swing.JTextField();
-        jLabel11 = new javax.swing.JLabel();
         jSeparator4 = new javax.swing.JSeparator();
         txtContraseña = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        txtConfirmacionContraseña = new javax.swing.JTextField();
-        jSeparator7 = new javax.swing.JSeparator();
         txtCalle = new javax.swing.JTextField();
         lblCalle = new javax.swing.JLabel();
         lblNumero = new javax.swing.JLabel();
@@ -402,31 +398,6 @@ public class frmActualizarCliente extends javax.swing.JFrame {
             }
         });
 
-        txtUsuario.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        txtUsuario.setForeground(java.awt.Color.gray);
-        txtUsuario.setText("Ingrese su usuario");
-        txtUsuario.setToolTipText("");
-        txtUsuario.setBorder(null);
-        txtUsuario.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtUsuarioFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtUsuarioFocusLost(evt);
-            }
-        });
-        txtUsuario.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                txtUsuarioMousePressed(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                txtUsuarioMouseReleased(evt);
-            }
-        });
-
-        jLabel11.setFont(new java.awt.Font("Segoe UI Variable", 1, 14)); // NOI18N
-        jLabel11.setText("Usuario:");
-
         txtContraseña.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         txtContraseña.setForeground(java.awt.Color.gray);
         txtContraseña.setText("Ingrese su contraseña");
@@ -451,31 +422,6 @@ public class frmActualizarCliente extends javax.swing.JFrame {
 
         jLabel12.setFont(new java.awt.Font("Segoe UI Variable", 1, 14)); // NOI18N
         jLabel12.setText("Contraseña:");
-
-        jLabel13.setFont(new java.awt.Font("Segoe UI Variable", 1, 14)); // NOI18N
-        jLabel13.setText("Repita su contraseña:");
-
-        txtConfirmacionContraseña.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        txtConfirmacionContraseña.setForeground(java.awt.Color.gray);
-        txtConfirmacionContraseña.setText("Repita su contraseña");
-        txtConfirmacionContraseña.setToolTipText("");
-        txtConfirmacionContraseña.setBorder(null);
-        txtConfirmacionContraseña.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtConfirmacionContraseñaFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtConfirmacionContraseñaFocusLost(evt);
-            }
-        });
-        txtConfirmacionContraseña.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                txtConfirmacionContraseñaMousePressed(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                txtConfirmacionContraseñaMouseReleased(evt);
-            }
-        });
 
         txtCalle.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
 
@@ -534,14 +480,9 @@ public class frmActualizarCliente extends javax.swing.JFrame {
                                 .addComponent(btnRegistraese, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel9)
                             .addComponent(jLabel10)
-                            .addComponent(jLabel11)
-                            .addComponent(txtUsuario)
                             .addComponent(jSeparator3)
-                            .addComponent(jLabel13)
                             .addComponent(txtContraseña)
                             .addComponent(jSeparator4)
-                            .addComponent(txtConfirmacionContraseña)
-                            .addComponent(jSeparator7)
                             .addGroup(panFormularioLayout.createSequentialGroup()
                                 .addComponent(txtDia, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
@@ -581,16 +522,16 @@ public class frmActualizarCliente extends javax.swing.JFrame {
                 .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20)
+                .addGap(45, 45, 45)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jSeparator5, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(28, 28, 28)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panFormularioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnAnadir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -622,11 +563,7 @@ public class frmActualizarCliente extends javax.swing.JFrame {
                     .addComponent(txtDia, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtMes, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtAnio, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(5, 5, 5)
-                .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel12)
@@ -634,13 +571,7 @@ public class frmActualizarCliente extends javax.swing.JFrame {
                 .addComponent(txtContraseña, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel13)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtConfirmacionContraseña, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 8, Short.MAX_VALUE)
-                .addComponent(jSeparator7, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
                 .addGroup(panFormularioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnRegistraese, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnVolver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -682,72 +613,6 @@ public class frmActualizarCliente extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void txtConfirmacionContraseñaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtConfirmacionContraseñaMouseReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtConfirmacionContraseñaMouseReleased
-
-    private void txtConfirmacionContraseñaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtConfirmacionContraseñaMousePressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtConfirmacionContraseñaMousePressed
-
-    private void txtConfirmacionContraseñaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtConfirmacionContraseñaFocusLost
-        if (txtConfirmacionContraseña.getText().isEmpty()) {
-            txtConfirmacionContraseña.setText("Repita su contraseña");
-            txtConfirmacionContraseña.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtConfirmacionContraseñaFocusLost
-
-    private void txtConfirmacionContraseñaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtConfirmacionContraseñaFocusGained
-        if (txtConfirmacionContraseña.getText().equals("Repita su contraseña")) {
-            txtConfirmacionContraseña.setText("");
-            txtConfirmacionContraseña.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtConfirmacionContraseñaFocusGained
-
-    private void txtContraseñaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtContraseñaMouseReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtContraseñaMouseReleased
-
-    private void txtContraseñaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtContraseñaMousePressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtContraseñaMousePressed
-
-    private void txtContraseñaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtContraseñaFocusLost
-        if (txtContraseña.getText().isEmpty()) {
-            txtContraseña.setText("Ingrese su contraseña");
-            txtContraseña.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtContraseñaFocusLost
-
-    private void txtContraseñaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtContraseñaFocusGained
-        if (txtContraseña.getText().equals("Ingrese su contraseña")) {
-            txtContraseña.setText("");
-            txtContraseña.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtContraseñaFocusGained
-
-    private void txtUsuarioMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtUsuarioMouseReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtUsuarioMouseReleased
-
-    private void txtUsuarioMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtUsuarioMousePressed
-
-    }//GEN-LAST:event_txtUsuarioMousePressed
-
-    private void txtUsuarioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtUsuarioFocusLost
-        if (txtUsuario.getText().isEmpty()) {
-            txtUsuario.setText("Ingrese su usuario");
-            txtUsuario.setForeground(Color.gray);
-        }
-    }//GEN-LAST:event_txtUsuarioFocusLost
-
-    private void txtUsuarioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtUsuarioFocusGained
-        if (txtUsuario.getText().equals("Ingrese su usuario")) {
-            txtUsuario.setText("");
-            txtUsuario.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_txtUsuarioFocusGained
 
     private void txtAnioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAnioKeyTyped
         if (txtDia.getText().length() >= 4) {
@@ -892,14 +757,15 @@ public class frmActualizarCliente extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRegistraeseMouseEntered
 
     private void btnRegistraeseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRegistraeseMouseClicked
-      /*
         try{
             int dia = Integer.parseInt(txtDia.getText());
             int mes = Integer.parseInt(txtMes.getText());
             int anio = Integer.parseInt(txtAnio.getText());
+            
             ClienteDTO clienteCreado = new ClienteDTO(txtNombre.getText(), txtApellido.getText(), txtCalle.getText(), txtNumero.getText(), txtColonia.getText(), txtCP.getText(), dia, mes, anio);
  
-            ClienteDTO clienteDTO = clienteBO.registrarCliente(clienteCreado);
+            ClienteDTO clienteDTO = clienteBO.actualizarCliente(clienteCreado);
+            
             frmAvisos aviso = new frmAvisos("Registro completado exitosamente!");
             aviso.setVisible(true);
         } catch (NegocioException ex) {
@@ -907,8 +773,6 @@ public class frmActualizarCliente extends javax.swing.JFrame {
         }catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Ingrese valores numéricos válidos para fecha");
         }
-        */
-        
     }//GEN-LAST:event_btnRegistraeseMouseClicked
 
     private void txtNombreMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtNombreMouseReleased
@@ -932,6 +796,28 @@ public class frmActualizarCliente extends javax.swing.JFrame {
             txtNombre.setForeground(Color.black);
         }
     }//GEN-LAST:event_txtNombreFocusGained
+
+    private void txtContraseñaMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtContraseñaMouseReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtContraseñaMouseReleased
+
+    private void txtContraseñaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtContraseñaMousePressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtContraseñaMousePressed
+
+    private void txtContraseñaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtContraseñaFocusLost
+        if (txtContraseña.getText().isEmpty()) {
+            txtContraseña.setText("Ingrese su contraseña");
+            txtContraseña.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_txtContraseñaFocusLost
+
+    private void txtContraseñaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtContraseñaFocusGained
+        if (txtContraseña.getText().equals("Ingrese su contraseña")) {
+            txtContraseña.setText("");
+            txtContraseña.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_txtContraseñaFocusGained
 
     /**
      * @param args the command line arguments
@@ -965,9 +851,7 @@ public class frmActualizarCliente extends javax.swing.JFrame {
     private javax.swing.JPanel btnVolver;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -982,7 +866,6 @@ public class frmActualizarCliente extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
-    private javax.swing.JSeparator jSeparator7;
     private javax.swing.JLabel lblCalle;
     private javax.swing.JLabel lblColonia;
     private javax.swing.JLabel lblLogo;
@@ -998,12 +881,10 @@ public class frmActualizarCliente extends javax.swing.JFrame {
     private javax.swing.JTextField txtCP;
     private javax.swing.JTextField txtCalle;
     private javax.swing.JTextField txtColonia;
-    private javax.swing.JTextField txtConfirmacionContraseña;
     private javax.swing.JTextField txtContraseña;
     private javax.swing.JTextField txtDia;
     private javax.swing.JTextField txtMes;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtNumero;
-    private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
 }

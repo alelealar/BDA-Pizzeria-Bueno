@@ -11,8 +11,12 @@ import persistencia.DAOS.IClienteDAO;
 import persistencia.conexion.ConexionBD;
 import persistencia.conexion.IConexionBD;
 import persistencia.daos.IPedidoDAO;
+import persistencia.daos.IPedidoExpressDAO;
+import persistencia.daos.IPizzaDAO;
 import persistencia.daos.IUsuarioDAO;
 import persistencia.daos.PedidoDAO;
+import persistencia.daos.PedidoExpressDAO;
+import persistencia.daos.PizzaDAO;
 import persistencia.daos.UsuarioDAO;
 
 /**
@@ -28,21 +32,27 @@ public class FabricaDAO {
         IPedidoDAO pedidoDAO = new PedidoDAO(conexion);
         return pedidoDAO;
     }
+    
+    public static IUsuarioDAO obtenerUsuarioDAO(){
+        IUsuarioDAO usuarioDAO = new UsuarioDAO(conexion);
+        return usuarioDAO;
+    }
 
     public static IClienteDAO obtenerClienteDAO() {
         IClienteDAO clienteDAO = new ClienteDAO(conexion);
         return clienteDAO;
     }
-    
-    public static UsuarioBO getUsuarioBO() {
-        UsuarioDAO usuarioDAO = new UsuarioDAO(conexion);
-        return new UsuarioBO(usuarioDAO);
+
+    public static IPizzaDAO obtenerPizzaDAO() {
+        IPizzaDAO pizzaDAO = new PizzaDAO(conexion);
+        return pizzaDAO;
     }
-    
-    public static ClienteBO getClienteBO(){
-        ClienteDAO clienteDAO = new ClienteDAO(conexion);
-        return new ClienteBO(clienteDAO);
+
+    public static IPedidoExpressDAO obtenerPedidoExpressDAO() {
+        IPedidoExpressDAO pedidoExpressDAO = new PedidoExpressDAO(conexion);
+        return pedidoExpressDAO;
     }
+
  
 
 }

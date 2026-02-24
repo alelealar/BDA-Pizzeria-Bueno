@@ -111,6 +111,12 @@ public class ClienteBO implements IClienteBO{
                 throw new NegocioException("Debe proporcionar el domicilio completo si empieza a llenarlo");
             }
         }
+        LocalDate fechaNac = LocalDate.of(cliente.getAnio(), cliente.getMesNum(), cliente.getDia());
+        
+        if(fechaNac.isAfter(LocalDate.now())){
+            LOG.warning("fecha nacimiento invalida. despues de hoy ");
+            throw new NegocioException("Debe proporcionar una fecha de nacimiento válida.");
+        }
 
         try {
             Cliente clienteDominio = mapearDTOaDominio(cliente);
@@ -125,23 +131,6 @@ public class ClienteBO implements IClienteBO{
             LOG.severe("Error al actualizar el cliente en la BD");
             throw new NegocioException("No se pudo actualizar al cliente. Intente más tarde.", ex);
         }
-    }
-
-    public Cliente obtenerClientePorId(int id) throws NegocioException {
-        /*
-        if(id < 0){
-            LOG.warning("id invalido. Menor a 0");
-            throw new NegocioException("El id es invalido. Ingrese un id mayor a 0");
-        }
-        try {
-            Cliente cliente = 
-            mapearDTOaDominio(dto);
-            return 
-        } catch (PersistenciaException ex) {
-            Logger.getLogger(ClienteBO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;*/
-        return null;
     }
 
     @Override

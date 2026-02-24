@@ -50,7 +50,7 @@ public class UsuarioDAO implements IUsuarioDAO {
         String sql = """
             SELECT idUsuario, usuario, contraseña, rol
             FROM Usuarios
-            WHERE usuario = ? AND contraseña = ?
+            WHERE BINARY usuario = ? AND contraseña = ?
         """;
 
         try (Connection con = conexionBD.crearConexion();

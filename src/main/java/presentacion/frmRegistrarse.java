@@ -1,7 +1,9 @@
 package presentacion;
 
 import Negocio.BOs.ClienteBO;
+import Negocio.BOs.IClienteBO;
 import Negocio.DTOs.ClienteDTO;
+import Negocio.Fabrica.FabricaBOs;
 import Negocio.excepciones.NegocioException;
 import java.awt.Color;
 import java.time.LocalDate;
@@ -26,12 +28,12 @@ import presentacion.vistas.panTarjetaPizza;
  */
 public class frmRegistrarse extends javax.swing.JFrame {
 
-    private ClienteBO clienteBO;
+    private IClienteBO clienteBO;
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmRegistrarse.class.getName());
 
     public frmRegistrarse() {
-        this.clienteBO = FabricaDAO.getClienteBO();
+        this.clienteBO = FabricaBOs.obtenerCliente();
         initComponents();
 
     }

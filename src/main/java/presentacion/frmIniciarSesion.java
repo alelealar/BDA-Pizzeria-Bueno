@@ -2,6 +2,7 @@ package presentacion;
 
 import Negocio.BOs.UsuarioBO;
 import Negocio.DTOs.UsuarioDTO;
+import Negocio.Fabrica.FabricaBOs;
 import Negocio.excepciones.NegocioException;
 import java.awt.Color;
 import java.time.LocalDate;
@@ -29,7 +30,7 @@ public class frmIniciarSesion extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmIniciarSesion.class.getName());
 
     public frmIniciarSesion() {
-        this.usuarioBO = FabricaDAO.getUsuarioBO();
+        this.usuarioBO = FabricaBOs.obtenerUsuario();
         initComponents();
 
     }
@@ -59,7 +60,7 @@ public class frmIniciarSesion extends javax.swing.JFrame {
         btnIngresar = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         btnVolver = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
+        lblVolver = new javax.swing.JLabel();
         btnRegistrate = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -193,24 +194,29 @@ public class frmIniciarSesion extends javax.swing.JFrame {
             }
         });
 
-        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel5.setText("Volver");
+        lblVolver.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        lblVolver.setForeground(new java.awt.Color(255, 255, 255));
+        lblVolver.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblVolver.setText("Volver");
+        lblVolver.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblVolverMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout btnVolverLayout = new javax.swing.GroupLayout(btnVolver);
         btnVolver.setLayout(btnVolverLayout);
         btnVolverLayout.setHorizontalGroup(
             btnVolverLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+            .addComponent(lblVolver, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
         );
         btnVolverLayout.setVerticalGroup(
             btnVolverLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
+            .addComponent(lblVolver, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
         );
 
         btnRegistrate.setBackground(new java.awt.Color(255, 255, 255));
-        btnRegistrate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRegistrate.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnRegistrate.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnRegistrateMouseClicked(evt);
@@ -396,7 +402,17 @@ public class frmIniciarSesion extends javax.swing.JFrame {
         try {
             UsuarioDTO usuarioDTO = usuarioBO.iniciarSesion(usuario, contrasena);
 
-            JOptionPane.showMessageDialog(this, "Bienvenido " + usuarioDTO.getNombreUsuario());             
+            JOptionPane.showMessageDialog(this, "Bienvenido " + usuarioDTO.getNombreUsuario());  
+            
+            if(usuarioDTO.getRol().equalsIgnoreCase("CLIENTE")){
+                frmCatalogo catalogo = new frmCatalogo(usuarioDTO.getIdUsuario());
+                catalogo.setVisible(true);
+                this.dispose();
+            } else if (usuarioDTO.getRol().equalsIgnoreCase("EMPLEADO")){
+                frmEmpleados cajero = new frmEmpleados();
+                cajero.setVisible(true);
+                this.dispose();
+            }
         } catch (NegocioException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
@@ -408,6 +424,12 @@ public class frmIniciarSesion extends javax.swing.JFrame {
         registro.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnRegistrateMouseClicked
+
+    private void lblVolverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblVolverMouseClicked
+        frmInicio inicio = new frmInicio();
+        inicio.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_lblVolverMouseClicked
 
     /**
      * @param args the command line arguments
@@ -442,7 +464,6 @@ public class frmIniciarSesion extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
@@ -451,6 +472,7 @@ public class frmIniciarSesion extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JLabel lblLogo;
     private javax.swing.JLabel lblTituloLogo;
+    private javax.swing.JLabel lblVolver;
     private javax.swing.JPanel panLogo;
     private javax.swing.JPanel panNavegacion;
     private javax.swing.JPasswordField txtPassword;

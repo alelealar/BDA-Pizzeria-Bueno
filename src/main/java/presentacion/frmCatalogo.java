@@ -10,7 +10,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import negocio.bos.CarritoBO;
-import persistencia.fabrica.FabricaDAO;
+import persitencia.fabrica.FabricaDAO;
 import presentacion.vistas.panTarjetaPizza;
 
 /**
