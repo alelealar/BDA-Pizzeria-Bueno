@@ -1,4 +1,4 @@
-package dtos;
+package Negocio.DTOs;
 
 import java.time.LocalDateTime;
 
