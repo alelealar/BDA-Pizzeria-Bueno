@@ -26,9 +26,13 @@ public class PizzaDTO {
         DISPONIBLE,
         NO_DISPONIBLE
     }
-
+    
+    //hay 3 tamaños de pizza, ocupo almacenarlos todos para poder mostrar en la venta los disponibles.
     private List<String> tamanios = new ArrayList<>();
+    //cada tamaño de pízza tiene un preecio diferente-
     private List<Double> precios = new ArrayList<>();
+    //cada pizza tiene un id eapecifico, ocupo almacenar los de los 3 tamaños.
+    private List<Integer> idPizzas = new ArrayList<>();
     private EstadoPizza estado;
 
     public PizzaDTO(int idPizza, String nombre, String descripcion, String rutaImagen, EstadoPizza estado) {
@@ -47,9 +51,10 @@ public class PizzaDTO {
         this.precio = precio;
     }
 
-    public void setVariante(String tamanio, double precio) {
+    public void setVariante(String tamanio, double precio, int idPizza) {
         this.tamanios.add(tamanio);
         this.precios.add(precio);
+        this.idPizzas.add(idPizza);
     }
 
     public PizzaDTO() {
@@ -71,7 +76,7 @@ public class PizzaDTO {
     public void setTamanio(String tamanio) {
         this.tamanio = tamanio;
     }
-    
+
     public int getIdPizza() {
         return idPizza;
     }
@@ -119,8 +124,7 @@ public class PizzaDTO {
     public List<Double> getPrecios() {
         return precios;
     }
-    
-    
+
     @Override
     public String toString() {
         return "PizzaDTO{" + "idPizza=" + idPizza + ", nombre=" + nombre + ", descripcion=" + descripcion + ", rutaImagen=" + rutaImagen + ", tamanios=" + tamanios + ", precios=" + precios + ", estado=" + estado + '}';

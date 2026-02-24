@@ -17,7 +17,6 @@ import persistencia.dominio.DetallePedido;
 import persistencia.dominio.Pedido;
 import persistencia.dominio.Pizza;
 import presentacion.vistas.panPedido;
-import presentacion.vistas.panTarjetaPizza;
 
 /**
  *

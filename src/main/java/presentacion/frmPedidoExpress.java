@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
 import persistencia.dominio.Pizza;
-import presentacion.vistas.panTarjetaPizza;
+import presentacion.vistas.panTarjetasPizzas;
 
 /**
  *
@@ -37,8 +37,8 @@ public class frmPedidoExpress extends javax.swing.JFrame {
 
             for (PizzaDTO pizza : pizzas) {
                 if (pizza.getEstado() == PizzaDTO.EstadoPizza.DISPONIBLE) {
-                    panTarjetaPizza tarjeta = new panTarjetaPizza();
-                    tarjeta.setDatosPizza(pizza, this);
+                    panTarjetasPizzas tarjeta = new panTarjetasPizzas();
+                    //tarjeta.setDatosPizza(pizza, this);
                     panPizzas.add(tarjeta);
                 }
             }

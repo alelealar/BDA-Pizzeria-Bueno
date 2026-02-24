@@ -1,13 +1,22 @@
 package presentacion;
 
+import Negocio.BOs.DetalleCarritoBO;
+import Negocio.BOs.ICarritoBO;
+import Negocio.BOs.IDetalleCarritoBO;
+import Negocio.DTOs.CarritoDTO;
 import Negocio.DTOs.DetalleCarritoDTO;
+import Negocio.DTOs.DetallePedidoDTO;
+import Negocio.Fabrica.FabricaBOs;
+import Negocio.excepciones.NegocioException;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import static java.awt.Component.CENTER_ALIGNMENT;
 import java.awt.HeadlessException;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import negocio.bos.CarritoBO;
 import presentacion.vistas.panPedido;
@@ -18,84 +27,126 @@ import presentacion.vistas.panPedido;
  */
 public class frmCarrito extends javax.swing.JFrame {
 
-    private List<DetalleCarritoDTO> pedidos;
-    private double total;
-
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmCarrito.class.getName());
-
+    private ICarritoBO carritoBo;
     private int idUsuario;
-
-    public frmCarrito() {
-    }
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(frmCarrito.class.getName());
 
     public frmCarrito(int idUsuario) {
         this.idUsuario = idUsuario;
         initComponents();
+        this.carritoBo = FabricaBOs.obtenerCarrito();
+
+        // CORRECCIÓN: Configuración del Layout para que las tarjetas se apilen verticalmente
         panPedidos.setLayout(new BoxLayout(panPedidos, BoxLayout.Y_AXIS));
+
+        // Carga inicial de datos
         cargarCarrito();
     }
 
-    private void cargarCarrito() {
-        try {
-            CarritoBO carritoBO = new CarritoBO();
-
-            pedidos = carritoBO.obtenerCarrito(idUsuario);
-
-            cargarPedidosEnElPanel();
-            cargarPedidoTextArea();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void cargarCarrito() {
+        cargarPedidosEnElPanel();
+        cargarPedidoTextArea();
     }
 
     private void cargarPedidosEnElPanel() {
+        try {
+            panPedidos.removeAll(); // Limpiar el panel antes de redibujar
 
-//        panPedidos.removeAll();
-//
-//        for (DetalleCarritoDTO pedido : pedidos) {
-//
-//            panPedido tarjeta = new panPedido(pedido, this);
-//
-//            panPedidos.add(tarjeta);
-//            //Recorremos la lista y creamos una tarjeta por cada pizza
-//            for (DetallePedido pedido : pedidos) {
-//                panPedido nuevaTarjeta = new panPedido(pedido, this);
-//                panPedidos.add(nuevaTarjeta);
-//
-//            }
-//
-//            panPedidos.revalidate();
-//            panPedidos.repaint();
-//        }
+            //obtenemos el carrito con los pedidos del usuario
+            CarritoDTO carrito = carritoBo.obtenerCarritoCompleto(idUsuario);
+
+            //verificamos que el carrito tenga algo
+            if (carrito != null && carrito.getDetalles() != null && !carrito.getDetalles().isEmpty()) {
+                List<DetalleCarritoDTO> detalles = carrito.getDetalles();
+
+                for (DetalleCarritoDTO detalle : detalles) {
+                    // Se crea una instancia del panel pequeño por cada pizza
+                    // Se pasa 'this' para que el panel pueda llamar a eliminarPanel()
+                    panPedido panelPizza = new panPedido(detalle, this);
+                    panPedidos.add(panelPizza);
+                }
+            } else {
+                // Mensaje visual si no hay nada
+                JLabel lblVacio = new JLabel("Tu carrito está vacío");
+                lblVacio.setAlignmentX(CENTER_ALIGNMENT);
+                lblVacio.setForeground(Color.GRAY);
+                panPedidos.add(lblVacio);
+            }
+
+            //Redibuja el panel
+            panPedidos.revalidate();
+            panPedidos.repaint();
+
+        } catch (NegocioException ex) {
+            LOG.severe("Error al cargar paneles: " + ex.getMessage());
+        }
     }
 
     public void eliminarPanel(DetalleCarritoDTO detalle) {
+        try {
+            int confirm = JOptionPane.showConfirmDialog(this, "¿Seguro que quieres quitar esta pizza?", "Eliminar", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
-        pedidos.remove(detalle);
+            if (confirm == JOptionPane.YES_OPTION) {
+                IDetalleCarritoBO detalleBO = FabricaBOs.obtenerDetalleCarritoBO();
 
-        panPedidos.removeAll();
+                // Eliminación en la base de datos
+                detalleBO.eliminarDetallesPorCarrito(detalle.getIdCarrito());
 
-        for (DetalleCarritoDTO pedido : pedidos) {
-            panPedido nuevaTarjeta = new panPedido(pedido, this);
-            panPedidos.add(nuevaTarjeta);
+                // Actualización de la interfaz
+                cargarCarrito();
+                JOptionPane.showMessageDialog(this, "Pizza eliminada.");
+            }
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(this, "Error al eliminar: " + ex.getMessage());
         }
-
-        panPedidos.revalidate();
-        panPedidos.repaint();
     }
 
+    /**
+     * Calcula el total de la compra y lo muestra en el JTextArea lateral.
+     */
     public void cargarPedidoTextArea() {
-
         try {
-            CarritoBO carritoBO = new CarritoBO();
+            CarritoDTO carritoActual = carritoBo.obtenerCarritoCompleto(idUsuario);
+            double totalAcumulado = 0;
 
-            double total = carritoBO.calcularTotal(idUsuario);
+            if (carritoActual != null && carritoActual.getDetalles() != null) {
+                for (DetalleCarritoDTO d : carritoActual.getDetalles()) {
+                    totalAcumulado += (d.getPrecioUnitario() * d.getCantidad());
+                }
+            }
 
-            txaDetallePedidos.setText("Total: $" + total);
+            // Formateo de moneda para que se vea profesional
+            txaDetallePedidos.setText("""
+                                      
+                                         RESUMEN DE COMPRA
+                                         --------------------------
+                                      
+                                         Subtotal: $""" + String.format("%.2f", totalAcumulado) + "\n"
+                    + "   Total:    $" + String.format("%.2f", totalAcumulado) + " MXN");
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (NegocioException e) {
+            LOG.warning(() -> "No se pudo calcular el total: " + e.getMessage());
+        }
+    }
+
+    private void btnOrdenarActionPerformed(java.awt.event.ActionEvent evt) {
+        try {
+            CarritoDTO carrito = carritoBo.obtenerCarritoCompleto(idUsuario);
+            if (carrito == null || carrito.getDetalles().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No hay pizzas para ordenar.");
+                return;
+            }
+
+            int confirm = JOptionPane.showConfirmDialog(this, "¿Finalizar compra?");
+            if (confirm == JOptionPane.YES_OPTION) {
+                // Aquí llamarías a la lógica de negocio para crear el pedido real
+                // carritoBo.procesarPedido(idUsuario); 
+                JOptionPane.showMessageDialog(this, "¡Pedido enviado a cocina!");
+                cargarCarrito();
+            }
+        } catch (NegocioException ex) {
+            LOG.warning(ex.getMessage());
+            JOptionPane.showMessageDialog(this, "Error al ordenar.");
         }
     }
 
@@ -396,12 +447,8 @@ public class frmCarrito extends javax.swing.JFrame {
         txaDetallePedidos.setRows(5);
         jScrollPane1.setViewportView(txaDetallePedidos);
 
+        btnOrdenar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         btnOrdenar.setText("Ordenar");
-        btnOrdenar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnOrdenarActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout panPizzasLayout = new javax.swing.GroupLayout(panPizzas);
         panPizzas.setLayout(panPizzasLayout);
@@ -410,9 +457,10 @@ public class frmCarrito extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panPizzasLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 872, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panPizzasLayout.createSequentialGroup()
+                    .addGroup(panPizzasLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panPizzasLayout.createSequentialGroup()
                                 .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -420,11 +468,9 @@ public class frmCarrito extends javax.swing.JFrame {
                                     .addComponent(txtCupon, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(3, 3, 3)
                                 .addComponent(btnValidar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(25, 25, 25))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panPizzasLayout.createSequentialGroup()
-                        .addComponent(btnOrdenar, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(95, 95, 95))))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(btnOrdenar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(25, 25, 25))
         );
         panPizzasLayout.setVerticalGroup(
             panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -443,9 +489,9 @@ public class frmCarrito extends javax.swing.JFrame {
                             .addComponent(txtCupon))
                         .addGap(0, 0, 0)
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
-                        .addComponent(btnOrdenar, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(45, 45, 45))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
+                        .addComponent(btnOrdenar, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -537,10 +583,6 @@ public class frmCarrito extends javax.swing.JFrame {
         btnCarrito.setBackground(Color.decode("#FF5C38"));
     }//GEN-LAST:event_btnPEMouseExited
 
-    private void btnOrdenarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrdenarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnOrdenarActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -558,7 +600,7 @@ public class frmCarrito extends javax.swing.JFrame {
                 }
             }
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+            LOG.log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 

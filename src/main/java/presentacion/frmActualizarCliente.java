@@ -20,7 +20,6 @@ import persistencia.dominio.Pizza;
 import persitencia.fabrica.FabricaDAO;
 import presentacion.vistas.frmAvisos;
 import presentacion.vistas.panPedido;
-import presentacion.vistas.panTarjetaPizza;
 
 /**
  *

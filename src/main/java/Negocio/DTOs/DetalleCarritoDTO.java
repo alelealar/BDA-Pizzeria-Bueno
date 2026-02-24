@@ -10,6 +10,8 @@ package Negocio.DTOs;
  */
 public class DetalleCarritoDTO {
 
+    private int idDetalleCarrito;
+    private int idCarrito;
     private int idPizza;
     private String nombrePizza;
     private String tamanio;
@@ -17,6 +19,9 @@ public class DetalleCarritoDTO {
     private double precioUnitario;
     private double subtotal;
     private String nota;
+
+    public DetalleCarritoDTO() {
+    }
 
     public DetalleCarritoDTO(int idPizza, String nombrePizza, String tamanio, int cantidad, double precioUnitario, String nota) {
         this.idPizza = idPizza;
@@ -80,4 +85,25 @@ public class DetalleCarritoDTO {
     public void setNota(String nota) {
         this.nota = nota;
     }
+
+    public void setSubtotal(double subtotal) {
+        this.subtotal = subtotal;
+    }
+
+    public int getIdDetalleCarrito() {
+        return idDetalleCarrito;
+    }
+
+    public void setIdDetalleCarrito(int idDetalleCarrito) {
+        this.idDetalleCarrito = idDetalleCarrito;
+    }
+
+    public int getIdCarrito() {
+        return idCarrito;
+    }
+
+    public void setIdCarrito(int idCarrito) {
+        this.idCarrito = idCarrito;
+    }
+
 }

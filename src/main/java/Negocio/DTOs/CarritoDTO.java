@@ -1,6 +1,7 @@
-package dtos;
+package Negocio.DTOs;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class CarritoDTO {
 
@@ -8,6 +9,7 @@ public class CarritoDTO {
     private int idUsuario;
     private LocalDateTime fechaCreacion;
     private boolean activo;
+    private List<DetalleCarritoDTO> detalles;
 
     // Constructor vacío
     public CarritoDTO() {
@@ -60,4 +62,13 @@ public class CarritoDTO {
     public void setActivo(boolean activo) {
         this.activo = activo;
     }
+
+    public List<DetalleCarritoDTO> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<DetalleCarritoDTO> detalles) {
+        this.detalles = detalles;
+    }
+
 }

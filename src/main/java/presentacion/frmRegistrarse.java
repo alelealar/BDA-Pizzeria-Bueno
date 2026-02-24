@@ -23,7 +23,6 @@ import persistencia.dominio.Pizza;
 import presentacion.vistas.frmAgregarTelefono;
 import presentacion.vistas.frmAvisos;
 import presentacion.vistas.panPedido;
-import presentacion.vistas.panTarjetaPizza;
 
 /**
  *

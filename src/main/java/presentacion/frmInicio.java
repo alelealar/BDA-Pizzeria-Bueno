@@ -7,10 +7,6 @@ import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import persistencia.dominio.DetallePedido;
-import persistencia.dominio.Pedido;
-import persistencia.dominio.Pizza;
-import presentacion.vistas.panPedido;
-import presentacion.vistas.panTarjetaPizza;
 
 /**
  *
@@ -18,12 +14,9 @@ import presentacion.vistas.panTarjetaPizza;
  */
 public class frmInicio extends javax.swing.JFrame {
 
-    private List<DetallePedido> pedidos;
-
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmInicio.class.getName());
 
     public frmInicio() {
-        this.pedidos = new ArrayList<>();
         initComponents();
 
     }

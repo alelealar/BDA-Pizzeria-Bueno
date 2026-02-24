@@ -33,7 +33,7 @@ public class CarritoDAO implements ICarritoDAO {
      * Logger para registrar información relevante durante operaciones de
      * persistencia.
      */
-    private static final Logger LOG = Logger.getLogger(ClienteDAO.class.getName());
+    private static final Logger LOG = Logger.getLogger(CarritoDAO.class.getName());
 
     /**
      * Constructor que inicializa la dependencia de conexión.
@@ -130,8 +130,8 @@ public class CarritoDAO implements ICarritoDAO {
             throw new PersistenciaException("Error al desactivar carrito.", ex);
         }
     }
-    
-     private Carrito extraerCarrito(ResultSet rs) throws PersistenciaException {
+
+    private Carrito extraerCarrito(ResultSet rs) throws PersistenciaException {
         try {
             Carrito carrito = new Carrito();
             carrito.setIdCarrito(rs.getInt("idCarrito"));

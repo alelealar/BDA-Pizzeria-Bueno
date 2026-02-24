@@ -6,12 +6,17 @@
 package Negocio.Fabrica;
 
 import Negocio.BOs.ClienteBO;
+import Negocio.BOs.DetalleCarritoBO;
+import Negocio.BOs.ICarritoBO;
+import Negocio.BOs.IDetalleCarritoBO;
 import Negocio.BOs.IPedidoBO;
 import Negocio.BOs.PedidoBO;
 import Negocio.BOs.PedidoExpressBO;
 import Negocio.BOs.PizzaBO;
 import Negocio.BOs.UsuarioBO;
 import Negocio.BOs.TelefonoBO;
+import negocio.bos.CarritoBO;
+import persistencia.dominio.Carrito;
 import persistencia.fabrica.FabricaDAO;
 
 /**
@@ -53,4 +58,13 @@ public class FabricaBOs {
         return new PedidoBO(FabricaDAO.crearPedidoDAO());
     }
 
+    public static IDetalleCarritoBO obtenerDetalleCarritoBO() {
+        IDetalleCarritoBO detalleCarritoBO = new DetalleCarritoBO(FabricaDAO.obtenerDetalleCarritoDAO());
+        return detalleCarritoBO;
+    }
+
+    public static ICarritoBO obtenerCarrito() {
+        CarritoBO carritoBO = new CarritoBO(FabricaDAO.obtenerCarritoDAO(), FabricaDAO.obtenerDetalleCarritoDAO(), FabricaDAO.obtenerPizzaDAO());
+        return carritoBO;
+    }
 }

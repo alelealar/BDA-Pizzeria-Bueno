@@ -4,6 +4,8 @@
  */
 package Negocio.BOs;
 
+import Negocio.DTOs.CarritoDTO;
+import Negocio.DTOs.ClienteDTO;
 import Negocio.DTOs.DetalleCarritoDTO;
 import Negocio.excepciones.NegocioException;
 import java.util.List;
@@ -13,15 +15,10 @@ import java.util.List;
  * @author RAYMUNDO
  */
 public interface ICarritoBO {
-    
+
     public void agregarProducto(int idUsuario, int idPizza, String tamanio, int cantidad, String nota) throws NegocioException;
-    
-    public List<DetalleCarritoDTO> obtenerCarrito(int idUsuario) throws NegocioException;
-    
-    public double calcularTotal(int idUsuario) throws NegocioException;
-    
-    public void eliminarProducto(int idUsuario, int idPizza, String tamanio) throws NegocioException;
-    
-    public void disminuirCantidad(int idUsuario, int idPizza, String tamanio) throws NegocioException;
-    
+
+    public CarritoDTO obtenerCarritoCompleto(int idUsuario) throws NegocioException;
+
+    public void finalizarCarrito(int idUsuario) throws NegocioException;
 }

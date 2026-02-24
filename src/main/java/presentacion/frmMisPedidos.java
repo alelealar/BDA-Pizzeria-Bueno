@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
 import persistencia.dominio.Pizza;
-import presentacion.vistas.panTarjetaPizza;
 
 /**
  *
@@ -816,9 +815,9 @@ public class frmMisPedidos extends javax.swing.JFrame {
     }//GEN-LAST:event_btnActualizarMouseClicked
 
     private void btnCarritoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCarritoMouseClicked
-        frmCarrito carrito = new frmCarrito();
-        carrito.setVisible(true);
-        this.dispose();
+//        frmCarrito carrito = new frmCarrito();
+//        carrito.setVisible(true);
+//        this.dispose();
     }//GEN-LAST:event_btnCarritoMouseClicked
 
     private void btnMispedidosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMispedidosMouseClicked

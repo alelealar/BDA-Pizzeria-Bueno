@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
-import persistencia.dominio.Pizza;
-import presentacion.vistas.panTarjetaPizza;
 import Negocio.BOs.IPedidoBO;
 import Negocio.BOs.PedidoBO;
 import Negocio.DTOs.PedidoDetalleDTO;

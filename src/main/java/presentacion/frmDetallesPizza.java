@@ -3,7 +3,6 @@ package presentacion;
 import Negocio.DTOs.PizzaDTO;
 import java.awt.Color;
 import javax.swing.JPanel;
-import presentacion.vistas.panTarjetaPizza;
 
 /**
  *
@@ -17,7 +16,7 @@ public class frmDetallesPizza extends javax.swing.JFrame {
         initComponents();
     }
 
-public void cargarInformacionPizza(PizzaDTO pizza) {
+    public void cargarInformacionPizza(PizzaDTO pizza) {
         lblDescripcionPizza.setText(pizza.getDescripcion());
         lblTituloPïzza.setText(pizza.getNombre());
         lblImagenPizza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizza.getRutaImagen())));
@@ -295,7 +294,7 @@ public void cargarInformacionPizza(PizzaDTO pizza) {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAnadirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAnadirMouseClicked
-        frmCarrito carrito = new frmCarrito();
+        //frmCarrito carrito = new frmCarrito();
     }//GEN-LAST:event_btnAnadirMouseClicked
 
     private void btnAnadirMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAnadirMouseEntered

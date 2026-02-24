@@ -4,11 +4,14 @@ package persistencia.fabrica;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 import persistencia.DAOS.ClienteDAO;
 import persistencia.DAOS.IClienteDAO;
 import persistencia.conexion.ConexionBD;
 import persistencia.conexion.IConexionBD;
+import persistencia.daos.CarritoDAO;
+import persistencia.daos.DetalleCarritoDAO;
+import persistencia.daos.ICarritoDAO;
+import persistencia.daos.IDetalleCarritoDAO;
 import persistencia.daos.IPedidoDAO;
 import persistencia.daos.IPedidoExpressDAO;
 import persistencia.daos.IPizzaDAO;
@@ -34,7 +37,7 @@ public class FabricaDAO {
         return pedidoDAO;
     }
 
-    public static IUsuarioDAO obtenerUsuarioDAO(){
+    public static IUsuarioDAO obtenerUsuarioDAO() {
         IUsuarioDAO usuarioDAO = new UsuarioDAO(conexion);
         return usuarioDAO;
     }
@@ -53,15 +56,24 @@ public class FabricaDAO {
         IPedidoExpressDAO pedidoExpressDAO = new PedidoExpressDAO(conexion);
         return pedidoExpressDAO;
     }
-    
+
     public static IPedidoDAO crearPedidoDAO() {
         return new PedidoDAO(conexion);
     }
 
-    
-    public static ITelefonoDAO obtenerTelefonoDAO(){
+    public static ITelefonoDAO obtenerTelefonoDAO() {
         IClienteDAO clienteDAO = new ClienteDAO(conexion);
         ITelefonoDAO telefonoDAO = new TelefonoDAO(conexion, clienteDAO);
         return telefonoDAO;
+    }
+
+    public static ICarritoDAO obtenerCarritoDAO() {
+        ICarritoDAO carritoDAO = new CarritoDAO(conexion);
+        return carritoDAO;
+    }
+
+    public static IDetalleCarritoDAO obtenerDetalleCarritoDAO() {
+        IDetalleCarritoDAO detalleCarritoDAO = new DetalleCarritoDAO(conexion);
+        return detalleCarritoDAO;
     }
 }
