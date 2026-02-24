@@ -2,7 +2,9 @@ package presentacion;
 
 import Negocio.BOs.ClienteBO;
 import Negocio.BOs.IClienteBO;
+import Negocio.BOs.ITelefonoBO;
 import Negocio.DTOs.ClienteDTO;
+import Negocio.DTOs.TelefonoDTO;
 import Negocio.Fabrica.FabricaBOs;
 import Negocio.excepciones.NegocioException;
 import java.awt.Color;
@@ -18,7 +20,9 @@ import persistencia.dominio.DetallePedido;
 import persistencia.dominio.Pedido;
 import persistencia.dominio.Pizza;
 import persitencia.fabrica.FabricaDAO;
+import presentacion.vistas.frmAgregarTelefono;
 import presentacion.vistas.frmAvisos;
+import presentacion.vistas.frmEliminarTelefono;
 import presentacion.vistas.panPedido;
 import presentacion.vistas.panTarjetaPizza;
 
@@ -29,6 +33,8 @@ import presentacion.vistas.panTarjetaPizza;
 public class frmRegistrarse extends javax.swing.JFrame {
 
     private IClienteBO clienteBO;
+    
+    private List<TelefonoDTO> telefonosTemp = new ArrayList<>();
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmRegistrarse.class.getName());
 
@@ -62,14 +68,14 @@ public class frmRegistrarse extends javax.swing.JFrame {
         btnRegistraese = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         btnVolver = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
+        lblVolver = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txaTelefonos = new javax.swing.JTextArea();
         jLabel6 = new javax.swing.JLabel();
         btnAnadir = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
+        btnAñadirTelefono = new javax.swing.JLabel();
         btnEliminar = new javax.swing.JPanel();
-        jLabel8 = new javax.swing.JLabel();
+        btnEliminarTelefono = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         txtApellido = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
@@ -210,20 +216,25 @@ public class frmRegistrarse extends javax.swing.JFrame {
             }
         });
 
-        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel5.setText("Volver");
+        lblVolver.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        lblVolver.setForeground(new java.awt.Color(255, 255, 255));
+        lblVolver.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblVolver.setText("Volver");
+        lblVolver.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblVolverMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout btnVolverLayout = new javax.swing.GroupLayout(btnVolver);
         btnVolver.setLayout(btnVolverLayout);
         btnVolverLayout.setHorizontalGroup(
             btnVolverLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+            .addComponent(lblVolver, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
         );
         btnVolverLayout.setVerticalGroup(
             btnVolverLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
+            .addComponent(lblVolver, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
         );
 
         txaTelefonos.setEditable(false);
@@ -245,21 +256,26 @@ public class frmRegistrarse extends javax.swing.JFrame {
             }
         });
 
-        jLabel7.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel7.setText("+ Añadir");
+        btnAñadirTelefono.setBackground(new java.awt.Color(255, 255, 255));
+        btnAñadirTelefono.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnAñadirTelefono.setForeground(new java.awt.Color(255, 255, 255));
+        btnAñadirTelefono.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btnAñadirTelefono.setText("+ Añadir");
+        btnAñadirTelefono.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnAñadirTelefonoMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout btnAnadirLayout = new javax.swing.GroupLayout(btnAnadir);
         btnAnadir.setLayout(btnAnadirLayout);
         btnAnadirLayout.setHorizontalGroup(
             btnAnadirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+            .addComponent(btnAñadirTelefono, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
         );
         btnAnadirLayout.setVerticalGroup(
             btnAnadirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
+            .addComponent(btnAñadirTelefono, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
         );
 
         btnEliminar.setBackground(new java.awt.Color(255, 92, 56));
@@ -272,21 +288,21 @@ public class frmRegistrarse extends javax.swing.JFrame {
             }
         });
 
-        jLabel8.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel8.setText("Eliminar");
+        btnEliminarTelefono.setBackground(new java.awt.Color(255, 255, 255));
+        btnEliminarTelefono.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnEliminarTelefono.setForeground(new java.awt.Color(255, 255, 255));
+        btnEliminarTelefono.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btnEliminarTelefono.setText("Eliminar");
 
         javax.swing.GroupLayout btnEliminarLayout = new javax.swing.GroupLayout(btnEliminar);
         btnEliminar.setLayout(btnEliminarLayout);
         btnEliminarLayout.setHorizontalGroup(
             btnEliminarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+            .addComponent(btnEliminarTelefono, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
         );
         btnEliminarLayout.setVerticalGroup(
             btnEliminarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
+            .addComponent(btnEliminarTelefono, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
         );
 
         jLabel9.setFont(new java.awt.Font("Segoe UI Variable", 1, 14)); // NOI18N
@@ -752,7 +768,7 @@ public class frmRegistrarse extends javax.swing.JFrame {
     }//GEN-LAST:event_txtUsuarioFocusGained
 
     private void txtAnioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAnioKeyTyped
-        if (txtDia.getText().length() >= 4) {
+        if (txtAnio.getText().length() >= 4) {
             evt.consume();
         }
     }//GEN-LAST:event_txtAnioKeyTyped
@@ -780,7 +796,7 @@ public class frmRegistrarse extends javax.swing.JFrame {
     }//GEN-LAST:event_txtAnioFocusGained
 
     private void txtMesKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtMesKeyTyped
-        if (txtDia.getText().length() >= 2) {
+        if (txtMes.getText().length() >= 2) {
             evt.consume();
         }
     }//GEN-LAST:event_txtMesKeyTyped
@@ -894,16 +910,21 @@ public class frmRegistrarse extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRegistraeseMouseEntered
 
     private void btnRegistraeseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRegistraeseMouseClicked
-      
+
         try{
             int dia = Integer.parseInt(txtDia.getText());
             int mes = Integer.parseInt(txtMes.getText());
             int anio = Integer.parseInt(txtAnio.getText());
             ClienteDTO clienteCreado = new ClienteDTO(txtNombre.getText(), txtApellido.getText(), txtCalle.getText(), txtNumero.getText(), txtColonia.getText(), txtCP.getText(), dia, mes, anio);
  
-            ClienteDTO clienteDTO = clienteBO.registrarCliente(clienteCreado, txtUsuario.getText(), txtConfirmacionContraseña.getText());
-            frmAvisos aviso = new frmAvisos("Registro completado exitosamente!");
-            aviso.setVisible(true);
+            ClienteDTO clienteDTO = clienteBO.registrarCliente(clienteCreado, txtUsuario.getText(), txtConfirmacionContraseña.getText(), this.telefonosTemp);
+            
+            JOptionPane.showMessageDialog(this, "¡Registro completado exitosamente!");
+
+            frmIniciarSesion inicioSesion = new frmIniciarSesion();
+            inicioSesion.setVisible(true);
+            this.dispose();
+            
         } catch (NegocioException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }catch (NumberFormatException ex) {
@@ -934,6 +955,24 @@ public class frmRegistrarse extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtNombreFocusGained
 
+    private void btnAñadirTelefonoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAñadirTelefonoMouseClicked
+        frmAgregarTelefono frmAdd = new frmAgregarTelefono(this);
+        frmAdd.setVisible(true);
+        
+    }//GEN-LAST:event_btnAñadirTelefonoMouseClicked
+
+    private void lblVolverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblVolverMouseClicked
+        frmIniciarSesion inicioSesion = new frmIniciarSesion();
+        inicioSesion.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_lblVolverMouseClicked
+
+    public void agregarTelefonoALista(TelefonoDTO nuevoTel) {
+        telefonosTemp.add(nuevoTel);
+        txaTelefonos.append("• " + nuevoTel.getEtiqueta() + ": " + nuevoTel.getTelefono() + "\n");
+        System.out.println("Teléfonos capturados: " + telefonosTemp.size());
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -961,7 +1000,9 @@ public class frmRegistrarse extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel btnAnadir;
+    private javax.swing.JLabel btnAñadirTelefono;
     private javax.swing.JPanel btnEliminar;
+    private javax.swing.JLabel btnEliminarTelefono;
     private javax.swing.JPanel btnRegistraese;
     private javax.swing.JPanel btnVolver;
     private javax.swing.JLabel jLabel1;
@@ -973,10 +1014,7 @@ public class frmRegistrarse extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
@@ -989,6 +1027,7 @@ public class frmRegistrarse extends javax.swing.JFrame {
     private javax.swing.JLabel lblLogo;
     private javax.swing.JLabel lblNumero;
     private javax.swing.JLabel lblTituloLogo;
+    private javax.swing.JLabel lblVolver;
     private javax.swing.JPanel panContenedor;
     private javax.swing.JPanel panFormulario;
     private javax.swing.JPanel panLogo;

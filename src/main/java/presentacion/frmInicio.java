@@ -44,7 +44,7 @@ public class frmInicio extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         panContenedorIS = new javax.swing.JPanel();
         btnIniciarSesion = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        btnInicioSesion = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         panContenedorPE = new javax.swing.JPanel();
         btnPedidoExpress = new javax.swing.JPanel();
@@ -110,8 +110,13 @@ public class frmInicio extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconoUsuario.png"))); // NOI18N
+        btnInicioSesion.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btnInicioSesion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconoUsuario.png"))); // NOI18N
+        btnInicioSesion.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnInicioSesionMouseClicked(evt);
+            }
+        });
 
         jLabel2.setFont(new java.awt.Font("Microsoft Sans Serif", 1, 36)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -125,14 +130,14 @@ public class frmInicio extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(btnIniciarSesionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE))
+                    .addComponent(btnInicioSesion, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
         btnIniciarSesionLayout.setVerticalGroup(
             btnIniciarSesionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(btnIniciarSesionLayout.createSequentialGroup()
                 .addGap(22, 22, 22)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnInicioSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(16, Short.MAX_VALUE))
@@ -273,13 +278,18 @@ public class frmInicio extends javax.swing.JFrame {
     }//GEN-LAST:event_btnPedidoExpressMouseExited
 
     private void btnIniciarSesionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnIniciarSesionMouseClicked
-        frmCatalogo catalogo = new frmCatalogo();
-        catalogo.setVisible(true);
+        frmIniciarSesion inicioSesion = new frmIniciarSesion();
+        inicioSesion.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnIniciarSesionMouseClicked
 
     private void btnPedidoExpressMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPedidoExpressMousePressed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnPedidoExpressMousePressed
+
+    private void btnInicioSesionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInicioSesionMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnInicioSesionMouseClicked
 
     /**
      * @param args the command line arguments
@@ -308,8 +318,8 @@ public class frmInicio extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel btnIniciarSesion;
+    private javax.swing.JLabel btnInicioSesion;
     private javax.swing.JPanel btnPedidoExpress;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

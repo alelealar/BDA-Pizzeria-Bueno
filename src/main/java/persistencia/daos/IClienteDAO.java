@@ -33,6 +33,8 @@ public interface IClienteDAO {
     Cliente agregarCliente(Cliente cliente) throws PersistenciaException;
     
     
+    void agregarTelefonos(int idCliente, List<Telefono> telefonos) throws PersistenciaException;
+    
     /**
      * Actualiza un cliente existente en la base de datos.
      * 

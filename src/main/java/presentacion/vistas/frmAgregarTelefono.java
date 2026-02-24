@@ -4,7 +4,13 @@
  */
 package presentacion.vistas;
 
+import Negocio.BOs.ITelefonoBO;
+import Negocio.DTOs.TelefonoDTO;
+import Negocio.Fabrica.FabricaBOs;
+import Negocio.excepciones.NegocioException;
 import java.awt.Color;
+import javax.swing.JOptionPane;
+import presentacion.frmRegistrarse;
 
 /**
  *
@@ -14,13 +20,26 @@ public class frmAgregarTelefono extends javax.swing.JFrame {
 
     private int mouseX;
     private int mouseY;
+    
+    private final frmRegistrarse registrarse;
+    private ITelefonoBO telefonoBO;
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmAgregarTelefono.class.getName());
 
     /**
      * Ventana para ingresar un teléfono.
      */
-    public frmAgregarTelefono() {
+    /*
+    public frmAgregarTelefono(int idCliente) {
+        this.idCliente = idCliente;
+        this.telefonoBO = FabricaBOs.obtenerTelefono();
+        initComponents();
+    }
+    */
+    
+    public frmAgregarTelefono(frmRegistrarse registrarse) {
+        this.registrarse = registrarse; // Guardamos la referencia a la ventana principal
+        this.telefonoBO = FabricaBOs.obtenerTelefono();
         initComponents();
     }
 
@@ -39,7 +58,7 @@ public class frmAgregarTelefono extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnAceptar = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
+        lblAceptar = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         txtEtiqueta = new javax.swing.JTextField();
         jSeparator2 = new javax.swing.JSeparator();
@@ -125,10 +144,15 @@ public class frmAgregarTelefono extends javax.swing.JFrame {
             }
         });
 
-        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel5.setText("Aceptar");
+        lblAceptar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        lblAceptar.setForeground(new java.awt.Color(255, 255, 255));
+        lblAceptar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblAceptar.setText("Aceptar");
+        lblAceptar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblAceptarMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout btnAceptarLayout = new javax.swing.GroupLayout(btnAceptar);
         btnAceptar.setLayout(btnAceptarLayout);
@@ -136,14 +160,14 @@ public class frmAgregarTelefono extends javax.swing.JFrame {
             btnAceptarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, btnAceptarLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(lblAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
                 .addContainerGap())
         );
         btnAceptarLayout.setVerticalGroup(
             btnAceptarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(btnAceptarLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
+                .addComponent(lblAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -404,6 +428,24 @@ public class frmAgregarTelefono extends javax.swing.JFrame {
         btnvolver.setBackground(Color.decode("#FF5C38"));
     }//GEN-LAST:event_btnvolverMouseExited
 
+    private void lblAceptarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblAceptarMouseClicked
+        String etiqueta = txtEtiqueta.getText();
+        String numero = txtTelefono.getText();
+        
+        if(etiqueta.trim().isEmpty() || numero.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor, llene ambos campos.");
+            return;
+        }
+
+        TelefonoDTO temp = new TelefonoDTO();
+        temp.setEtiqueta(etiqueta);
+        temp.setTelefono(numero);
+
+        this.registrarse.agregarTelefonoALista(temp);
+        this.dispose();
+        
+    }//GEN-LAST:event_lblAceptarMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -426,7 +468,7 @@ public class frmAgregarTelefono extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new frmAgregarTelefono().setVisible(true));
+ 
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -436,12 +478,12 @@ public class frmAgregarTelefono extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JLabel lblAceptar;
     private javax.swing.JPanel panEncabezado;
     private javax.swing.JTextField txtEtiqueta;
     private javax.swing.JTextField txtTelefono;

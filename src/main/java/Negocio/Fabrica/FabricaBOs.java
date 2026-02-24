@@ -9,6 +9,7 @@ import Negocio.BOs.ClienteBO;
 import Negocio.BOs.PedidoExpressBO;
 import Negocio.BOs.PizzaBO;
 import Negocio.BOs.UsuarioBO;
+import Negocio.BOs.TelefonoBO;
 import persitencia.fabrica.FabricaDAO;
 
 /**
@@ -39,6 +40,11 @@ public class FabricaBOs {
     public static ClienteBO obtenerCliente(){
         ClienteBO pedidoExBO = new ClienteBO(FabricaDAO.obtenerClienteDAO());
         return pedidoExBO;
+    }
+    
+    public static TelefonoBO obtenerTelefono(){
+        TelefonoBO telefonoBO = new TelefonoBO(FabricaDAO.obtenerTelefonoDAO());
+        return telefonoBO;
     }
 }
 

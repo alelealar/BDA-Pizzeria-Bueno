@@ -6,11 +6,14 @@
 package Negocio.BOs;
 
 import Negocio.DTOs.ClienteDTO;
+import Negocio.DTOs.TelefonoDTO;
 import Negocio.DTOs.UsuarioDTO;
 import Negocio.excepciones.NegocioException;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.DAOS.IClienteDAO;
@@ -28,21 +31,22 @@ import persistencia.excepciones.PersistenciaException;
 
 public class ClienteBO implements IClienteBO{
     private IClienteDAO clienteDAO;
+    private ClienteDTO clienteActual;
     private static final Logger LOG = Logger.getLogger(ClienteBO.class.getName());
 
-    public ClienteBO(IClienteDAO tecnico) {
-        this.clienteDAO = tecnico;
+    public ClienteBO(IClienteDAO cliente    ) {
+        this.clienteDAO = cliente;
     }
     
-    public ClienteDTO registrarCliente(ClienteDTO cliente, String usuario, String contrasena) throws NegocioException {
+    public ClienteDTO registrarCliente(ClienteDTO cliente, String usuario, String contrasena, List<TelefonoDTO> telefonos) throws NegocioException {
         if (cliente == null) {
             LOG.warning("Cliente nulo");
-            throw new IllegalArgumentException("El cliente no puede ser nulo");
+            throw new NegocioException("El cliente no puede ser nulo");
         }
 
         if (cliente.getNombres() == null || cliente.getNombres().isBlank()) {
             LOG.warning("El campo nombre se dejó vacío");
-            throw new IllegalArgumentException("El nombre del cliente es obligatorio");
+            throw new NegocioException("El nombre del cliente es obligatorio");
         }
 
         if (cliente.getCalle() != null && !cliente.getCalle().isBlank()) {
@@ -53,6 +57,7 @@ public class ClienteBO implements IClienteBO{
                 throw new NegocioException("Debe proporcionar el domicilio completo si empieza a llenarlo");
             }
         }
+        
 
         LocalDate fechaNacimiento;
         try {
@@ -79,8 +84,17 @@ public class ClienteBO implements IClienteBO{
 
         try {
             Cliente clienteDominio = mapearDTOaDominio(cliente);
+            clienteDominio.setNombreUsuario(usuario);
+            clienteDominio.setContraseniaUsuario(contrasena);
 
             Cliente clienteRegistrado = clienteDAO.agregarCliente(clienteDominio);
+            
+            if (telefonos != null && !telefonos.isEmpty()) {
+                
+                List<Telefono> listaTelefonosDominio = convertirListaTelefonos(telefonos, clienteRegistrado);
+
+                clienteDAO.agregarTelefonos(clienteRegistrado.getIdCliente(), listaTelefonosDominio);
+            }
 
             ClienteDTO resultado = mapearDominioaDTO(clienteRegistrado);
 
@@ -95,12 +109,12 @@ public class ClienteBO implements IClienteBO{
     public ClienteDTO actualizarCliente(ClienteDTO cliente) throws NegocioException {
         if (cliente == null) {
             LOG.warning("Cliente nulo");
-            throw new IllegalArgumentException("El cliente no puede ser nulo");
+            throw new NegocioException("El cliente no puede ser nulo");
         }
 
         if (cliente.getNombres() == null || cliente.getNombres().isBlank()) {
             LOG.warning("El campo nombre se dejó vacío");
-            throw new IllegalArgumentException("El nombre del cliente es obligatorio");
+            throw new NegocioException("El nombre del cliente es obligatorio");
         }
 
         if (cliente.getCalle() != null && !cliente.getCalle().isBlank()) {
@@ -144,23 +158,34 @@ public class ClienteBO implements IClienteBO{
     }
     
     private Cliente mapearDTOaDominio(ClienteDTO dto) {
-        Cliente cliente = new Cliente();
-        cliente.setIdCliente(dto.getIdCliente());
-        cliente.setNombres(dto.getNombres());
-        cliente.setApellidoPaterno(dto.getApellidoPaterno());
+        Cliente dominio = new Cliente();
+
+        dominio.setNombres(dto.getNombres());
         
-        LocalDate fechaNacimiento = LocalDate.of(dto.getAnio(), dto.getMesNum(), dto.getDia());
-        cliente.setFechaNacimiento(fechaNacimiento);
+        String apellidosCompletos = dto.getApellidos();
+        
+        if (apellidosCompletos != null && !apellidosCompletos.isBlank()) {
+            String[] partes = apellidosCompletos.split(" ");
+            
+            if(partes.length >= 2){
+                dominio.setApellidoPaterno(partes[0]);
+                dominio.setApellidoMaterno(partes[1]);
+            } else {
+                dominio.setApellidoPaterno(partes[0]);
+                dominio.setApellidoMaterno(null);
+            }
+        }
 
-        Domicilio domicilio = new Domicilio();
-        domicilio.setCalle(dto.getCalle());
-        domicilio.setNumero(dto.getNumero());
-        domicilio.setColonia(dto.getColonia());
-        domicilio.setCodigoPostal(dto.getCP());
+        dominio.setFechaNacimiento(LocalDate.of(dto.getAnio(), dto.getMesNum(), dto.getDia()));
 
-        cliente.setDomicilio(domicilio);
+        Domicilio dom = new Domicilio();
+        dom.setCalle(dto.getCalle());
+        dom.setNumero(dto.getNumero());
+        dom.setColonia(dto.getColonia());
+        dom.setCodigoPostal(dto.getCP());
+        dominio.setDomicilio(dom);
 
-        return cliente;
+        return dominio;
     }
 
     // Convierte de Dominio a DTO
@@ -180,5 +205,36 @@ public class ClienteBO implements IClienteBO{
         }
 
         return dto;
+    }
+    
+    private List<Telefono> convertirListaTelefonos(List<TelefonoDTO> listaDTO, Cliente cliente) {
+        List<Telefono> listaDominio = new ArrayList<>();
+
+        for (TelefonoDTO dto : listaDTO) {
+            Telefono entidad = new Telefono();
+            entidad.setEtiqueta(dto.getEtiqueta());
+            entidad.setTelefono(dto.getTelefono());
+            entidad.setCliente(cliente); // Vinculamos la entidad al cliente registrado
+
+            listaDominio.add(entidad);
+        }
+
+        return listaDominio;
+    }
+    
+    /**
+     * Devuelve el cliente actualmente manejado por este BO
+     * @return ClienteDTO actual
+     */
+    public ClienteDTO getCliente() {
+        return clienteActual;
+    }
+
+    /**
+     * Permite asignar un cliente al BO (opcional)
+     * @param cliente ClienteDTO a asignar
+     */
+    public void setCliente(ClienteDTO cliente) {
+        this.clienteActual = cliente;
     }
 }

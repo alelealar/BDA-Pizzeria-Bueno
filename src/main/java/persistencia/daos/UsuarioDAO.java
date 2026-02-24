@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.DAOS.ClienteDAO;
 import persistencia.conexion.IConexionBD;
@@ -48,10 +49,10 @@ public class UsuarioDAO implements IUsuarioDAO {
     public UsuarioDTO iniciarSesion(String usuario, String contraseña) throws PersistenciaException {
 
         String sql = """
-            SELECT idUsuario, usuario, contraseña, rol
-            FROM Usuarios
-            WHERE BINARY usuario = ? AND contraseña = ?
-        """;
+                        SELECT idUsuario, usuario, contraseña, rol
+                        FROM Usuarios
+                        WHERE BINARY usuario = ? AND contraseña = ?
+                    """;
 
         try (Connection con = conexionBD.crearConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -75,4 +76,6 @@ public class UsuarioDAO implements IUsuarioDAO {
             throw new PersistenciaException("Error al iniciar sesión", e);
         }
     }
+
+    
 }

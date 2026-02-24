@@ -13,10 +13,12 @@ import persistencia.conexion.IConexionBD;
 import persistencia.daos.IPedidoDAO;
 import persistencia.daos.IPedidoExpressDAO;
 import persistencia.daos.IPizzaDAO;
+import persistencia.daos.ITelefonoDAO;
 import persistencia.daos.IUsuarioDAO;
 import persistencia.daos.PedidoDAO;
 import persistencia.daos.PedidoExpressDAO;
 import persistencia.daos.PizzaDAO;
+import persistencia.daos.TelefonoDAO;
 import persistencia.daos.UsuarioDAO;
 
 /**
@@ -52,6 +54,13 @@ public class FabricaDAO {
         IPedidoExpressDAO pedidoExpressDAO = new PedidoExpressDAO(conexion);
         return pedidoExpressDAO;
     }
+    
+    public static ITelefonoDAO obtenerTelefonoDAO(){
+        IClienteDAO clienteDAO = new ClienteDAO(conexion);
+        ITelefonoDAO telefonoDAO = new TelefonoDAO(conexion, clienteDAO);
+        return telefonoDAO;
+    }
+    
 
  
 

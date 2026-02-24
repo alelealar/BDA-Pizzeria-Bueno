@@ -6,7 +6,9 @@
 package Negocio.BOs;
 
 import Negocio.DTOs.ClienteDTO;
+import Negocio.DTOs.TelefonoDTO;
 import Negocio.excepciones.NegocioException;
+import java.util.List;
 import persistencia.dominio.Cliente;
 import persistencia.dominio.Telefono;
 
@@ -18,13 +20,18 @@ import persistencia.dominio.Telefono;
  */
 public interface IClienteBO {
 
-    ClienteDTO registrarCliente(ClienteDTO cliente, String usuario, String contrasena) throws NegocioException;
+    ClienteDTO registrarCliente(ClienteDTO cliente, String usuario, String contrasena, List<TelefonoDTO> telefonos) throws NegocioException;
     
     ClienteDTO actualizarCliente(ClienteDTO cliente) throws NegocioException;
     
     public void agregarTelefono(int idCliente, Telefono telefono) throws NegocioException;
     
     public void eliminarTelefono(int idCliente, Telefono telefono) throws NegocioException;
+    
+    ClienteDTO getCliente();
+    
+    void setCliente(ClienteDTO cliente);
+    
 
     
 }

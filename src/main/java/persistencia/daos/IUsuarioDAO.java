@@ -15,4 +15,5 @@ public interface IUsuarioDAO {
     
     UsuarioDTO iniciarSesion(String usuario, String contraseña) throws PersistenciaException;
     
+    
 }

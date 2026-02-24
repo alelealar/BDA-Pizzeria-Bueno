@@ -108,15 +108,45 @@ public class ClienteDAO implements IClienteDAO {
 
             cs.execute();
 
-            int idGenerado = cs.getInt(12);
+            int idGenerado = cs.getInt(11);
+            
+            if (idGenerado == -1) {
+                throw new SQLException("Error interno en el Procedimiento Almacenado.");
+            }
             cliente.setIdCliente(idGenerado);
-
             LOG.info("Cliente registrado con éxito. ID: " + idGenerado);
             return cliente;
 
         } catch (SQLException ex) {
             LOG.severe("Error SQL al registrar al cliente: " + ex);
             throw new PersistenciaException("No se pudo registrar el cliente. Verifica los datos e inténtalo de nuevo.", ex);
+        }
+    }
+    
+    @Override
+    public void agregarTelefonos(int idCliente, List<Telefono> telefonos) throws PersistenciaException {
+        String comandoSQL = """
+                            INSERT INTO telefonosclientes 
+                                (telefono, etiqueta, idCliente) 
+                            VALUES 
+                                (?, ?, ?)
+                            """;
+
+        try (Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
+             
+            for (Telefono tel : telefonos) {
+                ps.setString(1, tel.getEtiqueta());
+                ps.setString(2, tel.getTelefono());
+                ps.setInt(3, idCliente);
+                ps.addBatch();
+            }
+
+            ps.executeBatch();
+            LOG.info("Se registraron " + telefonos.size() + " teléfonos para el cliente ID: " + idCliente);
+
+        } catch (SQLException ex) {
+            LOG.severe("Error SQL al registrar teléfonos: " + ex);
+            throw new PersistenciaException("No se pudieron registrar los teléfonos del cliente.", ex);
         }
     }
 

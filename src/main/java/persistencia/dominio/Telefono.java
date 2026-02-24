@@ -39,7 +39,7 @@ public class Telefono {
     /**
      * Usuario al que pertenece el teléfono.
      */
-    private Usuario usuario;
+    private Cliente cliente;
 
     /**
      * Constructor por omisión.
@@ -55,8 +55,8 @@ public class Telefono {
      * @param telefono número telefónico
      * @param etiqueta tipo o descripción del teléfono
      */
-    public Telefono(Usuario usuario, int idTelefono, String telefono, String etiqueta) {
-        this.usuario = usuario;
+    public Telefono(Cliente cliente, int idTelefono, String telefono, String etiqueta) {
+        this.cliente = cliente;
         this.idTelefono = idTelefono;
         this.telefono = telefono;
         this.etiqueta = etiqueta;
@@ -67,17 +67,17 @@ public class Telefono {
      *
      * @return usuario propietario del teléfono
      */
-    public Usuario getUsuario() {
-        return usuario;
+    public Usuario getCliente() {
+        return cliente;
     }
 
     /**
      * Establece el usuario asociado al teléfono.
      *
-     * @param usuario nuevo usuario propietario
+     * @param cliente nuevo usuario propietario
      */
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 
     /**
@@ -142,7 +142,7 @@ public class Telefono {
     @Override
     public String toString() {
         return "Telefono{"
-                + "usuario=" + usuario
+                + "usuario=" + cliente
                 + ", idTelefono=" + idTelefono
                 + ", telefono=" + telefono
                 + ", etiqueta=" + etiqueta
