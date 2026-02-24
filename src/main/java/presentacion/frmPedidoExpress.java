@@ -1,6 +1,9 @@
 package presentacion;
 
+import Negocio.BOs.IPizzaBO;
 import Negocio.DTOs.PizzaDTO;
+import Negocio.Fabrica.FabricaBOs;
+import Negocio.excepciones.NegocioException;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,32 +17,35 @@ import presentacion.vistas.panTarjetaPizza;
  */
 public class frmPedidoExpress extends javax.swing.JFrame {
 
-    private List<PizzaDTO> listaPizzas;
-
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmPedidoExpress.class.getName());
+    private FabricaBOs fabricaBOs = new FabricaBOs();
+    private IPizzaBO pizzaBO;
 
     public frmPedidoExpress() {
-        listaPizzas = new ArrayList<>();
         initComponents();
+        this.pizzaBO = fabricaBOs.obtenerProductos();
         cargarPizzasEnElPanel();
     }
 
     private void cargarPizzasEnElPanel() {
-        panPizzas.setLayout(new java.awt.GridLayout(0, 3, 15, 15));
 
-        // Recorremos la lista y creamos una tarjeta por cada pizza
-        for (PizzaDTO pizza : listaPizzas) {
-            // Creamos un nuevo panel tarjeta
-            panTarjetaPizza nuevaTarjeta = new panTarjetaPizza();
+        panPizzas.removeAll();
+        panPizzas.setLayout(new java.awt.GridLayout(0, 2, 15, 15));
 
-            // Le pasamos los datos
-            nuevaTarjeta.setDatosPizza(pizza);
+        try {
+            List<PizzaDTO> pizzas = pizzaBO.obtenerProductos();
 
-            // La agregamos al panel
-            panPizzas.add(nuevaTarjeta);
+            for (PizzaDTO pizza : pizzas) {
+                if (pizza.getEstado() == PizzaDTO.EstadoPizza.DISPONIBLE) {
+                    panTarjetaPizza tarjeta = new panTarjetaPizza();
+                    tarjeta.setDatosPizza(pizza, this);
+                    panPizzas.add(tarjeta);
+                }
+            }
+
+        } catch (NegocioException ex) {
+            System.getLogger(frmCatalogo.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
-
-        // Actualizamos el panel para que Swing dibuje los cambios en pantalla
         panPizzas.revalidate();
         panPizzas.repaint();
     }
@@ -63,6 +69,7 @@ public class frmPedidoExpress extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         btnMenu = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
         panPizzas = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -193,7 +200,7 @@ public class frmPedidoExpress extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(lblTituloLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
-                    .addComponent(panNavegacion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1193, Short.MAX_VALUE)))
+                    .addComponent(panNavegacion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         panLogoLayout.setVerticalGroup(
             panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -213,26 +220,28 @@ public class frmPedidoExpress extends javax.swing.JFrame {
         panPizzas.setLayout(panPizzasLayout);
         panPizzasLayout.setHorizontalGroup(
             panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 1197, Short.MAX_VALUE)
         );
         panPizzasLayout.setVerticalGroup(
             panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 541, Short.MAX_VALUE)
+            .addGap(0, 556, Short.MAX_VALUE)
         );
+
+        jScrollPane1.setViewportView(panPizzas);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(panPizzas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(panLogo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(panPizzas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 558, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -264,7 +273,7 @@ public class frmPedidoExpress extends javax.swing.JFrame {
     }//GEN-LAST:event_btnMenuMouseExited
 
     private void btnInicioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInicioMouseClicked
-        
+
     }//GEN-LAST:event_btnInicioMouseClicked
 
     private void btnCarritoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCarritoMouseClicked
@@ -311,6 +320,7 @@ public class frmPedidoExpress extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblLogo;
     private javax.swing.JLabel lblTituloLogo;
     private javax.swing.JPanel panLogo;

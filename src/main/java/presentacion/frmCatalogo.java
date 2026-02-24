@@ -1,4 +1,4 @@
-    package presentacion;
+package presentacion;
 
 import Negocio.BOs.IPizzaBO;
 import Negocio.BOs.PizzaBO;
@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import negocio.bos.CarritoBO;
+import persistencia.fabrica.FabricaDAO;
 import presentacion.vistas.panTarjetaPizza;
 
 /**
@@ -47,7 +48,7 @@ public class frmCatalogo extends javax.swing.JFrame {
             for (PizzaDTO pizza : pizzas) {
                 if (pizza.getEstado() == PizzaDTO.EstadoPizza.DISPONIBLE) {
                     panTarjetaPizza tarjeta = new panTarjetaPizza();
-                    tarjeta.setDatosPizza(pizza);
+                    tarjeta.setDatosPizza(pizza, this);
                     panPizzas.add(tarjeta);
                 }
             }

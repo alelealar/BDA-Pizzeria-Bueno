@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.mindrot.jbcrypt.BCrypt;
 import persistencia.conexion.IConexionBD;
 import persistencia.dominio.Pedido;
 import persistencia.dominio.PedidoResumen;
@@ -494,6 +495,9 @@ public class PedidoDAO implements IPedidoDAO {
             ps.setString(3, pin);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    if (BCrypt.checkpw(pin, rs.getString("PIN"))) {
+                        throw new PersistenciaException("El PIN no coincidee");
+                    }
                     return rs.getInt(1) > 0;
                 }
                 return false;

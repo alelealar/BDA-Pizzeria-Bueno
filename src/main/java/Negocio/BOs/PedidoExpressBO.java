@@ -2,6 +2,7 @@ package Negocio.BOs;
 
 import Negocio.DTOs.PedidoExpressDTO;
 import Negocio.excepciones.NegocioException;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.logging.Logger;
@@ -62,54 +63,21 @@ public class PedidoExpressBO implements IPedidoExpressBO {
             throw new NegocioException("El Pedido no debe tener un id asignado.");
         }
 
-        if (pedto.getEstadoActual() != null) {
-            pedto.setEstadoActual(pedto.getEstadoActual().trim());
-        }
-
-        if (pedto.getFolio() != null) {
-            pedto.setFolio(pedto.getFolio().trim());
-        }
-
-        if (pedto.getPIN() != null) {
-            pedto.setPIN(pedto.getPIN().trim());
-        }
-
         if (pedto.getNota() != null) {
             pedto.setNota(pedto.getNota().trim());
-        }
-
-        if (pedto.getEstadoActual() == null || pedto.getEstadoActual().isBlank()) {
-            throw new NegocioException("El estado del pedido es obligatorio.");
-        }
-
-        if (pedto.getFechaHoraPedido() == null) {
-            throw new NegocioException("La fecha del pedido es obligatoria.");
         }
 
         if (pedto.getFechaHoraPedido().isAfter(LocalDateTime.now())) {
             throw new NegocioException("La fecha del pedido no puede ser futura.");
         }
 
-        if (pedto.getFechaHoraEntrega() == null) {
-            throw new NegocioException("La fecha de entrega es obligatoria.");
-        }
-
         if (pedto.getFechaHoraEntrega().isBefore(pedto.getFechaHoraPedido())) {
             throw new NegocioException("La fecha de entrega no puede ser anterior a la fecha del pedido.");
         }
 
-        String regex = "^-?\\d+$";
-        if (pedto.getFolio() == null || !pedto.getFolio().matches(regex)) {
-            throw new NegocioException("El folio no es válido");
-        }
-
-        if (pedto.getPIN() == null || !pedto.getPIN().matches(regex)) {
-            throw new NegocioException("El PIN no es válido");
-        }
-
         PedidoExpress pedidoEx = new PedidoExpress();
-        pedidoEx.setFolio(pedto.getFolio());
-        pedidoEx.setPin(pedto.getPIN());
+        pedidoEx.setFolio(String.format("PEDEX-%05d", generarFolio()).trim());
+        pedidoEx.setPin(String.valueOf(generarFolio()).trim());
         pedidoEx.setNota(pedto.getNota());
 
         try {
@@ -171,18 +139,40 @@ public class PedidoExpressBO implements IPedidoExpressBO {
         }
     }
 
-    /**
-     * Método pendiente para actualizar un PedidoExpress.
-     *
-     * Actualmente no está implementado.
-     *
-     * @param pedto DTO con la información a actualizar
-     * @return PedidoExpressDTO actualizado
-     * @throws NegocioException cuando se implemente la lógica correspondiente
-     */
     @Override
     public PedidoExpressDTO actualizarPedidoExpress(PedidoExpressDTO pedto) throws NegocioException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    public String generarPIN() throws NegocioException {
+        SecureRandom random = new SecureRandom();
+        int digitos = 10000000 + random.nextInt(90000000);
+        return String.valueOf(digitos);
+    }
+
+    public String generarPinUnico() throws NegocioException {
+        try {
+            String pin;
+
+            do {
+                pin = generarPIN();
+            } while (pedidoExpressDAO.obtenerPinValido(pin));
+            return pin;
+        } catch (PersistenciaException ex) {
+            LOG.severe(ex.getMessage());
+            throw new NegocioException(ex.getMessage());
+        }
+
+    }
+
+    public int generarFolio() throws NegocioException {
+        int ultimo;
+        try {
+            ultimo = pedidoExpressDAO.obtenerFolio();
+            return ultimo + 1;
+        } catch (PersistenciaException ex) {
+            LOG.severe(ex.getMessage());
+            throw new NegocioException(ex.getMessage());
+        }
+    }
 }

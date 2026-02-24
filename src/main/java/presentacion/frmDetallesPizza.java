@@ -20,8 +20,10 @@ public class frmDetallesPizza extends javax.swing.JFrame {
     public void cargarInformacionPizza(PizzaDTO pizza) {
         lblDescripcionPizza.setText(pizza.getDescripcion());
         lblTituloPïzza.setText(pizza.getNombre());
-        lblImagenPizza.setIcon(new javax.swing.ImageIcon(pizza.getRutaImagen()));
+        lblImagenPizza.setIcon(new javax.swing.ImageIcon("/" + pizza.getRutaImagen()));
+        jrbChica.setText(pizza.getTamanio() + ": $" + String.valueOf(pizza.getPrecio()) + " MXN");
         jrbMediana.setText(pizza.getTamanio() + ": $" + String.valueOf(pizza.getPrecio()) + " MXN");
+        jrbGrande.setText(pizza.getTamanio() + ": $" + String.valueOf(pizza.getPrecio()) + " MXN");
     }
 
     /**
@@ -45,9 +47,9 @@ public class frmDetallesPizza extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         btnVolver = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        jtbChica = new javax.swing.JRadioButton();
+        jrbChica = new javax.swing.JRadioButton();
         jrbMediana = new javax.swing.JRadioButton();
-        jtbGrande = new javax.swing.JRadioButton();
+        jrbGrande = new javax.swing.JRadioButton();
         txtNota = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         lblDescripcionPizza = new javax.swing.JLabel();
@@ -88,14 +90,9 @@ public class frmDetallesPizza extends javax.swing.JFrame {
 
         panPizzas.setBackground(new java.awt.Color(255, 232, 216));
 
-        lblImagenPizza.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
         lblTituloPïzza.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        lblTituloPïzza.setText("xacdsadasdasdasd");
-        lblTituloPïzza.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         lblIngredientesPizza.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        lblIngredientesPizza.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         btnAnadir.setBackground(new java.awt.Color(255, 92, 56));
         btnAnadir.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -155,19 +152,22 @@ public class frmDetallesPizza extends javax.swing.JFrame {
             .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
         );
 
-        grupoTamanios.add(jtbChica);
-        jtbChica.setText("Chica");
-        jtbChica.addActionListener(new java.awt.event.ActionListener() {
+        grupoTamanios.add(jrbChica);
+        jrbChica.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jrbChica.setText("Chica");
+        jrbChica.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jtbChicaActionPerformed(evt);
+                jrbChicaActionPerformed(evt);
             }
         });
 
         grupoTamanios.add(jrbMediana);
+        jrbMediana.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jrbMediana.setText("Mediana");
 
-        grupoTamanios.add(jtbGrande);
-        jtbGrande.setText("Grande");
+        grupoTamanios.add(jrbGrande);
+        jrbGrande.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jrbGrande.setText("Grande");
 
         txtNota.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         txtNota.setForeground(java.awt.Color.gray);
@@ -195,7 +195,6 @@ public class frmDetallesPizza extends javax.swing.JFrame {
         jLabel8.setText("Nota:");
 
         lblDescripcionPizza.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        lblDescripcionPizza.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         javax.swing.GroupLayout panPizzasLayout = new javax.swing.GroupLayout(panPizzas);
         panPizzas.setLayout(panPizzasLayout);
@@ -208,50 +207,55 @@ public class frmDetallesPizza extends javax.swing.JFrame {
                 .addComponent(btnAnadir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15))
             .addGroup(panPizzasLayout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(lblImagenPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblImagenPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblIngredientesPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtNota, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8)
-                    .addComponent(jtbGrande)
-                    .addComponent(jrbMediana)
-                    .addComponent(jtbChica)
-                    .addComponent(lblTituloPïzza, javax.swing.GroupLayout.PREFERRED_SIZE, 417, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblIngredientesPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblDescripcionPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblTituloPïzza, javax.swing.GroupLayout.PREFERRED_SIZE, 417, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jrbMediana)
+                    .addComponent(jrbChica)
+                    .addComponent(jrbGrande))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panPizzasLayout.setVerticalGroup(
             panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panPizzasLayout.createSequentialGroup()
-                .addGap(27, 27, 27)
                 .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblImagenPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(panPizzasLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(lblImagenPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panPizzasLayout.createSequentialGroup()
+                        .addGap(27, 27, 27)
                         .addComponent(lblTituloPïzza, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(lblDescripcionPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jtbChica)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(43, 43, 43)
+                        .addComponent(jrbChica)
+                        .addGap(18, 18, 18)
                         .addComponent(jrbMediana)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtbGrande)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblIngredientesPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(16, 16, 16)
+                        .addGap(18, 18, 18)
+                        .addComponent(jrbGrande)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblIngredientesPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panPizzasLayout.createSequentialGroup()
+                        .addGap(88, 88, 88)
+                        .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnAnadir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnVolver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(15, 15, 15))
+                    .addGroup(panPizzasLayout.createSequentialGroup()
                         .addComponent(jLabel8)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtNota, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 0, 0)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 77, Short.MAX_VALUE)
-                .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnAnadir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnVolver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15))
+                        .addComponent(txtNota, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -315,9 +319,9 @@ public class frmDetallesPizza extends javax.swing.JFrame {
 
     }//GEN-LAST:event_txtNotaMouseReleased
 
-    private void jtbChicaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtbChicaActionPerformed
+    private void jrbChicaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jrbChicaActionPerformed
 
-    }//GEN-LAST:event_jtbChicaActionPerformed
+    }//GEN-LAST:event_jrbChicaActionPerformed
 
     private void btnVolverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVolverMouseClicked
         frmCatalogo catalogo = new frmCatalogo();
@@ -358,9 +362,9 @@ public class frmDetallesPizza extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JRadioButton jrbChica;
+    private javax.swing.JRadioButton jrbGrande;
     private javax.swing.JRadioButton jrbMediana;
-    private javax.swing.JRadioButton jtbChica;
-    private javax.swing.JRadioButton jtbGrande;
     private javax.swing.JLabel lblDescripcionPizza;
     private javax.swing.JLabel lblImagenPizza;
     private javax.swing.JLabel lblIngredientesPizza;

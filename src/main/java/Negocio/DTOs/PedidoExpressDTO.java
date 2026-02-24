@@ -71,6 +71,14 @@ public class PedidoExpressDTO {
         this.folio = folio;
     }
 
+    public PedidoExpressDTO(int idPedido, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega) {
+        this.idPedido = idPedido;
+        this.nota = nota;
+        this.estadoActual = estadoActual;
+        this.fechaHoraPedido = fechaHoraPedido;
+        this.fechaHoraEntrega = fechaHoraEntrega;
+    }
+
     /**
      * Obtiene el id del pedido.
      *
