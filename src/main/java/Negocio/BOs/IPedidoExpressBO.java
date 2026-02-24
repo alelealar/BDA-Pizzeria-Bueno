@@ -1,6 +1,5 @@
 package Negocio.BOs;
 
-import Negocio.DTOs.PedidoDTO;
 import Negocio.DTOs.PedidoExpressDTO;
 import Negocio.excepciones.NegocioException;
 
@@ -35,13 +34,5 @@ public interface IPedidoExpressBO {
      */
     public PedidoExpressDTO obtenerPedidoExpressPorId(int idPedidoExpress) throws NegocioException;
 
-    /**
-     * Metodo que permite actualizar un PedidoExpress existente.
-     *
-     * @param pedto Objeto PedidoExpressDTO con la informacion actualizada.
-     * @return PedidoExpressDTO con los datos modificados.
-     * @throws NegocioException Si ocurre algun error durante la actualizacion.
-     */
     public PedidoExpressDTO actualizarPedidoExpress(PedidoExpressDTO pedto) throws NegocioException;
-
 }

@@ -10,6 +10,7 @@ import Negocio.BOs.IPedidoBO;
 import Negocio.BOs.PedidoBO;
 import Negocio.DTOs.PedidoDetalleDTO;
 import Negocio.DTOs.PedidoTablaDTO;
+import Negocio.Fabrica.FabricaBOs;
 import Negocio.excepciones.NegocioException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,8 +39,7 @@ public class frmEmpleados extends javax.swing.JFrame {
 
         tablaPedidos.getSelectionModel().addListSelectionListener(e -> validarBoton());
 
-        IConexionBD conexion = new ConexionBD();
-        pedidoBO = new PedidoBO(new PedidoDAO(conexion));
+        pedidoBO = FabricaBOs.crearPedidoBO();
 
         cargarTabla();
     }
@@ -401,8 +401,7 @@ public class frmEmpleados extends javax.swing.JFrame {
                 java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
                 ),
                 p.getTotal(),
-                p.getEstado(),
-            };
+                p.getEstado(),};
 
             modelo.addRow(fila);
         }
@@ -433,9 +432,9 @@ public class frmEmpleados extends javax.swing.JFrame {
         String[] estadosDisponibles;
 
         if (estadoActual.equals("PENDIENTE")) {
-            estadosDisponibles = new String[]{"LISTO", "CANCELADO", "NO ENTREGADO"};
+            estadosDisponibles = new String[]{"LISTO", "CANCELADO"};
         } else if (estadoActual.equals("LISTO")) {
-            estadosDisponibles = new String[]{"ENTREGADO", "CANCELADO", "NO ENTREGADO"};
+            estadosDisponibles = new String[]{"ENTREGADO", "CANCELADO"};
         } else {
             return;
         }

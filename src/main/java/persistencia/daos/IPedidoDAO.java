@@ -59,10 +59,10 @@ public interface IPedidoDAO {
     public List<PedidoResumen> obtenerPedidosTabla() throws PersistenciaException;
     
     public List<PedidoResumen> obtenerPedidosFiltrados(String filtro) throws PersistenciaException;
-    
-    public void cambiarEstado(int idPedido, String nuevoEstado) throws PersistenciaException;
-    
+     
     public PedidoDetalleDTO obtenerDetallePedido(int idPedido) throws PersistenciaException;
     
     public boolean validarFolioYPIN(int idPedido, String folio, String pin) throws PersistenciaException;
+    
+    public void cambiarEstado(int idPedido, String nuevoEstado) throws PersistenciaException;
 }

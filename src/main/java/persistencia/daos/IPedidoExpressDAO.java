@@ -40,4 +40,18 @@ public interface IPedidoExpressDAO {
      * @throws PersistenciaException Si ocurre un error en la consulta.
      */
     List<PedidoExpress> obtenerPedidosExpress() throws PersistenciaException;
+
+    int obtenerFolio() throws PersistenciaException;
+
+    /**
+     *
+     * @param pin
+     * @return
+     * @throws PersistenciaException
+     */
+    boolean obtenerPinValido(String pin) throws PersistenciaException;
+    
+    
+    
+    PedidoExpress actualizarPedidoExpress(PedidoExpress pedidoExpress) throws PersistenciaException;
 }

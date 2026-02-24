@@ -173,7 +173,7 @@ public class PedidoBO implements IPedidoBO {
                         r.getFechaHora(),
                         r.getTotal(),
                         r.getEstado(),
-                        r.getTipo() 
+                        r.getTipo()
                 );
                 listaDTO.add(dto);
             }
@@ -214,13 +214,32 @@ public class PedidoBO implements IPedidoBO {
         }
     }
 
+//    @Override
+//    public void cambiarEstado(int idPedido, String nuevoEstado) throws NegocioException {
+//        try {
+//            pedidoDAO.cambiarEstado(idPedido, nuevoEstado);
+//        } catch (PersistenciaException ex) {
+//            throw new NegocioException("Error al cambiar estado de pedido", ex);
+//        }
+//    }
+
     @Override
-    public void cambiarEstado(int idPedido, String nuevoEstado) throws NegocioException {
+    public void cambiarEstado(int idPedido, String nuevoEstado)
+            throws NegocioException {
+
         try {
+
             pedidoDAO.cambiarEstado(idPedido, nuevoEstado);
-        } catch (PersistenciaException ex) {
-            throw new NegocioException("Error al cambiar estado de pedido", ex);
+
+        } catch (PersistenciaException e) {
+
+            throw new NegocioException(
+                    e.getMessage(),
+                    e
+            );
+
         }
+
     }
 
     @Override

@@ -5,6 +5,7 @@ import Negocio.DTOs.PedidoDTO;
 import Negocio.DTOs.PedidoDetalleDTO;
 import Negocio.DTOs.PedidoTablaDTO;
 import Negocio.excepciones.NegocioException;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.mindrot.jbcrypt.BCrypt;
 import persistencia.conexion.IConexionBD;
 import persistencia.dominio.Pedido;
 import persistencia.dominio.PedidoResumen;
@@ -406,23 +408,22 @@ public class PedidoDAO implements IPedidoDAO {
         }
     }
 
-    @Override
-    public void cambiarEstado(int idPedido, String nuevoEstado) throws PersistenciaException {
-
-        String sql = "UPDATE Pedidos SET estadoActual = ? WHERE idPedido = ?";
-
-        try (Connection con = conexionBD.crearConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setString(1, nuevoEstado);
-            ps.setInt(2, idPedido);
-
-            ps.executeUpdate();
-
-        } catch (SQLException ex) {
-            throw new PersistenciaException("Error al cambiar estado del pedido");
-        }
-    }
-
+//    @Override
+//    public void cambiarEstado(int idPedido, String nuevoEstado) throws PersistenciaException {
+//
+//        String sql = "UPDATE Pedidos SET estadoActual = ? WHERE idPedido = ?";
+//
+//        try (Connection con = conexionBD.crearConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
+//
+//            ps.setString(1, nuevoEstado);
+//            ps.setInt(2, idPedido);
+//
+//            ps.executeUpdate();
+//
+//        } catch (SQLException ex) {
+//            throw new PersistenciaException("Error al cambiar estado del pedido");
+//        }
+//    }
     @Override
     public PedidoDetalleDTO obtenerDetallePedido(int idPedido) throws PersistenciaException {
 
@@ -487,19 +488,53 @@ public class PedidoDAO implements IPedidoDAO {
 
     @Override
     public boolean validarFolioYPIN(int idPedido, String folio, String pin) throws PersistenciaException {
-        String sql = "SELECT COUNT(*) FROM PedidosExpress WHERE idPedido = ? AND folio = ? AND PIN = ?";
+
+        String sql = "SELECT PIN FROM PedidosExpress WHERE idPedido = ? AND folio = ?";
+
         try (Connection con = conexionBD.crearConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
+
             ps.setInt(1, idPedido);
             ps.setString(2, folio);
-            ps.setString(3, pin);
+
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
+
+                if (!rs.next()) {
+                    return false; // no existe pedido con ese folio
                 }
-                return false;
+
+                String pinHash = rs.getString("PIN");
+
+                if (!BCrypt.checkpw(pin, pinHash)) {
+                    throw new PersistenciaException("El PIN no coincide");
+                }
+
+                return true;
             }
+
         } catch (SQLException e) {
             throw new PersistenciaException("Error validando folio y PIN", e);
+        }
+    }
+
+    @Override
+    public void cambiarEstado(int idPedido, String nuevoEstado) throws PersistenciaException {
+
+        try {
+
+            CallableStatement cs = conexionBD.crearConexion().prepareCall("{CALL SP_CAMBIAR_ESTADO(?, ?)}");
+
+            cs.setInt(1, idPedido);
+            cs.setString(2, nuevoEstado);
+
+            cs.execute();
+
+        } catch (SQLException e) {
+
+            throw new PersistenciaException(
+                    "Error al cambiar el estado del pedido",
+                    e
+            );
+
         }
     }
 }

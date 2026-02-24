@@ -1,5 +1,6 @@
 package presentacion;
 
+import persistencia.fabrica.FabricaDAO;
 import Negocio.BOs.ClienteBO;
 import Negocio.DTOs.ClienteDTO;
 import Negocio.excepciones.NegocioException;
@@ -15,7 +16,6 @@ import javax.swing.JPanel;
 import persistencia.dominio.DetallePedido;
 import persistencia.dominio.Pedido;
 import persistencia.dominio.Pizza;
-import persitencia.fabrica.FabricaDAO;
 import presentacion.vistas.frmAvisos;
 import presentacion.vistas.panPedido;
 import presentacion.vistas.panTarjetaPizza;
@@ -31,7 +31,7 @@ public class frmRegistrarse extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmRegistrarse.class.getName());
 
     public frmRegistrarse() {
-        this.clienteBO = FabricaDAO.getClienteBO();
+       // this.clienteBO = FabricaDAO.getClienteBO();
         initComponents();
 
     }

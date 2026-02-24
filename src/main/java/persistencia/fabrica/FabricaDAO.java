@@ -1,19 +1,20 @@
+package persistencia.fabrica;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package persitencia.fabrica;
 
-import Negocio.BOs.ClienteBO;
-import Negocio.BOs.UsuarioBO;
 import persistencia.DAOS.ClienteDAO;
 import persistencia.DAOS.IClienteDAO;
 import persistencia.conexion.ConexionBD;
 import persistencia.conexion.IConexionBD;
 import persistencia.daos.IPedidoDAO;
-import persistencia.daos.IUsuarioDAO;
+import persistencia.daos.IPedidoExpressDAO;
+import persistencia.daos.IPizzaDAO;
 import persistencia.daos.PedidoDAO;
-import persistencia.daos.UsuarioDAO;
+import persistencia.daos.PedidoExpressDAO;
+import persistencia.daos.PizzaDAO;
 
 /**
  *
@@ -33,16 +34,19 @@ public class FabricaDAO {
         IClienteDAO clienteDAO = new ClienteDAO(conexion);
         return clienteDAO;
     }
-    
-    public static UsuarioBO getUsuarioBO() {
-        UsuarioDAO usuarioDAO = new UsuarioDAO(conexion);
-        return new UsuarioBO(usuarioDAO);
+
+    public static IPizzaDAO obtenerPizzaDAO() {
+        IPizzaDAO pizzaDAO = new PizzaDAO(conexion);
+        return pizzaDAO;
+    }
+
+    public static IPedidoExpressDAO obtenerPedidoExpressDAO() {
+        IPedidoExpressDAO pedidoExpressDAO = new PedidoExpressDAO(conexion);
+        return pedidoExpressDAO;
     }
     
-    public static ClienteBO getClienteBO(){
-        ClienteDAO clienteDAO = new ClienteDAO(conexion);
-        return new ClienteBO(clienteDAO);
+    public static IPedidoDAO crearPedidoDAO() {
+        return new PedidoDAO(conexion);
     }
- 
 
 }

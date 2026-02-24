@@ -1,5 +1,6 @@
 package presentacion;
 
+import persistencia.fabrica.FabricaDAO;
 import Negocio.BOs.UsuarioBO;
 import Negocio.DTOs.UsuarioDTO;
 import Negocio.excepciones.NegocioException;
@@ -14,7 +15,6 @@ import persistencia.daos.UsuarioDAO;
 import persistencia.dominio.DetallePedido;
 import persistencia.dominio.Pedido;
 import persistencia.dominio.Pizza;
-import persitencia.fabrica.FabricaDAO;
 import presentacion.vistas.panPedido;
 import presentacion.vistas.panTarjetaPizza;
 
@@ -29,7 +29,7 @@ public class frmIniciarSesion extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmIniciarSesion.class.getName());
 
     public frmIniciarSesion() {
-        this.usuarioBO = FabricaDAO.getUsuarioBO();
+     //   this.usuarioBO = FabricaDAO.getUsuarioBO();
         initComponents();
 
     }

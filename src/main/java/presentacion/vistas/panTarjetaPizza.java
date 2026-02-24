@@ -4,14 +4,20 @@ import javax.swing.JOptionPane;
 import Negocio.DTOs.PizzaDTO;
 import java.awt.Color;
 import negocio.bos.CarritoBO;
+import presentacion.frmCatalogo;
+import presentacion.frmDetallePedido;
+import presentacion.frmDetallesPizza;
+import presentacion.frmPedidoExpress;
 
 /**
  *
  * @author Brian
  */
 public class panTarjetaPizza extends javax.swing.JPanel {
-
+    
     private PizzaDTO pizza;
+    private frmCatalogo catalogo;
+    private frmPedidoExpress pedidoEx;
 
     /**
      * Creates new form panTarjetaPizza
@@ -19,15 +25,23 @@ public class panTarjetaPizza extends javax.swing.JPanel {
     public panTarjetaPizza() {
         initComponents();
     }
-
-    public void setDatosPizza(PizzaDTO pizza) {
+    
+    public void setDatosPizza(PizzaDTO pizza, frmCatalogo catalogo) {
+        this.catalogo = catalogo;
         this.pizza = pizza;
         lblNombrePizza.setText(pizza.getNombre());
         lblImagenPizza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizza.getRutaImagen())));
     }
-
+    
+    public void setDatosPizza(PizzaDTO pizza, frmPedidoExpress pedidoEX) {
+        this.pedidoEx = pedidoEX;
+        this.pizza = pizza;
+        lblNombrePizza.setText(pizza.getNombre());
+        lblImagenPizza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizza.getRutaImagen())));
+    }
+    
     private Runnable accionAgregar;
-
+    
     public void setAccionAgregar(Runnable accion) {
         this.accionAgregar = accion;
     }
@@ -55,6 +69,9 @@ public class panTarjetaPizza extends javax.swing.JPanel {
 
         btnAgregar.setBackground(new java.awt.Color(255, 92, 56));
         btnAgregar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnAgregarMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnAgregarMouseEntered(evt);
             }
@@ -67,6 +84,11 @@ public class panTarjetaPizza extends javax.swing.JPanel {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("+Añadir");
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel1MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout btnAgregarLayout = new javax.swing.GroupLayout(btnAgregar);
         btnAgregar.setLayout(btnAgregarLayout);
@@ -114,6 +136,17 @@ public class panTarjetaPizza extends javax.swing.JPanel {
     private void btnAgregarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarMouseExited
         btnAgregar.setBackground(Color.decode("#FF5C38"));
     }//GEN-LAST:event_btnAgregarMouseExited
+
+    private void btnAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarMouseClicked
+        frmDetallesPizza frmPizza = new frmDetallesPizza();
+        frmPizza.cargarInformacionPizza(pizza);
+        frmPizza.setVisible(true);
+        catalogo.dispose();
+    }//GEN-LAST:event_btnAgregarMouseClicked
+
+    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel1MouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
