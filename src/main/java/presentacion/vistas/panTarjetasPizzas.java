@@ -4,7 +4,11 @@
  */
 package presentacion.vistas;
 
+import Negocio.BOs.ICarritoBO;
+import Negocio.BOs.IPedidoBO;
+import Negocio.BOs.IPizzaBO;
 import Negocio.DTOs.PizzaDTO;
+import Negocio.Fabrica.FabricaBOs;
 import java.awt.Color;
 import presentacion.frmCatalogo;
 import presentacion.frmDetallesPizza;

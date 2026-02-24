@@ -52,6 +52,7 @@ public class frmCatalogo extends javax.swing.JFrame {
                 if (pizza.getEstado() == PizzaDTO.EstadoPizza.DISPONIBLE) {
                     panTarjetasPizzas tarjeta = new panTarjetasPizzas();
                     tarjeta.setDatosPizza(pizza, this);
+                    System.out.println(pizza);
                     panPizzas.add(tarjeta);
                 }
             }
@@ -71,7 +72,14 @@ public class frmCatalogo extends javax.swing.JFrame {
             for (PizzaDTO pizza : pizzas) {
                 if (!pizzasFiltradas.containsKey(pizza.getNombre())) {
                     pizzasFiltradas.put(pizza.getNombre(), pizza);
+                } else {
+                    //guardamos los ids, tamaños y precios de las demas pizzas.
+                    String tamanio = pizza.getTamanios().get(0);
+                    double precio = pizza.getPrecios().get(0);
+                    int id = pizza.getIdPizza();
+                    pizzasFiltradas.get(pizza.getNombre()).setVariante(tamanio, precio, id);
                 }
+
             }
         } catch (NegocioException ex) {
             System.getLogger(frmCatalogo.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);

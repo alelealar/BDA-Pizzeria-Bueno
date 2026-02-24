@@ -25,16 +25,16 @@ public class frmDetallesPizza extends javax.swing.JFrame {
         jrbMediana.setVisible(false);
         jrbGrande.setVisible(false);
 
-        if (pizza.getTamanios().get(0) != null) {
+        if (pizza.getTamanios().size() >= 1) {
             jrbChica.setText(pizza.getTamanios().get(0) + ": $" + String.valueOf(pizza.getPrecios().get(0)) + " MXN");
             jrbChica.setVisible(true);
 
         }
-        if (pizza.getTamanios().get(1) != null) {
+        if (pizza.getTamanios().size() >= 2) {
             jrbMediana.setText(pizza.getTamanios().get(1) + ": $" + String.valueOf(pizza.getPrecios().get(1)) + " MXN");
             jrbMediana.setVisible(true);
         }
-        if (pizza.getTamanios().get(2) != null) {
+        if (pizza.getTamanios().size() >= 3) {
             jrbGrande.setText(pizza.getTamanios().get(2) + ": $" + String.valueOf(pizza.getPrecios().get(2)) + " MXN");
             jrbGrande.setVisible(true);
 
