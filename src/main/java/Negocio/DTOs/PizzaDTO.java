@@ -17,8 +17,10 @@ public class PizzaDTO {
 
     private int idPizza;
     private String nombre;
+    private String tamanio;
     private String descripcion;
     private String rutaImagen;
+    private double precio;
 
     public enum EstadoPizza {
         DISPONIBLE,
@@ -37,6 +39,14 @@ public class PizzaDTO {
         this.estado = estado;
     }
 
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
     public void setVariante(String tamanio, double precio) {
         this.tamanios.add(tamanio);
         this.precios.add(precio);
@@ -45,6 +55,23 @@ public class PizzaDTO {
     public PizzaDTO() {
     }
 
+    public PizzaDTO(int idPizza, String nombre, String tamanio, String descripcion, String rutaImagen, EstadoPizza estado) {
+        this.idPizza = idPizza;
+        this.nombre = nombre;
+        this.tamanio = tamanio;
+        this.descripcion = descripcion;
+        this.rutaImagen = rutaImagen;
+        this.estado = estado;
+    }
+
+    public String getTamanio() {
+        return tamanio;
+    }
+
+    public void setTamanio(String tamanio) {
+        this.tamanio = tamanio;
+    }
+    
     public int getIdPizza() {
         return idPizza;
     }
@@ -92,7 +119,8 @@ public class PizzaDTO {
     public List<Double> getPrecios() {
         return precios;
     }
-
+    
+    
     @Override
     public String toString() {
         return "PizzaDTO{" + "idPizza=" + idPizza + ", nombre=" + nombre + ", descripcion=" + descripcion + ", rutaImagen=" + rutaImagen + ", tamanios=" + tamanios + ", precios=" + precios + ", estado=" + estado + '}';

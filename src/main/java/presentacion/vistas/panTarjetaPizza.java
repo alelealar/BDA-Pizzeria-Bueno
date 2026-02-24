@@ -1,11 +1,8 @@
 package presentacion.vistas;//GEN-FIRST:event_btnAgregarMouseExited
 //GEN-LAST:event_btnAgregarMouseExited
-import javax.swing.JOptionPane;
 import Negocio.DTOs.PizzaDTO;
 import java.awt.Color;
-import negocio.bos.CarritoBO;
 import presentacion.frmCatalogo;
-import presentacion.frmDetallePedido;
 import presentacion.frmDetallesPizza;
 import presentacion.frmPedidoExpress;
 
@@ -32,29 +29,26 @@ public class panTarjetaPizza extends javax.swing.JPanel {
         this.catalogo = catalogo;
         this.pizzaFiltrada = pizzaFiltrada;
         lblNombrePizza.setText(pizzaFiltrada.getNombre());
-        lblImagenPizza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizzaFiltrada.getRutaImagen())));
+//        lblImagenPizza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizzaFiltrada.getRutaImagen())));
     }
 
-    public void setDatosPizza(PizzaDTO pizzaFiltrada, frmPedidoExpress pedidoEX) {
-        this.pedidoEx = pedidoEX;
-        this.pizzaFiltrada = pizzaFiltrada;
-    
-    public void setDatosPizza(PizzaDTO pizza, frmCatalogo catalogo) {
-        this.catalogo = catalogo;
-        this.pizza = pizza;
-        lblNombrePizza.setText(pizza.getNombre());
-        lblImagenPizza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizza.getRutaImagen())));
-    }
-    
+
+//    public void setDatosPizza(PizzaDTO pizza, frmCatalogo catalogo) {
+//        this.catalogo = catalogo;
+//        this.pizza = pizza;
+//        lblNombrePizza.setText(pizza.getNombre());
+//        lblImagenPizza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizza.getRutaImagen())));
+//    }
+
     public void setDatosPizza(PizzaDTO pizza, frmPedidoExpress pedidoEX) {
         this.pedidoEx = pedidoEX;
         this.pizza = pizza;
         lblNombrePizza.setText(pizza.getNombre());
-        lblImagenPizza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizza.getRutaImagen())));
+      //  lblImagenPizza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizza.getRutaImagen())));
     }
-    
+
     private Runnable accionAgregar;
-    
+
     public void setAccionAgregar(Runnable accion) {
         this.accionAgregar = accion;
     }
@@ -85,9 +79,11 @@ public class panTarjetaPizza extends javax.swing.JPanel {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnAgregarMouseClicked(evt);
             }
+
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnAgregarMouseEntered(evt);
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btnAgregarMouseExited(evt);
             }
@@ -106,60 +102,54 @@ public class panTarjetaPizza extends javax.swing.JPanel {
         javax.swing.GroupLayout btnAgregarLayout = new javax.swing.GroupLayout(btnAgregar);
         btnAgregar.setLayout(btnAgregarLayout);
         btnAgregarLayout.setHorizontalGroup(
-            btnAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                btnAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
         );
         btnAgregarLayout.setVerticalGroup(
-            btnAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
+                btnAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(lblNombrePizza, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
-                .addGap(26, 26, 26)
-                .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblImagenPizza, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblNombrePizza, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                                .addGap(26, 26, 26)
+                                .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(lblImagenPizza, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(lblImagenPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblNombrePizza)
-                        .addGap(7, 7, 7))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
-                        .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblImagenPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(lblNombrePizza)
+                                                .addGap(7, 7, 7))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                                                .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addContainerGap())))
         );
     }// </editor-fold>                        
 
-    private void btnAgregarMouseEntered(java.awt.event.MouseEvent evt) {                                        
+    private void btnAgregarMouseEntered(java.awt.event.MouseEvent evt) {
         btnAgregar.setBackground(Color.decode("#E82F07"));
-    }                                       
+    }
 
-    private void btnAgregarMouseExited(java.awt.event.MouseEvent evt) {                                       
+    private void btnAgregarMouseExited(java.awt.event.MouseEvent evt) {
         btnAgregar.setBackground(Color.decode("#FF5C38"));
-    }                                      
+    }
 
-    private void btnAgregarMouseClicked(java.awt.event.MouseEvent evt) {                                        
-        frmDetallesPizza frmPizza = new frmDetallesPizza();
-        frmPizza.cargarInformacionPizza(pizza);
-        frmPizza.setVisible(true);
-        catalogo.dispose();
-    }                                       
 
-    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {                                     
+    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
-    }                                    
+    }
 
     private void btnAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarMouseClicked
         frmDetallesPizza frmPizza = new frmDetallesPizza();
@@ -167,7 +157,6 @@ public class panTarjetaPizza extends javax.swing.JPanel {
         frmPizza.setVisible(true);
         catalogo.dispose();
     }//GEN-LAST:event_btnAgregarMouseClicked
-
 
     // Variables declaration - do not modify                     
     private javax.swing.JPanel btnAgregar;

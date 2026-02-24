@@ -13,6 +13,7 @@ import java.util.List;
  * @author RAYMUNDO
  */
 public interface IPizzaBO {
-
+    
     public List<PizzaDTO> obtenerProductos() throws NegocioException;
+    
 }

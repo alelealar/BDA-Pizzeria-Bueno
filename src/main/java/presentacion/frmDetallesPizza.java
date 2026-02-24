@@ -41,11 +41,6 @@ public void cargarInformacionPizza(PizzaDTO pizza) {
 
         }
     }
-        lblImagenPizza.setIcon(new javax.swing.ImageIcon("/" + pizza.getRutaImagen()));
-        jrbChica.setText(pizza.getTamanio() + ": $" + String.valueOf(pizza.getPrecio()) + " MXN");
-        jrbMediana.setText(pizza.getTamanio() + ": $" + String.valueOf(pizza.getPrecio()) + " MXN");
-        jrbGrande.setText(pizza.getTamanio() + ": $" + String.valueOf(pizza.getPrecio()) + " MXN");
-        }
 
     /**
      * This method is called from within the constructor to initialize the form.

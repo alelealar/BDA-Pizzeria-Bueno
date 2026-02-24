@@ -498,14 +498,8 @@ public class PedidoDAO implements IPedidoDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
 
-                if (rs.next()) {
-                    if (BCrypt.checkpw(pin, rs.getString("PIN"))) {
-                        throw new PersistenciaException("El PIN no coincidee");
-                    }
-                    return rs.getInt(1) > 0;
-
                 if (!rs.next()) {
-                    return false; // no existe pedido con ese folio
+                    return false; // No existe pedido con ese folio
                 }
 
                 String pinHash = rs.getString("PIN");

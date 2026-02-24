@@ -6,11 +6,13 @@
 package Negocio.Fabrica;
 
 import Negocio.BOs.ClienteBO;
+import Negocio.BOs.IPedidoBO;
+import Negocio.BOs.PedidoBO;
 import Negocio.BOs.PedidoExpressBO;
 import Negocio.BOs.PizzaBO;
 import Negocio.BOs.UsuarioBO;
 import Negocio.BOs.TelefonoBO;
-import persitencia.fabrica.FabricaDAO;
+import persistencia.fabrica.FabricaDAO;
 
 /**
  *
@@ -26,27 +28,29 @@ public class FabricaBOs {
         PizzaBO pizzaBO = new PizzaBO(FabricaDAO.obtenerPizzaDAO());
         return pizzaBO;
     }
-    
+
     public static PedidoExpressBO obtenerPedidoExpress() {
         PedidoExpressBO pedidoExBO = new PedidoExpressBO(FabricaDAO.obtenerPedidoExpressDAO());
         return pedidoExBO;
     }
-    
-    public static UsuarioBO obtenerUsuario(){
+
+    public static UsuarioBO obtenerUsuario() {
         UsuarioBO usuarioBO = new UsuarioBO(FabricaDAO.obtenerUsuarioDAO());
         return usuarioBO;
     }
-    
-    public static ClienteBO obtenerCliente(){
+
+    public static ClienteBO obtenerCliente() {
         ClienteBO pedidoExBO = new ClienteBO(FabricaDAO.obtenerClienteDAO());
         return pedidoExBO;
     }
-    
-    public static TelefonoBO obtenerTelefono(){
+
+    public static TelefonoBO obtenerTelefono() {
         TelefonoBO telefonoBO = new TelefonoBO(FabricaDAO.obtenerTelefonoDAO());
         return telefonoBO;
     }
+
+    public static IPedidoBO crearPedidoBO() {
+        return new PedidoBO(FabricaDAO.crearPedidoDAO());
+    }
+
 }
-
-    
-
