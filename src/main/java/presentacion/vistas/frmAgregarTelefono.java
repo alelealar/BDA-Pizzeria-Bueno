@@ -38,7 +38,7 @@ public class frmAgregarTelefono extends javax.swing.JFrame {
     */
     
     public frmAgregarTelefono(frmRegistrarse registrarse) {
-        this.registrarse = registrarse; // Guardamos la referencia a la ventana principal
+        this.registrarse = registrarse;
         this.telefonoBO = FabricaBOs.obtenerTelefono();
         initComponents();
     }
@@ -158,17 +158,11 @@ public class frmAgregarTelefono extends javax.swing.JFrame {
         btnAceptar.setLayout(btnAceptarLayout);
         btnAceptarLayout.setHorizontalGroup(
             btnAceptarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, btnAceptarLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(lblAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
         );
         btnAceptarLayout.setVerticalGroup(
             btnAceptarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btnAceptarLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(lblAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
         );
 
         txtEtiqueta.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -237,17 +231,11 @@ public class frmAgregarTelefono extends javax.swing.JFrame {
         btnvolver.setLayout(btnvolverLayout);
         btnvolverLayout.setHorizontalGroup(
             btnvolverLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, btnvolverLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
         );
         btnvolverLayout.setVerticalGroup(
             btnvolverLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btnvolverLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
         );
 
         jLabel1.setFont(new java.awt.Font("Segoe UI Variable", 1, 14)); // NOI18N
@@ -429,6 +417,15 @@ public class frmAgregarTelefono extends javax.swing.JFrame {
     }//GEN-LAST:event_btnvolverMouseExited
 
     private void lblAceptarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblAceptarMouseClicked
+        if(!txtEtiqueta.getText().matches("^[A-Za-zñÑáéíóúÁÉÍÓÚ0-9\\s]+$")){
+            JOptionPane.showMessageDialog(this, "La etiqueta solo debe contener letras y números", "Etiqueta inválida", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if(!txtTelefono.getText().matches("[0-9]{10}")){
+            JOptionPane.showMessageDialog(this, "El numero telefonico debe contener 10 números solamente", "Telefono inválido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         String etiqueta = txtEtiqueta.getText();
         String numero = txtTelefono.getText();
         

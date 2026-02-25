@@ -1,5 +1,8 @@
 package com.mycompany.papizzabda;
 
+import presentacion.frmIniciarSesion;
+import presentacion.frmInicio;
+
 /**
  *
  * @author sando
@@ -7,6 +10,9 @@ package com.mycompany.papizzabda;
 public class PapizzaBDA {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        frmInicio login = new frmInicio();
+        login.setVisible(true);
+        
+        
     }
 }

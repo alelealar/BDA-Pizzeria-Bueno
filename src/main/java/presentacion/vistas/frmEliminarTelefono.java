@@ -4,7 +4,19 @@
  */
 package presentacion.vistas;
 
+import Negocio.BOs.ITelefonoBO;
+import Negocio.DTOs.ClienteDTO;
+import Negocio.DTOs.TelefonoDTO;
+import Negocio.Fabrica.FabricaBOs;
+import Negocio.excepciones.NegocioException;
 import java.awt.Color;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import presentacion.frmRegistrarse;
 
 /**
  *
@@ -14,14 +26,23 @@ public class frmEliminarTelefono extends javax.swing.JFrame {
 
     private int mouseX;
     private int mouseY;
+    
+    private ITelefonoBO telefonoBO;
+    private ClienteDTO cliente;
+    
+    private frmRegistrarse registrarse;
+    private List<TelefonoDTO> telefonos;    
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmEliminarTelefono.class.getName());
 
     /**
      * Ventana para ingresar un teléfono.
      */
-    public frmEliminarTelefono() {
+    public frmEliminarTelefono(List<TelefonoDTO> telefonos) {
         initComponents();
+        this.registrarse = registrarse;
+        this.telefonos = telefonos;
+        cargarTelefonos();
     }
 
     /**
@@ -39,12 +60,12 @@ public class frmEliminarTelefono extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnAceptar = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
+        lblAceptar = new javax.swing.JLabel();
         btnvolver = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         panelContenedorTabla = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblTelefonos = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setLocationByPlatform(true);
@@ -122,26 +143,25 @@ public class frmEliminarTelefono extends javax.swing.JFrame {
             }
         });
 
-        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel5.setText("Aceptar");
+        lblAceptar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        lblAceptar.setForeground(new java.awt.Color(255, 255, 255));
+        lblAceptar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblAceptar.setText("Aceptar");
+        lblAceptar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblAceptarMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout btnAceptarLayout = new javax.swing.GroupLayout(btnAceptar);
         btnAceptar.setLayout(btnAceptarLayout);
         btnAceptarLayout.setHorizontalGroup(
             btnAceptarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, btnAceptarLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(lblAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
         );
         btnAceptarLayout.setVerticalGroup(
             btnAceptarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btnAceptarLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(lblAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
         );
 
         btnvolver.setBackground(new java.awt.Color(255, 92, 56));
@@ -181,8 +201,8 @@ public class frmEliminarTelefono extends javax.swing.JFrame {
 
         panelContenedorTabla.setBackground(new java.awt.Color(255, 255, 255));
 
-        jTable1.setBackground(new java.awt.Color(237, 229, 229));
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblTelefonos.setBackground(new java.awt.Color(237, 229, 229));
+        tblTelefonos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
                 {null, null},
@@ -201,7 +221,7 @@ public class frmEliminarTelefono extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblTelefonos);
 
         javax.swing.GroupLayout panelContenedorTablaLayout = new javax.swing.GroupLayout(panelContenedorTabla);
         panelContenedorTabla.setLayout(panelContenedorTablaLayout);
@@ -336,6 +356,50 @@ public class frmEliminarTelefono extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnAceptarMouseClicked
 
+    private void lblAceptarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblAceptarMouseClicked
+        int filaEliminar = tblTelefonos.getSelectedRow();
+        
+        if(filaEliminar == -1){
+            JOptionPane.showMessageDialog(this, "Selecciona un telefono para eliminar", "sin seleccion", JOptionPane.WARNING_MESSAGE);
+        }
+        
+        int modelRow = tblTelefonos.convertColumnIndexToModel(filaEliminar);
+        
+        if (filaEliminar >= 0 && filaEliminar < telefonos.size()) {
+            telefonos.remove(filaEliminar);
+            cargarTelefonos();
+        }
+        dispose();
+
+    }//GEN-LAST:event_lblAceptarMouseClicked
+
+    private void cargarTelefonos(){
+        DefaultTableModel model = (DefaultTableModel) tblTelefonos.getModel();
+        model.setRowCount(0);
+        for(TelefonoDTO tel: telefonos){
+            Object[] fila = new Object[3];
+            fila[0] = tel.getIdUsuario();
+            fila[1] = tel.getEtiqueta();
+            fila[2] = tel.getTelefono();
+
+            model.addRow(fila);
+        }
+        
+        /*
+        private void lblAceptarMouseClicked(java.awt.event.MouseEvent evt) {                                        
+            int indiceSeleccionado = listaTelefonos.getSelectedIndex();
+
+            if (indiceSeleccionado != -1) { // valida que sí haya algo seleccionado
+                telefonos.remove(indiceSeleccionado);
+                dispose(); // opcional, cerrar ventana
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Selecciona un teléfono para eliminar");
+            }
+        }
+      
+        */
+    }
     /**
      * @param args the command line arguments
      */
@@ -358,7 +422,6 @@ public class frmEliminarTelefono extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new frmEliminarTelefono().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -366,13 +429,13 @@ public class frmEliminarTelefono extends javax.swing.JFrame {
     private javax.swing.JPanel btnSalir;
     private javax.swing.JPanel btnvolver;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JLabel lblAceptar;
     private javax.swing.JPanel panEncabezado;
     private javax.swing.JPanel panelContenedorTabla;
+    private javax.swing.JTable tblTelefonos;
     // End of variables declaration//GEN-END:variables
 }

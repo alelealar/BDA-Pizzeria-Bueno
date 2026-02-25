@@ -17,6 +17,6 @@ public interface ITelefonoBO {
     
     TelefonoDTO agregarTelefono(String etiqueta, String telefono, int idCliente)throws NegocioException;
     
-    void eliminarTelefono(int idCliente, String telefono)throws NegocioException;
+    TelefonoDTO eliminarTelefono(int idTelefono) throws NegocioException;
 
 }

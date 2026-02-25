@@ -19,6 +19,7 @@ public interface ITelefonoDAO {
     
     Telefono agregarTelefono(Telefono telefono) throws PersistenciaException;
     
-    void eliminarTelefono(int idTelefono);
+    Telefono eliminarTelefono(int idTelefono) throws PersistenciaException;
 
+    Telefono obtenerTelefono(int idTelefono) throws PersistenciaException;
 }

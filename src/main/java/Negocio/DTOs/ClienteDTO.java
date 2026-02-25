@@ -5,6 +5,9 @@
 
 package Negocio.DTOs;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Brian Kaleb Sandoval Rodríguez - 00000262741
@@ -26,6 +29,7 @@ public class ClienteDTO {
     private int dia;
     private int mesNum;
     private int anio;
+    private List<TelefonoDTO> telefonos;
 
     public ClienteDTO(int idCliente, String nombres, String apellidoPaterno, String apellidoMaterno, String calle, String numero, String colonia, String CP, int dia, int mesNum, int anio) {
         this.idCliente = idCliente;
@@ -55,7 +59,6 @@ public class ClienteDTO {
     }
 
     public ClienteDTO(String nombres, String apellidos, String calle, String numero, String colonia, String CP, int dia, int mesNum, int anio) {
-        this.idCliente = idCliente;
         this.nombres = nombres;
         this.apellidos = apellidos;
         this.calle = calle;
@@ -67,9 +70,8 @@ public class ClienteDTO {
         this.anio = anio;
     }
     
-    
-
     public ClienteDTO() {
+            this.telefonos = new ArrayList<>();
     }
     
 
@@ -168,6 +170,14 @@ public class ClienteDTO {
 
     public void setAnio(int anio) {
         this.anio = anio;
+    }
+
+    public List<TelefonoDTO> getTelefonos() {
+        return telefonos;
+    }
+
+    public void setTelefonos(List<TelefonoDTO> telefonos) {
+        this.telefonos = telefonos;
     }
     
     

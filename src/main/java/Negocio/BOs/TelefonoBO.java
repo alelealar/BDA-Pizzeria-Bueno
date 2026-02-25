@@ -68,8 +68,30 @@ public class TelefonoBO implements ITelefonoBO{
     }
 
     @Override
-    public void eliminarTelefono(int idCliente, String telefono) throws NegocioException{
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public TelefonoDTO eliminarTelefono(int idTelefono) throws NegocioException{   
+        try{          
+
+            Telefono telefonoGuardado = telefonoDAO.obtenerTelefono(idTelefono);
+
+            telefonoDAO.eliminarTelefono(idTelefono);
+
+            TelefonoDTO telDTO = new TelefonoDTO();
+            telDTO.setTelefono(telefonoGuardado.getTelefono());
+            telDTO.setEtiqueta(telefonoGuardado.getEtiqueta());
+            telDTO.setIdUsuario(
+                telefonoGuardado.getCliente().getIdUsuario()
+            );
+
+            return telDTO;
+
+            
+        } catch (PersistenciaException ex) {
+            LOG.severe("Error sql al eliminar el telefono");
+            throw new NegocioException("Hubo un error al eliminar el telefono seleccionado");
+        }
+        
+        
     }
+    
 
 }

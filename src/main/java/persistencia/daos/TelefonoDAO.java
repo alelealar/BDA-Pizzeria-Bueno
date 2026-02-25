@@ -98,8 +98,67 @@ public class TelefonoDAO implements ITelefonoDAO{
     }
 
     @Override
-    public void eliminarTelefono(int idTelefono) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Telefono eliminarTelefono(int idTelefono) throws PersistenciaException {
+        String comandoSQL = """
+                            DELETE FROM telefonosclientes
+                            WHERE idCliente = ? AND telefono = ?;
+                            """;
+        try(Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)){
+            
+            Telefono telefono = obtenerTelefono(idTelefono);
+            ps.setInt(1, idTelefono);
+            ps.setString(2, telefono.getTelefono());
+            
+            int filasEliminadas = ps.executeUpdate();
+            
+            if(filasEliminadas < 1){
+                LOG.warning("No se logro eliminar el telefono");
+                throw new PersistenciaException("No fue posible eliminar el telefono");
+            }
+            
+            return telefono;
+            
+            
+        } catch (SQLException ex) {
+            LOG.severe("Error SQL al eliminar el telefono");
+            throw new PersistenciaException("Hubo un error al eliminar el telefono. Intentelo mas tarde.");
+        }
+    }
+    
+    
+    public Telefono obtenerTelefono(int idTelefono) throws PersistenciaException{
+        String comandoSQL = """
+                            SELECT 
+                            	idTelefono, 
+                                telefono,
+                                etiqueta, 
+                                idCliente
+                            FROM telefonosclientes
+                            WHERE idTelefono = ?;
+                            """;
+        try(Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)){
+            ps.setInt(1, idTelefono);
+            
+            try(ResultSet rs = ps.executeQuery()){
+                if (!rs.next()) {
+                    LOG.log(Level.WARNING, "No se encontró el telefono con id {0}");
+                    throw new PersistenciaException("No existe el telefono con el ID proporcionado.");
+                }
+                Telefono tel = new Telefono();
+                tel.setIdTelefono(rs.getInt("idTelefono"));
+                tel.setTelefono(rs.getString("telefono"));
+                tel.setEtiqueta(rs.getString("etiqueta"));
+                int idCliente = rs.getInt("idCliente");
+                
+                tel.setCliente(clienteDAO.buscarClientePorId(idCliente));
+                
+                return tel;
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(TelefonoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new PersistenciaException("Error para obtener el telefono");
+        }
     }
 
 }
