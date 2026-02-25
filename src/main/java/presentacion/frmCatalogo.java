@@ -19,27 +19,27 @@ import presentacion.vistas.panTarjetasPizzas;
  * @author Brian
  */
 public class frmCatalogo extends javax.swing.JFrame {
-
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmCatalogo.class.getName());
-
+    
     private int idUsuario;
     private IPizzaBO pizzaBO;
     private boolean express;
     private String token;
-
+    
     public frmCatalogo() {
         initComponents();
         this.pizzaBO = FabricaBOs.obtenerProductos();
         cargarPizzasEnElPanel();
     }
-
+    
     public frmCatalogo(int idUsuario) {
         initComponents();
         this.idUsuario = idUsuario;
         this.pizzaBO = FabricaBOs.obtenerProductos();
         cargarPizzasEnElPanel();
     }
-
+    
     public frmCatalogo(boolean express) {
         initComponents();
         IPedidoExpressBO pedidoExBO = FabricaBOs.obtenerPedidoExpress();
@@ -53,16 +53,16 @@ public class frmCatalogo extends javax.swing.JFrame {
         btnPE.setVisible(false);
         cargarPizzasEnElPanel();
     }
-
+    
     private void cargarPizzasEnElPanel() {
-
+        
         panMostrarPizzas.removeAll();
         panMostrarPizzas.setLayout(new java.awt.GridLayout(0, 2, 15, 15));
-
+        
         try {
             List<PizzaDTO> pizzas = pizzaBO.obtenerProductos();
             List<PizzaDTO> pizzasFiltradas = pizzaBO.agruparPizzasPorNombre();
-
+            
             for (PizzaDTO pizza : pizzasFiltradas) {
                 if (pizza.getEstado() == PizzaDTO.EstadoPizza.DISPONIBLE) {
                     panTarjetasPizzas tarjeta = new panTarjetasPizzas();
@@ -75,7 +75,7 @@ public class frmCatalogo extends javax.swing.JFrame {
                     panMostrarPizzas.add(tarjeta);
                 }
             }
-
+            
         } catch (NegocioException ex) {
             System.getLogger(frmCatalogo.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
@@ -388,9 +388,17 @@ public class frmCatalogo extends javax.swing.JFrame {
     }//GEN-LAST:event_btnActualizarMouseExited
 
     private void btnCarritoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCarritoMouseClicked
-        frmCarrito frmCarrito = new frmCarrito(idUsuario);
-        frmCarrito.setVisible(true);
-        this.dispose();
+        if (express) {
+            frmCarrito frmCarrito = new frmCarrito(token);
+            frmCarrito.setVisible(true);
+            this.dispose();
+        } else {
+            frmCarrito frmCarrito = new frmCarrito(idUsuario);
+            frmCarrito.setVisible(true);
+            this.dispose();
+        }
+        
+
     }//GEN-LAST:event_btnCarritoMouseClicked
 
     private void btnCarritoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCarritoMouseEntered

@@ -50,8 +50,8 @@ public interface IPedidoExpressDAO {
      * @throws PersistenciaException
      */
     boolean obtenerPinValido(String pin) throws PersistenciaException;
-    
-    
-    
+
     PedidoExpress actualizarPedidoExpress(PedidoExpress pedidoExpress) throws PersistenciaException;
+
+    int obtenerCantidadPedidosPorToken(String token) throws PersistenciaException;
 }

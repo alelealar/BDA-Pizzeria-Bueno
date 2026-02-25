@@ -18,6 +18,7 @@ public class PedidoExpressDTO {
     private String estadoActual;
     private LocalDateTime fechaHoraPedido;
     private LocalDateTime fechaHoraEntrega;
+    private String token;
 
     private String PIN;
     private String folio;
@@ -38,8 +39,9 @@ public class PedidoExpressDTO {
      * @param fechaHoraEntrega Fecha y hora estimada de entrega.
      * @param PIN Codigo PIN del pedido.
      * @param folio Folio del pedido.
+     * @param token
      */
-    public PedidoExpressDTO(int idPedido, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, String PIN, String folio) {
+    public PedidoExpressDTO(int idPedido, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, String PIN, String folio, String token) {
         this.idPedido = idPedido;
         this.nota = nota;
         this.estadoActual = estadoActual;
@@ -47,6 +49,7 @@ public class PedidoExpressDTO {
         this.fechaHoraEntrega = fechaHoraEntrega;
         this.PIN = PIN;
         this.folio = folio;
+        this.token = token;
     }
 
     /**
@@ -62,13 +65,14 @@ public class PedidoExpressDTO {
      * @param PIN Codigo PIN del pedido.
      * @param folio Folio del pedido.
      */
-    public PedidoExpressDTO(String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, String PIN, String folio) {
+    public PedidoExpressDTO(String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, String PIN, String folio, String token) {
         this.nota = nota;
         this.estadoActual = estadoActual;
         this.fechaHoraPedido = fechaHoraPedido;
         this.fechaHoraEntrega = fechaHoraEntrega;
         this.PIN = PIN;
         this.folio = folio;
+        this.token = token;
     }
 
     public PedidoExpressDTO(int idPedido, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega) {
@@ -203,6 +207,14 @@ public class PedidoExpressDTO {
      */
     public void setFolio(String folio) {
         this.folio = folio;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
 }
