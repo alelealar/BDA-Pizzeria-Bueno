@@ -9,16 +9,20 @@ import persistencia.DAOS.IClienteDAO;
 import persistencia.conexion.ConexionBD;
 import persistencia.conexion.IConexionBD;
 import persistencia.daos.CarritoDAO;
+import persistencia.daos.CuponDAO;
 import persistencia.daos.DetalleCarritoDAO;
 import persistencia.daos.ICarritoDAO;
+import persistencia.daos.ICuponDAO;
 import persistencia.daos.IDetalleCarritoDAO;
 import persistencia.daos.IPedidoDAO;
 import persistencia.daos.IPedidoExpressDAO;
+import persistencia.daos.IPedidoProgramadoDAO;
 import persistencia.daos.IPizzaDAO;
 import persistencia.daos.ITelefonoDAO;
 import persistencia.daos.IUsuarioDAO;
 import persistencia.daos.PedidoDAO;
 import persistencia.daos.PedidoExpressDAO;
+import persistencia.daos.PedidoProgramadoDAO;
 import persistencia.daos.PizzaDAO;
 import persistencia.daos.TelefonoDAO;
 import persistencia.daos.UsuarioDAO;
@@ -75,5 +79,15 @@ public class FabricaDAO {
     public static IDetalleCarritoDAO obtenerDetalleCarritoDAO() {
         IDetalleCarritoDAO detalleCarritoDAO = new DetalleCarritoDAO(conexion);
         return detalleCarritoDAO;
+    }
+
+    public static ICuponDAO obtenerCuponDAO() {
+        ICuponDAO cuponDAO = new CuponDAO(conexion);
+        return cuponDAO;
+    }
+    
+    public static IPedidoProgramadoDAO crearPedidoProgramadoDAO() {
+        IPedidoProgramadoDAO pp = new PedidoProgramadoDAO(conexion);
+        return pp;
     }
 }

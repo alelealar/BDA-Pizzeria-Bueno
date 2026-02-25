@@ -388,6 +388,7 @@ public class frmDetallesPizza extends javax.swing.JFrame {
                 pantallaCarrito.setVisible(true);
                 this.dispose();
             } else {
+                int idUsuario = 1;
                 carrito.agregarProducto(idUsuario, idPizza, tamanioSeleccionado, 1, nota);
                 frmCarrito pantallaCarrito = new frmCarrito(idUsuario);
                 pantallaCarrito.setVisible(true);

@@ -56,6 +56,8 @@ public class PedidoProgramado extends Pedido {
         this.cliente = cliente;
         this.cupon = cupon;
     }
+    
+    
 
     /**
      * Constructor sin identificador.

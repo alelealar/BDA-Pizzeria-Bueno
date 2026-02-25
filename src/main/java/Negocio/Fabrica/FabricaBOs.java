@@ -6,16 +6,24 @@
 package Negocio.Fabrica;
 
 import Negocio.BOs.ClienteBO;
+import Negocio.BOs.CuponBO;
 import Negocio.BOs.DetalleCarritoBO;
 import Negocio.BOs.ICarritoBO;
+import Negocio.BOs.ICuponBO;
 import Negocio.BOs.IDetalleCarritoBO;
 import Negocio.BOs.IPedidoBO;
+import Negocio.BOs.IPedidoProgramadoBO;
 import Negocio.BOs.PedidoBO;
 import Negocio.BOs.PedidoExpressBO;
+import Negocio.BOs.PedidoProgramadoBO;
 import Negocio.BOs.PizzaBO;
 import Negocio.BOs.UsuarioBO;
 import Negocio.BOs.TelefonoBO;
 import negocio.bos.CarritoBO;
+import persistencia.daos.CuponDAO;
+import persistencia.daos.ICuponDAO;
+import persistencia.daos.IPedidoProgramadoDAO;
+import persistencia.daos.PedidoProgramadoDAO;
 import persistencia.dominio.Carrito;
 import persistencia.fabrica.FabricaDAO;
 
@@ -67,4 +75,13 @@ public class FabricaBOs {
         CarritoBO carritoBO = new CarritoBO(FabricaDAO.obtenerCarritoDAO(), FabricaDAO.obtenerDetalleCarritoDAO(), FabricaDAO.obtenerPizzaDAO());
         return carritoBO;
     }
+
+    public static ICuponBO obtenerCupon() {
+        return new CuponBO(FabricaDAO.obtenerCuponDAO());
+    }
+    
+    public static IPedidoProgramadoBO crearPedidoProgramado() {
+        return new PedidoProgramadoBO(FabricaDAO.crearPedidoProgramadoDAO());
+    }
+
 }

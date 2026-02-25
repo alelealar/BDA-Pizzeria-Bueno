@@ -2,12 +2,16 @@ package presentacion;
 
 import Negocio.BOs.DetalleCarritoBO;
 import Negocio.BOs.ICarritoBO;
+import Negocio.BOs.ICuponBO;
 import Negocio.BOs.IDetalleCarritoBO;
 import Negocio.BOs.IPedidoExpressBO;
+import Negocio.BOs.IPedidoProgramadoBO;
 import Negocio.DTOs.CarritoDTO;
+import Negocio.DTOs.CuponDTO;
 import Negocio.DTOs.DetalleCarritoDTO;
 import Negocio.DTOs.DetallePedidoDTO;
 import Negocio.DTOs.PedidoExpressDTO;
+import Negocio.DTOs.PedidoProgramadoDTO;
 import Negocio.Fabrica.FabricaBOs;
 import Negocio.excepciones.NegocioException;
 import java.awt.BorderLayout;
@@ -37,12 +41,14 @@ public class frmCarrito extends javax.swing.JFrame {
     private boolean express;
     private String token;
     private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(frmCarrito.class.getName());
+    private CuponDTO cuponAplicado = null;
+    private IPedidoProgramadoBO pedidoProgramadoBO;
 
     public frmCarrito(int idUsuario) {
         this.idUsuario = idUsuario;
         initComponents();
         this.carritoBo = FabricaBOs.obtenerCarrito();
-
+        this.pedidoProgramadoBO = FabricaBOs.crearPedidoProgramado();
         // Configuración del Layout para que las tarjetas se apilen verticalmente
         panPedidos.setLayout(new BoxLayout(panPedidos, BoxLayout.Y_AXIS));
 
@@ -61,7 +67,7 @@ public class frmCarrito extends javax.swing.JFrame {
         jLabel3.setVisible(false);
         btnPE.setVisible(false);
         jSeparator1.setVisible(false);
-        btnValidar1.setVisible(false);
+        btnValidar.setVisible(false);
         btnMispedidos.setVisible(false);
 
         this.carritoBo = FabricaBOs.obtenerCarrito();
@@ -177,10 +183,8 @@ public class frmCarrito extends javax.swing.JFrame {
             """);
 
             for (DetalleCarritoDTO detalle : carritoActual.getDetalles()) {
-
                 double subtotalProducto = detalle.getCantidad() * detalle.getPrecioUnitario();
                 totalAcumulado += subtotalProducto;
-
                 resumen.append(detalle.getCantidad())
                         .append("x ")
                         .append(detalle.getNombrePizza())
@@ -189,7 +193,6 @@ public class frmCarrito extends javax.swing.JFrame {
                         .append(")   $")
                         .append(String.format("%.2f", subtotalProducto))
                         .append("\n");
-
                 if (detalle.getNota() != null && !detalle.getNota().isBlank()) {
                     resumen.append("   Nota: ")
                             .append(detalle.getNota())
@@ -197,9 +200,23 @@ public class frmCarrito extends javax.swing.JFrame {
                 }
             }
 
+            double totalFinal = totalAcumulado;
+
+            if (cuponAplicado != null) {
+                double descuento = totalAcumulado * (cuponAplicado.getPorcentajeDescuento() / 100.0);
+                totalFinal = totalAcumulado - descuento;
+
+                resumen.append("--------------------------------\n");
+                resumen.append("Descuento (")
+                        .append(cuponAplicado.getPorcentajeDescuento())
+                        .append("%): -$")
+                        .append(String.format("%.2f", descuento))
+                        .append("\n");
+            }
+
             resumen.append("--------------------------------\n");
             resumen.append("Total: $")
-                    .append(String.format("%.2f", totalAcumulado))
+                    .append(String.format("%.2f", totalFinal))
                     .append(" MXN\n");
 
             txaDetallePedidos.setText(resumen.toString());
@@ -234,7 +251,7 @@ public class frmCarrito extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         panPizzas = new javax.swing.JPanel();
         txtCupon = new javax.swing.JTextField();
-        btnValidar1 = new javax.swing.JPanel();
+        btnValidar = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -462,16 +479,16 @@ public class frmCarrito extends javax.swing.JFrame {
             }
         });
 
-        btnValidar1.setBackground(new java.awt.Color(255, 135, 109));
-        btnValidar1.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnValidar.setBackground(new java.awt.Color(255, 135, 109));
+        btnValidar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnValidar1MouseClicked(evt);
+                btnValidarMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnValidarMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnValidar1MouseExited(evt);
+                btnValidarMouseExited(evt);
             }
         });
 
@@ -479,18 +496,18 @@ public class frmCarrito extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Validar");
 
-        javax.swing.GroupLayout btnValidar1Layout = new javax.swing.GroupLayout(btnValidar1);
-        btnValidar1.setLayout(btnValidar1Layout);
-        btnValidar1Layout.setHorizontalGroup(
-            btnValidar1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btnValidar1Layout.createSequentialGroup()
+        javax.swing.GroupLayout btnValidarLayout = new javax.swing.GroupLayout(btnValidar);
+        btnValidar.setLayout(btnValidarLayout);
+        btnValidarLayout.setHorizontalGroup(
+            btnValidarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btnValidarLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jLabel3)
                 .addContainerGap(18, Short.MAX_VALUE))
         );
-        btnValidar1Layout.setVerticalGroup(
-            btnValidar1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(btnValidar1Layout.createSequentialGroup()
+        btnValidarLayout.setVerticalGroup(
+            btnValidarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btnValidarLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel3)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -534,7 +551,7 @@ public class frmCarrito extends javax.swing.JFrame {
                                     .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtCupon, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(3, 3, 3)
-                                .addComponent(btnValidar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(btnValidar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(btnOrdenar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(25, 25, 25))
@@ -552,7 +569,7 @@ public class frmCarrito extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnValidar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnValidar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtCupon))
                         .addGap(0, 0, 0)
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -635,12 +652,12 @@ public class frmCarrito extends javax.swing.JFrame {
     }//GEN-LAST:event_txtCuponFocusLost
 
     private void btnValidarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnValidarMouseEntered
-        btnValidar1.setBackground(Color.decode("#E82F07"));
+        btnValidar.setBackground(Color.decode("#E82F07"));
     }//GEN-LAST:event_btnValidarMouseEntered
 
-    private void btnValidar1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnValidar1MouseExited
-        btnValidar1.setBackground(Color.decode("#FF876D"));
-    }//GEN-LAST:event_btnValidar1MouseExited
+    private void btnValidarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnValidarMouseExited
+        btnValidar.setBackground(Color.decode("#FF876D"));
+    }//GEN-LAST:event_btnValidarMouseExited
 
     private void btnPEMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPEMouseEntered
         btnCarrito.setBackground(Color.decode("#FF5C38"));
@@ -650,9 +667,24 @@ public class frmCarrito extends javax.swing.JFrame {
         btnCarrito.setBackground(Color.decode("#FF5C38"));
     }//GEN-LAST:event_btnPEMouseExited
 
-    private void btnValidar1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnValidar1MouseClicked
+    private void btnValidarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnValidarMouseClicked
+        String codigo = txtCupon.getText().trim();
 
-    }//GEN-LAST:event_btnValidar1MouseClicked
+        try {
+            ICuponBO cuponBO = FabricaBOs.obtenerCupon();
+            cuponAplicado = cuponBO.validarCupon(codigo);
+
+            JOptionPane.showMessageDialog(this,
+                    "Cupón válido. Descuento: "
+                    + cuponAplicado.getPorcentajeDescuento() + "%");
+
+            cargarPedidoTextArea();
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+            cuponAplicado = null;
+        }
+    }//GEN-LAST:event_btnValidarMouseClicked
 
     private void btnOrdenarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrdenarActionPerformed
         try {
@@ -693,7 +725,29 @@ public class frmCarrito extends javax.swing.JFrame {
                     aviso.setVisible(true);
                     carritoBo.finalizarExpress(token);
                 } else {
-                    JOptionPane.showMessageDialog(this, "¡Pedido Realizado!");
+                    CarritoDTO carritoDto = carritoBo.obtenerCarritoCompleto(idUsuario);
+
+                    PedidoProgramadoDTO pedidoDTO = new PedidoProgramadoDTO();
+
+                    pedidoDTO.setFechaHoraEntrega(LocalDateTime.now().plusHours(1)); // ejemplo
+                    pedidoDTO.setNota("Pedido programado desde carrito");
+                    pedidoDTO.setIdCliente(carritoDto.getIdUsuario());
+                    pedidoDTO.setIdCupon(
+                            cuponAplicado != null ? cuponAplicado.getIdCupon() : null
+                    );
+                    PedidoProgramadoDTO resultado = pedidoProgramadoBO.agregarPedidoProgramado(pedidoDTO);
+
+                    List<DetalleCarritoDTO> detalles = carritoDto.getDetalles();
+
+                    for (DetalleCarritoDTO detalle : detalles) {
+                        eliminarPaneles(detalle);
+                    }
+
+                    JOptionPane.showMessageDialog(this,
+                            "Pedido programado registrado.\nFolio: "
+                            + resultado.getIdPedido()
+                    );
+
                     cargarCarrito();
                 }
             }
@@ -735,7 +789,7 @@ public class frmCarrito extends javax.swing.JFrame {
     private javax.swing.JPanel btnMispedidos;
     private javax.swing.JButton btnOrdenar;
     private javax.swing.JPanel btnPE;
-    private javax.swing.JPanel btnValidar1;
+    private javax.swing.JPanel btnValidar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

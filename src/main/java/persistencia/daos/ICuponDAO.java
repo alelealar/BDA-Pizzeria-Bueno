@@ -20,4 +20,6 @@ public interface ICuponDAO {
     Cupon obtenerCuponPorId(String id) throws PersistenciaException;
     
     Cupon incrementarUsosCupon(Cupon cupon) throws PersistenciaException;
+    
+    public Cupon validarCupon(String codigo) throws PersistenciaException;
 }

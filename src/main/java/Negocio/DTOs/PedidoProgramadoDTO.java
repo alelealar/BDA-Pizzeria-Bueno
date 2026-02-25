@@ -6,6 +6,7 @@
 package Negocio.DTOs;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 
@@ -22,16 +23,16 @@ public class PedidoProgramadoDTO {
     private int idPedido;
     private String nota; 
     private String estadoActual;
-    private LocalDate fechaHoraPedido;
-    private LocalDate fechaHoraEntrega;
+    private LocalDateTime fechaHoraPedido;
+    private LocalDateTime fechaHoraEntrega;
 
     private int numPedido;  
     private int idCliente;
     private String nombreCliente;
-    private int idCupon;
+    private String idCupon;
     private double porcentajeDescuento;
 
-    public PedidoProgramadoDTO(int idPedido, String nota, String estadoActual, LocalDate fechaHoraPedido, LocalDate fechaHoraEntrega, int numPedido, int idCliente, String nombreCliente, int idCupon, double porcentajeDescuento) {
+    public PedidoProgramadoDTO(int idPedido, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, int numPedido, int idCliente, String nombreCliente, String idCupon, double porcentajeDescuento) {
         this.idPedido = idPedido;
         this.nota = nota;
         this.estadoActual = estadoActual;
@@ -44,7 +45,7 @@ public class PedidoProgramadoDTO {
         this.porcentajeDescuento = porcentajeDescuento;
     }
 
-    public PedidoProgramadoDTO(String nota, String estadoActual, LocalDate fechaHoraPedido, LocalDate fechaHoraEntrega, int numPedido, int idCliente, String nombreCliente, int idCupon, double porcentajeDescuento) {
+    public PedidoProgramadoDTO(String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, int numPedido, int idCliente, String nombreCliente, String idCupon, double porcentajeDescuento) {
         this.nota = nota;
         this.estadoActual = estadoActual;
         this.fechaHoraPedido = fechaHoraPedido;
@@ -56,7 +57,7 @@ public class PedidoProgramadoDTO {
         this.porcentajeDescuento = porcentajeDescuento;
     }
 
-    public PedidoProgramadoDTO(int idPedido, String nota, String estadoActual, LocalDate fechaHoraPedido, LocalDate fechaHoraEntrega, int numPedido, int idCliente, String nombreCliente) {
+    public PedidoProgramadoDTO(int idPedido, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, int numPedido, int idCliente, String nombreCliente) {
         this.idPedido = idPedido;
         this.nota = nota;
         this.estadoActual = estadoActual;
@@ -94,19 +95,19 @@ public class PedidoProgramadoDTO {
         this.estadoActual = estadoActual;
     }
 
-    public LocalDate getFechaHoraPedido() {
+    public LocalDateTime getFechaHoraPedido() {
         return fechaHoraPedido;
     }
 
-    public void setFechaHoraPedido(LocalDate fechaHoraPedido) {
+    public void setFechaHoraPedido(LocalDateTime fechaHoraPedido) {
         this.fechaHoraPedido = fechaHoraPedido;
     }
 
-    public LocalDate getFechaHoraEntrega() {
+    public LocalDateTime getFechaHoraEntrega() {
         return fechaHoraEntrega;
     }
 
-    public void setFechaHoraEntrega(LocalDate fechaHoraEntrega) {
+    public void setFechaHoraEntrega(LocalDateTime fechaHoraEntrega) {
         this.fechaHoraEntrega = fechaHoraEntrega;
     }
 
@@ -134,11 +135,11 @@ public class PedidoProgramadoDTO {
         this.nombreCliente = nombreCliente;
     }
 
-    public int getIdCupon() {
+    public String getIdCupon() {
         return idCupon;
     }
 
-    public void setIdCupon(int idCupon) {
+    public void setIdCupon(String idCupon) {
         this.idCupon = idCupon;
     }
 
@@ -149,6 +150,4 @@ public class PedidoProgramadoDTO {
     public void setPorcentajeDescuento(double porcentajeDescuento) {
         this.porcentajeDescuento = porcentajeDescuento;
     }
-    
-    
 }

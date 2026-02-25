@@ -31,11 +31,11 @@ import persistencia.excepciones.PersistenciaException;
  * @author Alejandra Leal Armenta - 00000262719
  * @author Paulina Michel Guevara Cervantez - 00000262724
  */
-public class PedidoProgramadoDAO implements IPedidoProgramadoDAO{
-    
-     /**
+public class PedidoProgramadoDAO implements IPedidoProgramadoDAO {
+
+    /**
      * Componente encargado de crear conexiones con la base de datos.
-     * 
+     *
      * Se inyecta por constructor para reducir acoplamiento y facilitar pruebas.
      */
     private final IConexionBD conexionBD;
@@ -57,34 +57,57 @@ public class PedidoProgramadoDAO implements IPedidoProgramadoDAO{
     public PedidoProgramadoDAO(IConexionBD conexionBD) {
         this.conexionBD = conexionBD;
         this.cuponDAO = new CuponDAO(conexionBD);
-        this.clienteDAO = new ClienteDAO(conexionBD); 
+        this.clienteDAO = new ClienteDAO(conexionBD);
     }
-    
-    public PedidoProgramado agregarPedidoProgramado(PedidoProgramado pp) throws PersistenciaException {
-        String sp = "{CALL SP_REGISTAR_PEDIDO_PROGRAMADO(?, ?, ?, ?, ?, ?)}"; // 5 IN, 1 OUT
 
-        try (Connection conn = this.conexionBD.crearConexion(); CallableStatement cs = conn.prepareCall(sp)) {
-             
-            cs.setTimestamp(1, Timestamp.valueOf(pp.getFechaHoraEntrega()));
-            cs.setString(2, pp.getNota());
-            cs.setInt(3, pp.getNumPedido());
-            cs.setString(4, pp.getCupon().getIdCupon());
-            cs.setInt(5, pp.getCliente().getIdCliente());
+     @Override
+    public PedidoProgramado agregarPedidoProgramado(PedidoProgramado pedido)
+            throws PersistenciaException {
 
-            cs.registerOutParameter(6, Types.INTEGER);
+        String sp = "{CALL SP_REGISTAR_PEDIDO_PROGRAMADO(?, ?, ?, ?, ?)}";
+
+        try (Connection conn = conexionBD.crearConexion();
+             CallableStatement cs = conn.prepareCall(sp)) {
+
+            // IN 1: nota
+            cs.setString(1, pedido.getNota());
+
+            // IN 2: idCupon (nullable)
+            if (pedido.getCupon() != null) {
+                cs.setString(2, pedido.getCupon().getIdCupon());
+            } else {
+                cs.setNull(2, Types.VARCHAR);
+            }
+
+            // IN 3: idUsuario
+            cs.setInt(3, pedido.getCliente().getIdUsuario());
+
+            // IN 4: fechaHoraProgramada
+            cs.setTimestamp(4, Timestamp.valueOf(pedido.getFechaHoraEntrega()));
+
+            // OUT 5: idPedido generado
+            cs.registerOutParameter(5, Types.INTEGER);
 
             cs.execute();
 
-            int idPedidoGenerado = cs.getInt(6);
-            pp.setIdPedido(idPedidoGenerado);
+            int idGenerado = cs.getInt(5);
 
-            return pp;
+            if (idGenerado <= 0) {
+                throw new PersistenciaException("No se pudo insertar el pedido programado");
+            }
+
+            pedido.setIdPedido(idGenerado);
+
+            LOG.info("Pedido programado insertado con ID: " + idGenerado);
+
+            return pedido;
 
         } catch (SQLException ex) {
-            LOG.severe("Error SQL al insertar pedido programado con SP: " + ex);
-            throw new PersistenciaException("Error al insertar el pedido programado mediante SP", ex);
+            LOG.severe("Error al insertar pedido programado: " + ex.getMessage());
+            throw new PersistenciaException("Error al insertar pedido programado", ex);
         }
     }
+
 
     @Override
     public List<PedidoProgramado> obtenerPedidosPorCliente(int idCliente) throws PersistenciaException {
@@ -98,16 +121,16 @@ public class PedidoProgramadoDAO implements IPedidoProgramadoDAO{
                       FROM pedidosProgramados
                       WHERE idUsuario = ?;
                       """;
-        
-        try(Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)){
+
+        try (Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
             ps.setInt(1, idCliente);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     PedidoProgramado p = extraerPedidoProgramado(rs);
                     pedidos.add(p);
                 }
-            }   
+            }
             return pedidos;
         } catch (SQLException ex) {
             LOG.severe("Error SQL al obtener pedidos programados: " + ex);
@@ -130,8 +153,7 @@ public class PedidoProgramadoDAO implements IPedidoProgramadoDAO{
                       WHERE tc.telefono = ?;
                       """;
 
-        try (Connection conn = this.conexionBD.crearConexion();
-             PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
+        try (Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
 
             ps.setString(1, telefono);
 
@@ -148,8 +170,7 @@ public class PedidoProgramadoDAO implements IPedidoProgramadoDAO{
             LOG.severe("Error SQL al obtener pedidos programados por teléfono: " + ex);
             throw new PersistenciaException("No se pudieron recuperar los pedidos asociados al teléfono proporcionado.");
         }
-    }   
-
+    }
 
     @Override
     public List<PedidoProgramado> obtenerPedidosProgramados() throws PersistenciaException {
@@ -163,8 +184,7 @@ public class PedidoProgramadoDAO implements IPedidoProgramadoDAO{
                             FROM PedidosProgramados;
                             """;
 
-        try (Connection conn = this.conexionBD.crearConexion();
-             PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
+        try (Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -180,7 +200,7 @@ public class PedidoProgramadoDAO implements IPedidoProgramadoDAO{
             throw new PersistenciaException("No se pudieron recuperar los pedidos programados en este momento.");
         }
     }
-    
+
     /**
      * Extrae un objeto PedidoProgramado desde un ResultSet
      */
@@ -191,7 +211,7 @@ public class PedidoProgramadoDAO implements IPedidoProgramadoDAO{
             pedido.setIdPedido(rs.getInt("idPedido"));
             pedido.setTipo(Pedido.Tipo.PROGRAMADO);
             pedido.setNumPedido(rs.getInt("numPedido"));
-            
+
             int idCliente = rs.getInt("idUsuario");
             Cliente cliente = this.clienteDAO.buscarClientePorId(idCliente);
             pedido.setCliente(cliente);
@@ -211,5 +231,5 @@ public class PedidoProgramadoDAO implements IPedidoProgramadoDAO{
             throw new PersistenciaException("Error al extraer el pedido programado.", ex);
         }
     }
-    
+
 }

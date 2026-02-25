@@ -5,6 +5,7 @@
 package persistencia.daos;
 
 import Negocio.DTOs.CuponDTO;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,11 +25,11 @@ import persistencia.excepciones.PersistenciaException;
  * @author Alejandra Leal Armenta - 00000262719
  * @author Paulina Michel Guevara Cervantez - 00000262724
  */
-public class CuponDAO implements ICuponDAO{
-    
+public class CuponDAO implements ICuponDAO {
+
     /**
      * Componente encargado de crear conexiones con la base de datos.
-     * 
+     *
      * Se inyecta por constructor para reducir acoplamiento y facilitar pruebas.
      */
     private final IConexionBD conexionBD;
@@ -49,7 +50,6 @@ public class CuponDAO implements ICuponDAO{
         this.conexionBD = conexionBD;
     }
 
-
     @Override
     public Cupon obtenerCuponPorId(String id) throws PersistenciaException {
         String comandoSQL = """
@@ -61,19 +61,19 @@ public class CuponDAO implements ICuponDAO{
                             FROM cupones
                             WHERE idCupon = ?;
                             """;
-        try(Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)){
+        try (Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
             ps.setString(1, id);
-            
-            try (ResultSet rs = ps.executeQuery()){
-                if(!rs.next()){
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
                     LOG.log(Level.WARNING, "No se encontró el cupon con id {0}", id);
                     throw new PersistenciaException("Cupón inexistente");
                 }
-                
-                return extraerCupon(rs);        
-            }     
+
+                return extraerCupon(rs);
+            }
         } catch (SQLException ex) {
-            LOG.severe("Hubo un error al acceder a la base de datos. "+ex);
+            LOG.severe("Hubo un error al acceder a la base de datos. " + ex);
             throw new PersistenciaException("Hubo un error al acceder a la base de datos.", ex);
         }
     }
@@ -85,25 +85,23 @@ public class CuponDAO implements ICuponDAO{
                             set cantUsos = cantUsos + 1
                             where idCupon = ?;
                             """;
-        
-        try(Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)){
+
+        try (Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
             ps.setString(1, cupon.getIdCupon());
-            
-            if(ps.executeUpdate() == 0){
-                LOG.warning("No se pudo incrementar el cupon: "+cupon.getIdCupon());
-                throw new PersistenciaException("No fue posible utilizar el cupon: "+cupon.getIdCupon());
+
+            if (ps.executeUpdate() == 0) {
+                LOG.warning("No se pudo incrementar el cupon: " + cupon.getIdCupon());
+                throw new PersistenciaException("No fue posible utilizar el cupon: " + cupon.getIdCupon());
             }
-            cupon.setCantidadUsos(cupon.getCantidadUsos()+1);
+            cupon.setCantidadUsos(cupon.getCantidadUsos() + 1);
             return cupon;
-            
-            
+
         } catch (SQLException ex) {
-            LOG.severe("Error SQL al incrementar los usos del cupón: "+ex);
+            LOG.severe("Error SQL al incrementar los usos del cupón: " + ex);
             throw new PersistenciaException("Hubo un error al utilizar el cupón", ex);
         }
     }
-    
-    
+
     public Cupon extraerCupon(ResultSet rs) throws PersistenciaException {
         try {
             Cupon cupon = new Cupon();
@@ -123,8 +121,33 @@ public class CuponDAO implements ICuponDAO{
             throw new PersistenciaException("Error al extraer el cupón.", ex);
         }
     }
-    
-    
-    
-    
+
+    @Override
+    public Cupon validarCupon(String codigo) throws PersistenciaException {
+
+        String sql = "CALL SP_VALIDAR_CUPON(?)";
+
+        try (Connection con = conexionBD.crearConexion(); CallableStatement cs = con.prepareCall(sql)) {
+
+            cs.setString(1, codigo);
+            ResultSet rs = cs.executeQuery();
+
+            if (rs.next()) {
+
+                Cupon cupon = new Cupon();
+                cupon.setIdCupon(rs.getString("idCupon"));
+                cupon.setPorcentajeDescuento(rs.getDouble("porcentajeDescuento"));
+                cupon.setCantidadUsos(rs.getInt("cantUsos"));
+                cupon.setVigencia(rs.getTimestamp("vigencia").toLocalDateTime());
+
+                return cupon;
+            }
+
+            return null;
+
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al validar cupón", e);
+        }
+    }
+
 }
