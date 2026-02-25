@@ -5,7 +5,6 @@ import java.util.List;
 public class PedidoDetalleDTO {
 
     private int idPedido;
-    private String folio;
     private String nombreCliente;
     private double total;
     private List<DetallePedidoDTO> detalles;
@@ -13,10 +12,9 @@ public class PedidoDetalleDTO {
     public PedidoDetalleDTO() {
     }
 
-    public PedidoDetalleDTO(int idPedido, String folio, String nombreCliente, 
+    public PedidoDetalleDTO(int idPedido, String nombreCliente, 
                             double total, List<DetallePedidoDTO> detalles) {
         this.idPedido = idPedido;
-        this.folio = folio;
         this.nombreCliente = nombreCliente;
         this.total = total;
         this.detalles = detalles;
@@ -30,14 +28,6 @@ public class PedidoDetalleDTO {
 
     public void setIdPedido(int idPedido) {
         this.idPedido = idPedido;
-    }
-
-    public String getFolio() {
-        return folio;
-    }
-
-    public void setFolio(String folio) {
-        this.folio = folio;
     }
 
     public String getNombreCliente() {

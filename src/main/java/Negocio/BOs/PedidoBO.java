@@ -1,5 +1,6 @@
 package Negocio.BOs;
 
+import Negocio.DTOs.DetallePedidoDTO;
 import Negocio.DTOs.PedidoDTO;
 import Negocio.DTOs.PedidoDetalleDTO;
 import Negocio.DTOs.PedidoTablaDTO;
@@ -18,6 +19,7 @@ public class PedidoBO implements IPedidoBO {
 
     private final IPedidoDAO pedidoDAO;
 
+    
     public PedidoBO(IPedidoDAO pedidoDAO) {
         this.pedidoDAO = pedidoDAO;
     }
@@ -133,8 +135,8 @@ public class PedidoBO implements IPedidoBO {
         pedido.setIdPedido(dto.getIdPedido());
         pedido.setNota(dto.getNota());
         pedido.setEstadoActual(dto.getEstadoActual());
-        pedido.setFechaHoraPedido(dto.getFechaHoraPedido().atStartOfDay());
-        pedido.setFechaHoraEntrega(dto.getFechaHoraEntrega().atStartOfDay());
+        pedido.setFechaHoraPedido(dto.getFechaHoraPedido());
+        pedido.setFechaHoraEntrega(dto.getFechaHoraEntrega());
         pedido.setTipo(dto.getTipo() == PedidoDTO.Tipo.PROGRAMADO
                 ? Pedido.Tipo.PROGRAMADO
                 : Pedido.Tipo.EXPRESS);
@@ -149,8 +151,8 @@ public class PedidoBO implements IPedidoBO {
         dto.setIdPedido(pedido.getIdPedido());
         dto.setNota(pedido.getNota());
         dto.setEstadoActual(pedido.getEstadoActual());
-        dto.setFechaHoraPedido(pedido.getFechaHoraPedido().toLocalDate());
-        dto.setFechaHoraEntrega(pedido.getFechaHoraEntrega().toLocalDate());
+        dto.setFechaHoraPedido(pedido.getFechaHoraPedido());
+        dto.setFechaHoraEntrega(pedido.getFechaHoraEntrega());
         dto.setTipo(pedido.getTipo() == Pedido.Tipo.PROGRAMADO
                 ? PedidoDTO.Tipo.PROGRAMADO
                 : PedidoDTO.Tipo.EXPRESS);
@@ -189,6 +191,7 @@ public class PedidoBO implements IPedidoBO {
     public List<PedidoTablaDTO> obtenerPedidosFiltrados(String filtro) throws NegocioException {
         try {
 
+            System.out.println("aqui ando");
             List<PedidoResumen> listaDAO = pedidoDAO.obtenerPedidosFiltrados(filtro);
             List<PedidoTablaDTO> listaDTO = new ArrayList<>();
 
@@ -214,34 +217,15 @@ public class PedidoBO implements IPedidoBO {
         }
     }
 
-//    @Override
-//    public void cambiarEstado(int idPedido, String nuevoEstado) throws NegocioException {
-//        try {
-//            pedidoDAO.cambiarEstado(idPedido, nuevoEstado);
-//        } catch (PersistenciaException ex) {
-//            throw new NegocioException("Error al cambiar estado de pedido", ex);
-//        }
-//    }
-
     @Override
-    public void cambiarEstado(int idPedido, String nuevoEstado)
-            throws NegocioException {
-
+    public void cambiarEstado(int idPedido, String nuevoEstado) throws NegocioException {
         try {
-
             pedidoDAO.cambiarEstado(idPedido, nuevoEstado);
-
-        } catch (PersistenciaException e) {
-
-            throw new NegocioException(
-                    e.getMessage(),
-                    e
-            );
-
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("Error al cambiar estado de pedido", ex);
         }
-
     }
-
+    
     @Override
     public PedidoDetalleDTO obtenerDetallePedido(int idPedido) throws NegocioException {
 
@@ -251,17 +235,41 @@ public class PedidoBO implements IPedidoBO {
 
         try {
 
-            PedidoDetalleDTO pedido = pedidoDAO.obtenerDetallePedido(idPedido);
+            Pedido pedido = pedidoDAO.obtenerDetallePedido(idPedido);
 
             if (pedido == null) {
                 throw new NegocioException("No se encontró el pedido.");
             }
 
-            return pedido;
+            PedidoDetalleDTO dto = new PedidoDetalleDTO();
+            dto.setIdPedido(pedido.getIdPedido());
+
+            // dto.setFolio(null);
+            dto.setNombreCliente(null);
+
+            dto.setTotal(pedido.getTotal());
+
+            List<DetallePedidoDTO> listaDetalles = new ArrayList<>();
+
+            for (persistencia.dominio.DetallePedido d : pedido.getDetalles()) {
+
+                DetallePedidoDTO detalleDTO = new DetallePedidoDTO();
+                detalleDTO.setCantidad(d.getCantidad());
+                detalleDTO.setNota(d.getNota());
+                detalleDTO.setPrecio(d.getPrecio());
+                detalleDTO.setNombreProducto(d.getPizza().getNombre());
+                detalleDTO.setSubtotal(d.getSubtotal());
+
+                listaDetalles.add(detalleDTO);
+            }
+
+            dto.setDetalles(listaDetalles);
+
+            return dto;
 
         } catch (PersistenciaException e) {
-            throw new NegocioException("Error al obtener detalle del pedido: "
-                    + e.getMessage());
+            throw new NegocioException(
+                    "Error al obtener detalle del pedido: " + e.getMessage(), e);
         }
     }
 
@@ -272,6 +280,38 @@ public class PedidoBO implements IPedidoBO {
         } catch (PersistenciaException ex) {
             throw new NegocioException("Error al validar folio y pin: "
                     + ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<PedidoDTO> obtenerPedidosCliente(int idUsuario) throws NegocioException {
+
+        try {
+
+            List<Integer> ids = pedidoDAO.obtenerIdsPedidosPorCliente(idUsuario);
+
+            List<PedidoDTO> listaDTO = new ArrayList<>();
+
+            for (Integer id : ids) {
+
+                Pedido pedido = pedidoDAO.obtenerDetallePedido(id);
+
+                PedidoDTO dto = new PedidoDTO();
+
+                dto.setIdPedido(pedido.getIdPedido());
+                dto.setEstadoActual(pedido.getEstadoActual());
+                dto.setFechaHoraPedido(pedido.getFechaHoraPedido());
+                dto.setFechaHoraEntrega(pedido.getFechaHoraEntrega());
+                dto.setTipo(PedidoDTO.Tipo.valueOf(pedido.getTipo().name()));
+                dto.setTotal(pedido.getTotal());
+
+                listaDTO.add(dto);
+            }
+
+            return listaDTO;
+
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error al obtener pedidos", e);
         }
     }
 }

@@ -20,8 +20,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.mindrot.jbcrypt.BCrypt;
 import persistencia.conexion.IConexionBD;
+import persistencia.dominio.DetallePedido;
 import persistencia.dominio.Pedido;
 import persistencia.dominio.PedidoResumen;
+import persistencia.dominio.Pizza;
 import persistencia.excepciones.PersistenciaException;
 
 /**
@@ -289,7 +291,6 @@ public class PedidoDAO implements IPedidoDAO {
 
     @Override
     public List<PedidoResumen> obtenerPedidosTabla() throws PersistenciaException {
-        System.out.println("llegue");
 
         String sql = """
         SELECT 
@@ -298,82 +299,92 @@ public class PedidoDAO implements IPedidoDAO {
             COALESCE(t.telefono, '') AS telefono,
             p.fechaHoraPedido AS fechaHora,
             p.estadoActual AS estado,
-            CASE 
-                WHEN pe.idPedido IS NOT NULL THEN 'EXPRESS'
-                WHEN pp.idPedido IS NOT NULL THEN 'PROGRAMADO'
-                ELSE 'NORMAL'
-            END AS tipo,
-            pe.folio
+            p.tipo,
+            pe.folio,
+            COALESCE((
+                SELECT SUM(dp.cantidad * pz.precio)
+                FROM DetallesPedidos dp
+                INNER JOIN Pizzas pz ON dp.idPizza = pz.idPizza
+                WHERE dp.idPedido = p.idPedido
+            ), 0) AS total
         FROM Pedidos p
         LEFT JOIN PedidosProgramados pp ON p.idPedido = pp.idPedido
         LEFT JOIN PedidosExpress pe ON p.idPedido = pe.idPedido
-        LEFT JOIN Clientes c ON pp.idUsuario IS NOT NULL AND c.idUsuario = pp.idUsuario
+        LEFT JOIN Clientes c ON c.idUsuario = pp.idUsuario
         LEFT JOIN TelefonosClientes t ON t.idCliente = c.idUsuario
     """;
 
         List<PedidoResumen> lista = new ArrayList<>();
 
-        System.out.println("sql aft");
-
         try (Connection con = conexionBD.crearConexion(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
+
                 int idPedido = rs.getInt("idPedido");
                 String cliente = rs.getString("cliente");
                 String telefono = rs.getString("telefono");
                 LocalDateTime fechaHora = rs.getTimestamp("fechaHora").toLocalDateTime();
                 String estado = rs.getString("estado");
                 String tipo = rs.getString("tipo");
-                String folio = rs.getString("folio"); // solo para EXPRESS, null para otros
-                double total = 0; // Aquí podrías calcular el total si lo sumas desde DetallesPedidos
+                String folio = rs.getString("folio");
+                double total = rs.getDouble("total");
 
-                lista.add(new PedidoResumen(idPedido, folio, cliente, telefono, fechaHora, total, estado, tipo));
+                lista.add(new PedidoResumen(
+                        idPedido,
+                        folio,
+                        cliente,
+                        telefono,
+                        fechaHora,
+                        total,
+                        estado,
+                        tipo
+                ));
             }
 
-            System.out.println("Pedidos obtenidos: " + lista.size());
-            System.out.println(lista);
-
         } catch (SQLException e) {
-            throw new PersistenciaException("Error al obtener pedidos para la tabla: " + e.getMessage(), e);
+            e.printStackTrace();
+            throw new PersistenciaException(
+                    "Error al obtener pedidos para la tabla: " + e.getMessage(), e);
         }
 
         return lista;
     }
 
     @Override
-    public List<PedidoResumen> obtenerPedidosFiltrados(String filtro) throws PersistenciaException {
+    public List<PedidoResumen> obtenerPedidosFiltrados(String filtro)
+            throws PersistenciaException {
 
         List<PedidoResumen> lista = new ArrayList<>();
 
         String sql = """
-    SELECT 
-        p.idPedido,
-        COALESCE(pe.folio, pp.numPedido) AS folio,
-        CONCAT(c.nombres, ' ', c.apellidoPaterno) AS cliente,
-        t.telefono,
-        p.fechaHoraPedido,
-        COALESCE(SUM(dp.cantidad * piz.precio), 0) AS total,
-        p.estadoActual
-    FROM Pedidos p
-    LEFT JOIN PedidosProgramados pp ON p.idPedido = pp.idPedido
-    LEFT JOIN PedidosExpress pe ON p.idPedido = pe.idPedido
-    LEFT JOIN Clientes c ON pp.idUsuario = c.idUsuario
-    LEFT JOIN TelefonosClientes t ON t.idCliente = c.idUsuario
-    LEFT JOIN DetallesPedidos dp ON p.idPedido = dp.idPedido
-    LEFT JOIN Pizzas piz ON dp.idPizza = piz.idPizza
-    WHERE 
-        CONCAT(IFNULL(c.nombres,''),' ',IFNULL(c.apellidoPaterno,'')) LIKE ?
-        OR pe.folio LIKE ?
-        OR CAST(pp.numPedido AS CHAR) LIKE ?
-        OR t.telefono LIKE ?
-    GROUP BY 
-        p.idPedido,
-        folio,
-        cliente,
-        t.telefono,
-        p.fechaHoraPedido,
-        p.estadoActual
-    """;
+SELECT 
+    p.idPedido,
+    p.tipo,
+    COALESCE(pe.folio, pp.numPedido) AS folio,
+    CONCAT(IFNULL(c.nombres,''),' ',IFNULL(c.apellidoPaterno,'')) AS cliente,
+    tel.telefono,
+    p.fechaHoraPedido,
+    (
+        SELECT SUM(dp.cantidad * piz.precio)
+        FROM DetallesPedidos dp
+        JOIN Pizzas piz ON dp.idPizza = piz.idPizza
+        WHERE dp.idPedido = p.idPedido
+    ) AS total,
+    p.estadoActual
+FROM Pedidos p
+LEFT JOIN PedidosProgramados pp ON p.idPedido = pp.idPedido
+LEFT JOIN PedidosExpress pe ON p.idPedido = pe.idPedido
+LEFT JOIN Clientes c ON pp.idUsuario = c.idUsuario
+LEFT JOIN (
+    SELECT idCliente, MIN(telefono) telefono
+    FROM TelefonosClientes
+    GROUP BY idCliente
+) tel ON tel.idCliente = c.idUsuario
+WHERE (COALESCE(pe.folio, pp.numPedido) LIKE ?
+       OR CONCAT(IFNULL(c.nombres,''),' ',IFNULL(c.apellidoPaterno,'')) LIKE ?
+       OR p.tipo LIKE ?
+       OR p.estadoActual LIKE ?)
+""";
 
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -387,11 +398,17 @@ public class PedidoDAO implements IPedidoDAO {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
+
                 PedidoResumen pt = new PedidoResumen(
                         rs.getInt("idPedido"),
                         rs.getString("folio"),
-                        rs.getString("cliente") != null ? rs.getString("cliente") : "Público General",
-                        rs.getString("telefono") != null ? rs.getString("telefono") : "N/A",
+                        rs.getString("cliente") != null
+                        && !rs.getString("cliente").trim().isEmpty()
+                        ? rs.getString("cliente")
+                        : "Público General",
+                        rs.getString("telefono") != null
+                        ? rs.getString("telefono")
+                        : "N/A",
                         rs.getTimestamp("fechaHoraPedido").toLocalDateTime(),
                         rs.getDouble("total"),
                         rs.getString("estadoActual"),
@@ -407,7 +424,24 @@ public class PedidoDAO implements IPedidoDAO {
             throw new PersistenciaException("Error al filtrar pedidos", ex);
         }
     }
+    
+    @Override
+    public void cambiarEstado(int idPedido, String nuevoEstado) throws PersistenciaException {
 
+    String sql = "{CALL SP_CAMBIAR_ESTADO(?, ?)}";
+
+    try (Connection con = conexionBD.crearConexion();
+         CallableStatement cs = con.prepareCall(sql)) {
+
+        cs.setInt(1, idPedido);
+        cs.setString(2, nuevoEstado);
+
+        cs.execute();
+
+    } catch (SQLException e) {
+        throw new PersistenciaException("Error al cambiar estado", e);
+    }
+}
 //    @Override
 //    public void cambiarEstado(int idPedido, String nuevoEstado) throws PersistenciaException {
 //
@@ -425,22 +459,25 @@ public class PedidoDAO implements IPedidoDAO {
 //        }
 //    }
     @Override
-    public PedidoDetalleDTO obtenerDetallePedido(int idPedido) throws PersistenciaException {
+    public Pedido obtenerDetallePedido(int idPedido) throws PersistenciaException {
 
         String sql = """
         SELECT 
             p.idPedido,
-            COALESCE(pe.folio, pp.numPedido, 'N/A') AS folio,
-            COALESCE(CONCAT(c.nombres, ' ', c.apellidoPaterno), 'Público General') AS nombreCliente,
+            p.tipo,
+            p.estadoActual,
+            p.fechaHoraPedido,
+            dp.idDetallesPedidos,
             dp.cantidad,
-            piz.nombre AS nombreProducto,
-            (dp.cantidad * piz.precio) AS subtotal
+            dp.nota,
+            piz.idPizza,
+            piz.nombre,
+            piz.tamaño,
+            piz.descripcion,
+            piz.precio
         FROM Pedidos p
-        LEFT JOIN PedidosProgramados pp ON p.idPedido = pp.idPedido
-        LEFT JOIN PedidosExpress pe ON p.idPedido = pe.idPedido
-        LEFT JOIN Clientes c ON pp.idUsuario = c.idUsuario
-        LEFT JOIN DetallesPedidos dp ON dp.idPedido = p.idPedido
-        LEFT JOIN Pizzas piz ON dp.idPizza = piz.idPizza
+        INNER JOIN DetallesPedidos dp ON p.idPedido = dp.idPedido
+        INNER JOIN Pizzas piz ON dp.idPizza = piz.idPizza
         WHERE p.idPedido = ?
     """;
 
@@ -449,40 +486,46 @@ public class PedidoDAO implements IPedidoDAO {
             ps.setInt(1, idPedido);
             ResultSet rs = ps.executeQuery();
 
-            List<DetallePedidoDTO> listaDetalles = new ArrayList<>();
-            int id = -1;
-            String folio = null;
-            String nombreCliente = null;
-            double total = 0;
+            Pedido pedido = null;
 
             while (rs.next()) {
-                id = rs.getInt("idPedido");
-                folio = rs.getString("folio");
-                nombreCliente = rs.getString("nombreCliente");
 
-                int cantidad = rs.getInt("cantidad");
-                String nombreProducto = rs.getString("nombreProducto");
-                double subtotal = rs.getDouble("subtotal");
-
-                total += subtotal;
-
-                if (nombreProducto != null) {
-                    listaDetalles.add(new DetallePedidoDTO(cantidad, nombreProducto, subtotal));
+                if (pedido == null) {
+                    pedido = new Pedido();
+                    pedido.setIdPedido(rs.getInt("idPedido"));
+                    pedido.setEstadoActual(rs.getString("estadoActual"));
+                    pedido.setTipo(Pedido.Tipo.valueOf(rs.getString("tipo").toUpperCase()));
+                    Timestamp ts = rs.getTimestamp("fechaHoraPedido");
+                    if (ts != null) {
+                        pedido.setFechaHoraPedido(ts.toLocalDateTime());
+                    }
+                    pedido.setDetalles(new ArrayList<>());
                 }
+
+                // Crear pizza
+                Pizza pizza = new Pizza();
+                pizza.setIdPizza(rs.getInt("idPizza"));
+                pizza.setNombre(rs.getString("nombre"));
+                pizza.setTamanio(rs.getString("tamaño"));
+                pizza.setDescripcion(rs.getString("descripcion"));
+                pizza.setPrecio(rs.getDouble("precio"));
+
+                // Crear detalle
+                DetallePedido detalle = new DetallePedido();
+                detalle.setIdDetallePedido(rs.getInt("idDetallesPedidos"));
+                detalle.setCantidad(rs.getInt("cantidad"));
+                detalle.setNota(rs.getString("nota"));
+                detalle.setPrecio(rs.getDouble("precio"));
+                detalle.setPizza(pizza);
+                detalle.setPedido(pedido);
+
+                pedido.getDetalles().add(detalle);
             }
 
-            if (id == -1) {
-                return null; // No existe pedido
-            }
-
-            if (listaDetalles.isEmpty()) {
-                listaDetalles.add(new DetallePedidoDTO(0, "Sin productos", 0));
-            }
-
-            return new PedidoDetalleDTO(id, folio, nombreCliente, total, listaDetalles);
+            return pedido;
 
         } catch (SQLException e) {
-            throw new PersistenciaException("Error al obtener detalle del pedido: " + e.getMessage(), e);
+            throw new PersistenciaException("Error al obtener detalle del pedido", e);
         }
     }
 
@@ -517,24 +560,35 @@ public class PedidoDAO implements IPedidoDAO {
     }
 
     @Override
-    public void cambiarEstado(int idPedido, String nuevoEstado) throws PersistenciaException {
+    public List<Integer> obtenerIdsPedidosPorCliente(int idUsuario) throws PersistenciaException {
 
-        try {
+        String sql = """
+        SELECT p.idPedido
+        FROM Pedidos p
+        INNER JOIN PedidosProgramados pp ON p.idPedido = pp.idPedido
+        WHERE pp.idUsuario = ?
+        ORDER BY p.fechaHoraPedido DESC
+    """;
 
-            CallableStatement cs = conexionBD.crearConexion().prepareCall("{CALL SP_CAMBIAR_ESTADO(?, ?)}");
+        List<Integer> ids = new ArrayList<>();
 
-            cs.setInt(1, idPedido);
-            cs.setString(2, nuevoEstado);
+        try (Connection con = conexionBD.crearConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
 
-            cs.execute();
+            ps.setInt(1, idUsuario);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                ids.add(rs.getInt("idPedido"));
+            }
+
+            return ids;
 
         } catch (SQLException e) {
-
-            throw new PersistenciaException(
-                    "Error al cambiar el estado del pedido",
-                    e
-            );
-
+            throw new PersistenciaException("Error al obtener pedidos del cliente", e);
         }
     }
+
+    
+    
 }

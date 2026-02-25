@@ -1,78 +1,41 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Negocio.DTOs;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-/**
- *
- * @author Brian Kaleb Sandoval Rodríguez - 00000262741
- * @author Alejandra Leal Armenta - 00000262719
- * @author Paulina Michel Guevara Cervantez - 00000262724
- */
 public class PedidoDTO {
 
     private int idPedido;
-    /**
-     * Nota adicional del pedido.
-     */
     private String nota;
-
-    /**
-     * Estado actual del pedido (pendiente, en preparación, entregado, etc.).
-     */
     private String estadoActual;
+    private LocalDateTime fechaHoraPedido;  
+    private LocalDateTime fechaHoraEntrega;  
+    private double total;                    
 
-    /**
-     * Fecha y hora en que se realizó el pedido.
-     */
-    private LocalDate fechaHoraPedido;
-
-    /**
-     * Fecha y hora programada para la entrega del pedido.
-     */
-    private LocalDate fechaHoraEntrega;
-
-    public enum Tipo{
+    public enum Tipo {
         PROGRAMADO, EXPRESS
     }
+
     private Tipo tipo;
-    
-    
-    /**
-     * Constructor por omisión.
-     */
+
     public PedidoDTO() {
     }
 
-    /**
-     * Constructor completo que incluye identificador.
-     *
-     * @param idPedido
-     * @param nota nota adicional
-     * @param estadoActual estado actual del pedido
-     * @param fechaHoraPedido fecha y hora del pedido
-     * @param fechaHoraEntrega fecha y hora de entrega
-     * @param tipo
-     */
-    public PedidoDTO(int idPedido, String nota, String estadoActual, LocalDate fechaHoraPedido, LocalDate fechaHoraEntrega, Tipo tipo) {    
+    public PedidoDTO(int idPedido, String nota, String estadoActual,
+                     LocalDateTime fechaHoraPedido,
+                     LocalDateTime fechaHoraEntrega,
+                     Tipo tipo,
+                     double total) {
+
         this.idPedido = idPedido;
         this.nota = nota;
         this.estadoActual = estadoActual;
         this.fechaHoraPedido = fechaHoraPedido;
         this.fechaHoraEntrega = fechaHoraEntrega;
         this.tipo = tipo;
+        this.total = total;
     }
 
-    public PedidoDTO(String nota, String estadoActual, LocalDate fechaHoraPedido, LocalDate fechaHoraEntrega, Tipo tipo) {
-        this.nota = nota;
-        this.estadoActual = estadoActual;
-        this.fechaHoraPedido = fechaHoraPedido;
-        this.fechaHoraEntrega = fechaHoraEntrega;
-        this.tipo = tipo;
-    }
+    // GETTERS Y SETTERS
 
     public int getIdPedido() {
         return idPedido;
@@ -82,59 +45,35 @@ public class PedidoDTO {
         this.idPedido = idPedido;
     }
 
-    /**
-     * @return nota del pedido
-     */
     public String getNota() {
         return nota;
     }
 
-    /**
-     * @param nota nueva nota
-     */
     public void setNota(String nota) {
         this.nota = nota;
     }
 
-    /**
-     * @return estado actual del pedido
-     */
     public String getEstadoActual() {
         return estadoActual;
     }
 
-    /**
-     * @param estadoActual nuevo estado
-     */
     public void setEstadoActual(String estadoActual) {
         this.estadoActual = estadoActual;
     }
 
-    /**
-     * @return fecha y hora del pedido
-     */
-    public LocalDate getFechaHoraPedido() {
+    public LocalDateTime getFechaHoraPedido() {
         return fechaHoraPedido;
     }
 
-    /**
-     * @param fechaHoraPedido nueva fecha y hora del pedido
-     */
-    public void setFechaHoraPedido(LocalDate fechaHoraPedido) {
+    public void setFechaHoraPedido(LocalDateTime fechaHoraPedido) {
         this.fechaHoraPedido = fechaHoraPedido;
     }
 
-    /**
-     * @return fecha y hora de entrega
-     */
-    public LocalDate getFechaHoraEntrega() {
+    public LocalDateTime getFechaHoraEntrega() {
         return fechaHoraEntrega;
     }
 
-    /**
-     * @param fechaHoraEntrega nueva fecha y hora de entrega
-     */
-    public void setFechaHoraEntrega(LocalDate fechaHoraEntrega) {
+    public void setFechaHoraEntrega(LocalDateTime fechaHoraEntrega) {
         this.fechaHoraEntrega = fechaHoraEntrega;
     }
 
@@ -145,7 +84,12 @@ public class PedidoDTO {
     public void setTipo(Tipo tipo) {
         this.tipo = tipo;
     }
-    
-    
 
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
 }

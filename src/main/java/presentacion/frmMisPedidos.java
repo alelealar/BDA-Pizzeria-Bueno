@@ -1,9 +1,21 @@
 package presentacion;
 
+import Negocio.BOs.IPedidoBO;
+import Negocio.BOs.PedidoBO;
+import Negocio.DTOs.PedidoDTO;
+import Negocio.DTOs.PedidoProgramadoDTO;
 import java.awt.Color;
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.table.DefaultTableModel;
+import persistencia.conexion.ConexionBD;
+import persistencia.conexion.IConexionBD;
+import persistencia.daos.IPedidoDAO;
+import persistencia.daos.PedidoDAO;
 import persistencia.dominio.Pizza;
 
 /**
@@ -13,9 +25,71 @@ import persistencia.dominio.Pizza;
 public class frmMisPedidos extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmMisPedidos.class.getName());
+    private IPedidoBO pedidoBO;
+    private int idCliente;
 
-    public frmMisPedidos() {
+    public frmMisPedidos(int idCliente) {
         initComponents();
+        this.idCliente = idCliente;
+        IConexionBD conexion = new ConexionBD();
+        IPedidoDAO pedidoDAO = new PedidoDAO(conexion);
+        this.pedidoBO = new PedidoBO(pedidoDAO);
+
+        cargarPedidos();
+
+        btnCancelar.setVisible(false);
+
+        configurarListenerTabla();
+    }
+
+    private void cargarPedidos() {
+
+        try {
+
+            List<PedidoDTO> pedidos = pedidoBO.obtenerPedidosCliente(idCliente);
+
+            DefaultTableModel modelo = (DefaultTableModel) tablaPedidos.getModel();
+            modelo.setRowCount(0); // limpiar tabla
+
+            for (PedidoDTO p : pedidos) {
+
+                modelo.addRow(new Object[]{
+                    p.getIdPedido(),
+                    p.getFechaHoraPedido(),
+                    p.getTotal(),
+                    p.getEstadoActual()
+                });
+            }
+
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Error al cargar pedidos: " + e.getMessage());
+        }
+    }
+
+    private void configurarListenerTabla() {
+
+        tablaPedidos.getSelectionModel().addListSelectionListener(e -> {
+
+            if (!e.getValueIsAdjusting()) {
+
+                int fila = tablaPedidos.getSelectedRow();
+
+                if (fila != -1) {
+
+                    String estado = tablaPedidos.getValueAt(fila, 3).toString();
+
+                    if (estado.equalsIgnoreCase("PENDIENTE")) {
+                        btnCancelar.setVisible(true);
+                    } else {
+                        btnCancelar.setVisible(false);
+                    }
+
+                } else {
+                    btnCancelar.setVisible(false);
+                }
+            }
+        });
     }
 
     /**
@@ -47,7 +121,6 @@ public class frmMisPedidos extends javax.swing.JFrame {
         btnCancelar = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         cmbTipo = new javax.swing.JComboBox<>();
-        cmbEstado = new javax.swing.JComboBox<>();
         txtAnio = new javax.swing.JTextField();
         txtMes = new javax.swing.JTextField();
         txtDia = new javax.swing.JTextField();
@@ -56,6 +129,7 @@ public class frmMisPedidos extends javax.swing.JFrame {
         txtMes1 = new javax.swing.JTextField();
         txtDia1 = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
+        btnFiltrar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setLocationByPlatform(true);
@@ -90,7 +164,7 @@ public class frmMisPedidos extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Inicio");
-        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout btnInicioLayout = new javax.swing.GroupLayout(btnInicio);
         btnInicio.setLayout(btnInicioLayout);
@@ -122,7 +196,7 @@ public class frmMisPedidos extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Actualizar");
-        jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout btnActualizarLayout = new javax.swing.GroupLayout(btnActualizar);
         btnActualizar.setLayout(btnActualizarLayout);
@@ -156,7 +230,7 @@ public class frmMisPedidos extends javax.swing.JFrame {
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Carrito");
-        jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout btnCarritoLayout = new javax.swing.GroupLayout(btnCarrito);
         btnCarrito.setLayout(btnCarritoLayout);
@@ -190,7 +264,7 @@ public class frmMisPedidos extends javax.swing.JFrame {
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Mis pedidos");
-        jLabel6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel6.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout btnMispedidosLayout = new javax.swing.GroupLayout(btnMispedidos);
         btnMispedidos.setLayout(btnMispedidosLayout);
@@ -225,7 +299,7 @@ public class frmMisPedidos extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Pedido Express");
-        jLabel3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel3.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout btnPELayout = new javax.swing.GroupLayout(btnPE);
         btnPE.setLayout(btnPELayout);
@@ -273,13 +347,13 @@ public class frmMisPedidos extends javax.swing.JFrame {
         tablaPedidos.setBackground(new java.awt.Color(255, 227, 227));
         tablaPedidos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Folio", "Cliente", "Producto", "Fecha - Hora", "Total", "Estado"
+                "Producto", "Fecha - Hora", "Total", "Estado"
             }
         ));
         jScrollPane1.setViewportView(tablaPedidos);
@@ -308,22 +382,24 @@ public class frmMisPedidos extends javax.swing.JFrame {
             btnCancelarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, btnCancelarLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
                 .addContainerGap())
         );
         btnCancelarLayout.setVerticalGroup(
             btnCancelarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(btnCancelarLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
+                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         cmbTipo.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         cmbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        cmbEstado.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        cmbEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbTipo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbTipoActionPerformed(evt);
+            }
+        });
 
         txtAnio.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         txtAnio.setForeground(java.awt.Color.gray);
@@ -505,6 +581,20 @@ public class frmMisPedidos extends javax.swing.JFrame {
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel8.setText("Fecha Fin");
 
+        btnFiltrar.setBackground(new java.awt.Color(242, 242, 242));
+        btnFiltrar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        btnFiltrar.setText("Filtrar");
+        btnFiltrar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnFiltrarMouseClicked(evt);
+            }
+        });
+        btnFiltrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFiltrarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panPizzasLayout = new javax.swing.GroupLayout(panPizzas);
         panPizzas.setLayout(panPizzasLayout);
         panPizzasLayout.setHorizontalGroup(
@@ -515,9 +605,7 @@ public class frmMisPedidos extends javax.swing.JFrame {
                     .addComponent(jScrollPane1)
                     .addGroup(panPizzasLayout.createSequentialGroup()
                         .addComponent(cmbTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(26, 26, 26)
-                        .addComponent(cmbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(124, 124, 124)
                         .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
                             .addGroup(panPizzasLayout.createSequentialGroup()
@@ -536,6 +624,8 @@ public class frmMisPedidos extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtAnio1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(30, 30, 30))
         );
@@ -545,9 +635,7 @@ public class frmMisPedidos extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panPizzasLayout.createSequentialGroup()
-                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(31, 31, 31))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panPizzasLayout.createSequentialGroup()
+                        .addGap(2, 2, 2)
                         .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(panPizzasLayout.createSequentialGroup()
                                 .addComponent(jLabel8)
@@ -561,13 +649,15 @@ public class frmMisPedidos extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(cmbTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(cmbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtDia, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtMes, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtAnio, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(18, 18, 18)))
+                                    .addComponent(txtAnio, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(10, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -630,7 +720,32 @@ public class frmMisPedidos extends javax.swing.JFrame {
     }//GEN-LAST:event_btnPEMouseExited
 
     private void btnCancelarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCancelarMouseClicked
-        this.dispose();
+        int fila = tablaPedidos.getSelectedRow();
+
+        if (fila == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Selecciona un pedido");
+            return;
+        }
+
+        int idPedido = (int) tablaPedidos.getValueAt(fila, 0);
+
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
+                "¿Deseas cancelar el pedido?",
+                "Confirmar",
+                javax.swing.JOptionPane.YES_NO_OPTION);
+
+        if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+
+            try {
+                pedidoBO.cambiarEstado(idPedido, "CANCELADO");
+                cargarPedidos();
+            } catch (Exception e) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "No se pudo cancelar: " + e.getMessage());
+            }
+        }
+        btnCancelar.setVisible(false);
     }//GEN-LAST:event_btnCancelarMouseClicked
 
     private void btnCancelarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCancelarMouseEntered
@@ -830,6 +945,51 @@ public class frmMisPedidos extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnPEMouseClicked
 
+    private void cmbTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTipoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbTipoActionPerformed
+
+    private void btnFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltrarActionPerformed
+//        try {
+//
+//            int diaInicio = Integer.parseInt(txtDiaInicio.getText());
+//            int mesInicio = Integer.parseInt(txtMesInicio.getText());
+//            int anioInicio = Integer.parseInt(txtAnioInicio.getText());
+//
+//            int diaFin = Integer.parseInt(txtDiaFin.getText());
+//            int mesFin = Integer.parseInt(txtMesFin.getText());
+//            int anioFin = Integer.parseInt(txtAnioFin.getText());
+//
+//            LocalDateTime fechaInicio = LocalDateTime.of(anioInicio, mesInicio, diaInicio, 0, 0, 0);
+//            LocalDateTime fechaFin = LocalDateTime.of(anioFin, mesFin, diaFin, 23, 59, 59);
+//
+//            if (fechaInicio.isAfter(fechaFin)) {
+//                JOptionPane.showMessageDialog(this, "La fecha inicio no puede ser mayor que la fecha fin");
+//                return;
+//            }
+//
+//            List<PedidoProgramadoDTO> lista
+//                    = pedidoBO.filtrarProgramadosPorPeriodo(fechaInicio, fechaFin);
+//
+//            if (lista.isEmpty()) {
+//                JOptionPane.showMessageDialog(this, "No hay pedidos en ese periodo");
+//            }
+//
+//            cargarTabla(lista);
+//
+//        } catch (NumberFormatException e) {
+//            JOptionPane.showMessageDialog(this, "Ingrese solo números válidos en las fechas");
+//        } catch (DateTimeException e) {
+//            JOptionPane.showMessageDialog(this, "Fecha inválida");
+//        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+//        }
+    }//GEN-LAST:event_btnFiltrarActionPerformed
+
+    private void btnFiltrarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnFiltrarMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnFiltrarMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -852,17 +1012,17 @@ public class frmMisPedidos extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new frmMisPedidos().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new frmMisPedidos(1).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel btnActualizar;
     private javax.swing.JPanel btnCancelar;
     private javax.swing.JPanel btnCarrito;
+    private javax.swing.JButton btnFiltrar;
     private javax.swing.JPanel btnInicio;
     private javax.swing.JPanel btnMispedidos;
     private javax.swing.JPanel btnPE;
-    private javax.swing.JComboBox<String> cmbEstado;
     private javax.swing.JComboBox<String> cmbTipo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

@@ -2,6 +2,8 @@ package persistencia.dominio;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Clase base que representa un Pedido dentro del sistema.
@@ -17,6 +19,8 @@ import java.time.LocalDateTime;
  * @author Paulina Michel Guevara Cervantez - 00000262724
  */
 public class Pedido {
+
+    private List<DetallePedido> detalles = new ArrayList<>();
 
     /**
      * Identificador único del pedido.
@@ -42,8 +46,8 @@ public class Pedido {
      * Fecha y hora programada para la entrega del pedido.
      */
     private LocalDateTime fechaHoraEntrega;
-    
-    public enum Tipo{
+
+    public enum Tipo {
         PROGRAMADO, EXPRESS
     }
     private Tipo tipo;
@@ -53,7 +57,7 @@ public class Pedido {
      */
     public Pedido() {
     }
-    
+
     /**
      * Constructor completo que incluye identificador.
      *
@@ -64,7 +68,7 @@ public class Pedido {
      * @param fechaHoraEntrega fecha y hora de entrega
      * @param tipo
      */
-    public Pedido(int idPedido, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, Tipo tipo) {    
+    public Pedido(int idPedido, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, Tipo tipo) {
         this.idPedido = idPedido;
         this.nota = nota;
         this.estadoActual = estadoActual;
@@ -72,7 +76,7 @@ public class Pedido {
         this.fechaHoraEntrega = fechaHoraEntrega;
         this.tipo = tipo;
     }
-    
+
     /**
      * Constructor sin identificador.
      *
@@ -82,14 +86,29 @@ public class Pedido {
      * @param fechaHoraEntrega fecha y hora de entrega
      * @param tipo
      */
-    public Pedido(String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, Tipo tipo) {    
+    public Pedido(String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, Tipo tipo) {
         this.nota = nota;
         this.estadoActual = estadoActual;
         this.fechaHoraPedido = fechaHoraPedido;
         this.fechaHoraEntrega = fechaHoraEntrega;
         this.tipo = tipo;
     }
-    
+
+    public List<DetallePedido> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<DetallePedido> detalles) {
+        this.detalles = detalles;
+    }
+
+    public double getTotal() {
+        double total = 0;
+        for (DetallePedido d : detalles) {
+            total += d.getSubtotal();
+        }
+        return total;
+    }
 
     /**
      * @return identificador del pedido
@@ -168,7 +187,6 @@ public class Pedido {
     public void setTipo(Tipo tipo) {
         this.tipo = tipo;
     }
-
 
     /**
      * Devuelve una representación en cadena del pedido.

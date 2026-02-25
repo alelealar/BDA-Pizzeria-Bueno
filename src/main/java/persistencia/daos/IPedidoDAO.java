@@ -60,9 +60,11 @@ public interface IPedidoDAO {
     
     public List<PedidoResumen> obtenerPedidosFiltrados(String filtro) throws PersistenciaException;
      
-    public PedidoDetalleDTO obtenerDetallePedido(int idPedido) throws PersistenciaException;
+    public Pedido obtenerDetallePedido(int idPedido) throws PersistenciaException;
     
     public boolean validarFolioYPIN(int idPedido, String folio, String pin) throws PersistenciaException;
     
     public void cambiarEstado(int idPedido, String nuevoEstado) throws PersistenciaException;
+    
+   public List<Integer> obtenerIdsPedidosPorCliente(int idUsuario) throws PersistenciaException;
 }

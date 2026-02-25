@@ -128,7 +128,7 @@ public class frmEmpleados extends javax.swing.JFrame {
 
         txtBuscador.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         txtBuscador.setForeground(java.awt.Color.gray);
-        txtBuscador.setText("Buscar por nombre o teléfono");
+        txtBuscador.setText("Buscar por nombre, teléfono o folio");
         txtBuscador.setToolTipText("");
         txtBuscador.setBorder(null);
         txtBuscador.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -354,7 +354,7 @@ public class frmEmpleados extends javax.swing.JFrame {
         String texto = txtBuscador.getText().trim();
 
         try {
-            if (texto.isEmpty() || texto.equals("Buscar por nombre o teléfono")) {
+            if (texto.isEmpty() || texto.equals("Buscar por nombre, teléfono o folio")) {
                 llenarTabla(pedidoBO.obtenerPedidosTabla());
             } else {
                 llenarTabla(pedidoBO.obtenerPedidosFiltrados(texto));
@@ -385,21 +385,28 @@ public class frmEmpleados extends javax.swing.JFrame {
     private void llenarTabla(List<PedidoTablaDTO> pedidos) {
 
         this.listaPedidosActual = pedidos;
-
         DefaultTableModel modelo = (DefaultTableModel) tablaPedidos.getModel();
         modelo.setRowCount(0);
 
         for (PedidoTablaDTO p : pedidos) {
 
+            boolean esExpress = p.getTipo().equalsIgnoreCase("EXPRESS");
+            boolean esProgramado = p.getTipo().equalsIgnoreCase("PROGRAMADO");
+
+            String folio = esProgramado ? "N/A" : p.getFolio();
+            String cliente = esExpress ? "N/A" : p.getCliente();
+            String telefono = esExpress ? "N/A" : p.getTelefono();
+
             Object[] fila = {
-                p.getFolio(),
-                p.getCliente(),
-                p.getTelefono(),
+                folio,
+                cliente,
+                telefono,
                 p.getFechaHora().format(
                 java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
                 ),
                 p.getTotal(),
-                p.getEstado(),};
+                p.getEstado()
+            };
 
             modelo.addRow(fila);
         }
@@ -429,10 +436,18 @@ public class frmEmpleados extends javax.swing.JFrame {
 
         String[] estadosDisponibles;
 
-        if (estadoActual.equals("PENDIENTE")) {
+        boolean esExpress = pedidoSeleccionado.getTipo().equalsIgnoreCase("EXPRESS");
+
+        if (estadoActual.equals("LISTO")) {
+
+            if (esExpress) {
+                estadosDisponibles = new String[]{"ENTREGADO"};
+            } else {
+                estadosDisponibles = new String[]{"ENTREGADO", "CANCELADO"};
+            }
+
+        } else if (estadoActual.equals("PENDIENTE")) {
             estadosDisponibles = new String[]{"LISTO", "CANCELADO"};
-        } else if (estadoActual.equals("LISTO")) {
-            estadosDisponibles = new String[]{"ENTREGADO", "CANCELADO"};
         } else {
             return;
         }
@@ -468,10 +483,12 @@ public class frmEmpleados extends javax.swing.JFrame {
             // Antes de marcar ENTREGADO 
             if (nuevoEstado.equals("ENTREGADO")) {
 
-                // Registrar el pago (puedes personalizar según tu BO/DAO)
+                double total = pedidoSeleccionado.getTotal();
+
                 int confirmarPago = JOptionPane.showConfirmDialog(
                         this,
-                        "¿Se ha recibido el pago del pedido?",
+                        "Total del pedido: $" + String.format("%.2f", total)
+                        + "\n\n¿Se ha recibido el pago del pedido?",
                         "Confirmar pago",
                         JOptionPane.YES_NO_OPTION
                 );

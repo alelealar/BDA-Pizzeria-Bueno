@@ -71,4 +71,5 @@ public interface IPedidoBO {
     
     public boolean validarFolioYPIN(int idPedido, String folio, String pin) throws NegocioException;
     
+    public List<PedidoDTO> obtenerPedidosCliente(int idUsuario) throws NegocioException;
 }
