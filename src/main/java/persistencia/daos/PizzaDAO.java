@@ -114,6 +114,8 @@ public class PizzaDAO implements IPizzaDAO {
     }
     
     
+    
+    
     private Pizza extraerPizza(ResultSet rs) throws PersistenciaException {
         try {
            Pizza pizza = new Pizza();
@@ -134,6 +136,88 @@ public class PizzaDAO implements IPizzaDAO {
         } catch (IllegalArgumentException ex) {
             LOG.severe("Estado de pizza inválido en BD: " + ex.getMessage());
             throw new PersistenciaException("Estado de pizza inválido.");
+        }
+    }
+
+    @Override
+    public Pizza obtenerPizzaPorTamano(String nombre, String tamPizza) throws PersistenciaException{
+        String comandoSQL = """
+                            SELECT 
+                            	idPizza, 
+                                nombre, 
+                                tamaño, 
+                                descripcion, 
+                                precio, 
+                                rutaImagen, 
+                                estado
+                            FROM pizzas
+                            WHERE nombre = ? AND tamaño = ?;
+                            """;
+        
+        try(Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)){
+            ps.setString(1, nombre);
+            ps.setString(2, tamPizza);
+            
+            try(ResultSet rs = ps.executeQuery()){
+                if(!rs.next()){
+                    LOG.warning("No existe el par con ese tamaño y ese nombre juntos");
+                    throw new PersistenciaException("La pizza con el nombre "+nombre+" y el tamaño "+tamPizza+" no existe");
+                }
+                return extraerPizza(rs);
+            }
+                       
+        } catch (SQLException ex) {
+            LOG.severe("Error sql al obtener el par pizza y tamaño");
+            throw new PersistenciaException("Hubo un error al encontrar la pizza con el nombre "+nombre+" y el tamaño "+tamPizza, ex);
+        }
+    }
+
+    @Override
+    public void actualizarPrecioPizza(String nombre, String tam, double nuevoPrecio) throws PersistenciaException {
+        String comandoSQL = """
+                            update pizzas
+                            set precio = ?
+                            where tamaño = ? && nombre = ?
+                            """;
+         try(Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)){
+            ps.setDouble(1, nuevoPrecio);
+            ps.setString(2, tam);
+            ps.setString(3, nombre);
+            
+            int filasAct = ps.executeUpdate();
+            if(filasAct < 1){
+                LOG.warning("No se actualizo ninguna pizza");
+                throw new PersistenciaException("No se encontro la pizza a actualizar");
+            }
+                       
+        } catch (SQLException ex) {
+            LOG.severe("Error sql al obtener el par pizza y tamaño");
+            throw new PersistenciaException("Hubo un error al actualizar la pizza con el nombre "+nombre+" y el tamaño "+tam, ex);
+        }
+    }
+
+    @Override
+    public void actualizarEstadoPizza(int idPizza) throws PersistenciaException {
+         String comandoSQL = """
+                            UPDATE pizzas
+                            SET estado = CASE
+                                            WHEN estado = 'DISPONIBLE' THEN 'NO_DISPONIBLE'
+                                            ELSE 'DISPONIBLE'
+                                        END
+                            where idPizza = ?
+                            """;
+         try(Connection conn = this.conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)){
+            ps.setInt(1, idPizza);
+            
+            int filasAct = ps.executeUpdate();
+            if(filasAct < 1){
+                LOG.warning("No se actualizo ningun estado de pizza");
+                throw new PersistenciaException("No se logro actualizar el estado de la pizza");
+            }
+                       
+        } catch (SQLException ex) {
+            LOG.severe("Error sql al actualizar el estado de la pizza");
+            throw new PersistenciaException("Hubo un error al actualizar el estado de la pizza");
         }
     }
     

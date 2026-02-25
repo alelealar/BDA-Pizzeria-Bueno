@@ -5,6 +5,7 @@
 package Negocio.BOs;
 
 import Negocio.DTOs.PizzaDTO;
+import Negocio.DTOs.PizzaProductoDTO;
 import Negocio.excepciones.NegocioException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -112,5 +113,43 @@ public class PizzaBO implements IPizzaBO {
             }
         }
         return new ArrayList(pizzasFiltradas.values());
+    }
+
+    @Override
+    public PizzaProductoDTO obtenerPizzaPorTamano(String nombre, String tamPizza) throws NegocioException {
+        try{
+            Pizza pizza = pizzaDAO.obtenerPizzaPorTamano(nombre, tamPizza);
+            
+            PizzaDTO.EstadoPizza estadoDto;
+              if (pizza.getEstado() == Pizza.EstadoPizza.DISPONIBLE) {
+                estadoDto = PizzaDTO.EstadoPizza.DISPONIBLE;
+            } else {
+                estadoDto = PizzaDTO.EstadoPizza.NO_DISPONIBLE;
+            }
+            return new PizzaProductoDTO(pizza.getIdPizza(), pizza.getNombre(), 
+                                        pizza.getDescripcion(), pizza.getRutaImagen(), pizza.getTamanio(), 
+                                        pizza.getPrecio(), estadoDto);
+        }catch (PersistenciaException ex) {
+             throw new NegocioException("No se logro obtener la pizza");
+        }
+
+    }
+
+    @Override
+    public void actualizarPrecioPizza(String nombre, String tam, double nuevoPrecio) throws NegocioException {
+        try {
+            pizzaDAO.actualizarPrecioPizza(nombre, tam, nuevoPrecio);
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("No se pudo actualizar el precio de la pizza " + nombre + " tamaño " + tam, ex);
+        }
+    }
+
+    @Override
+    public void actualizarEstadoPizza(int idPizza) throws NegocioException {
+        try {
+           pizzaDAO.actualizarEstadoPizza(idPizza);
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("No se pudo actualizar el estado de la pizza");
+        }
     }
 }
