@@ -113,7 +113,7 @@ public class CarritoDAO implements ICarritoDAO {
 
         String comandoSQL = """
             UPDATE Carritos
-            SET activo = FALSE
+            SET activo = 0
             WHERE idCarrito = ?;
             """;
 
@@ -150,4 +150,89 @@ public class CarritoDAO implements ICarritoDAO {
             throw new PersistenciaException("Error al extraer carrito.", ex);
         }
     }
+
+    //Pedido Express
+    @Override
+    public Carrito crearCarritoExpress(Carrito carrito) throws PersistenciaException {
+
+        String comandoSQL = """
+            INSERT INTO Carritos (token, fechaCreacion, activo)
+            VALUES (?, NOW(), TRUE);
+            """;
+
+        try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, carrito.getToken());
+
+            int filas = ps.executeUpdate();
+
+            if (filas == 0) {
+                throw new PersistenciaException("No se pudo crear el carrito.");
+            }
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    carrito.setIdCarrito(rs.getInt(1));
+                } else {
+                    throw new PersistenciaException("No se pudo obtener el ID del carrito.");
+                }
+            }
+
+            LOG.info("Carrito creado con ID: " + carrito.getIdCarrito());
+            return carrito;
+
+        } catch (SQLException ex) {
+            LOG.severe("Error SQL al crear carrito: " + ex);
+            throw new PersistenciaException("Error al crear carrito.", ex);
+        }
+    }
+
+    @Override
+    public Carrito obtenerCarritoActivoExpress(String token) throws PersistenciaException {
+
+        String comandoSQL = """
+            SELECT idCarrito, token, fechaCreacion, activo
+            FROM Carritos
+            WHERE token = ? AND activo = 1;
+            """;
+
+        try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
+
+            ps.setString(1, token);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                if (!rs.next()) {
+                    return null;
+                }
+
+                return extraerCarritoExpress(rs);
+            }
+
+        } catch (SQLException ex) {
+            LOG.severe("Error SQL al obtener carrito activo: " + ex);
+            throw new PersistenciaException("Error al obtener carrito activo.", ex);
+        }
+    }
+
+    private Carrito extraerCarritoExpress(ResultSet rs) throws PersistenciaException {
+        try {
+            Carrito carrito = new Carrito();
+            carrito.setIdCarrito(rs.getInt("idCarrito"));
+            carrito.setToken(rs.getString("token"));
+
+            Timestamp timestamp = rs.getTimestamp("fechaCreacion");
+            if (timestamp != null) {
+                carrito.setFechaCreacion(timestamp.toLocalDateTime());
+            }
+
+            carrito.setActivo(rs.getBoolean("activo"));
+
+            return carrito;
+
+        } catch (SQLException ex) {
+            throw new PersistenciaException("Error al extraer carrito.", ex);
+        }
+    }
+
 }

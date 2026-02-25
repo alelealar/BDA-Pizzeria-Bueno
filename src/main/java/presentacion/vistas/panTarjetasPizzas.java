@@ -25,6 +25,8 @@ public class panTarjetasPizzas extends javax.swing.JPanel {
     private frmCatalogo catalogo;
     private frmPedidoExpress pedidoEx;
     private int idUsuario;
+    private String token;
+    private boolean express;
 
     /**
      * Creates new form panTarjetasPizzas
@@ -37,6 +39,16 @@ public class panTarjetasPizzas extends javax.swing.JPanel {
         this.catalogo = catalogo;
         this.idUsuario = idUsuario;
         this.pizzaFiltrada = pizzaFiltrada;
+        lblNombre.setText(pizzaFiltrada.getNombre());
+        lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizzaFiltrada.getRutaImagen())));
+    }
+
+    public void setDatosPizzaExpress(PizzaDTO pizzaFiltrada, frmCatalogo catalogo, String token) {
+        this.catalogo = catalogo;
+        this.token = token;
+        this.express = true;
+        this.pizzaFiltrada = pizzaFiltrada;
+
         lblNombre.setText(pizzaFiltrada.getNombre());
         lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizzaFiltrada.getRutaImagen())));
     }
@@ -122,7 +134,13 @@ public class panTarjetasPizzas extends javax.swing.JPanel {
 
     private void btnAnadirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAnadirMouseClicked
         frmDetallesPizza frmPizza = new frmDetallesPizza();
-        frmPizza.cargarInformacionPizza(pizzaFiltrada, idUsuario);
+
+        if (express) {
+            frmPizza.cargarInformacionPizzaExpress(pizzaFiltrada, token);
+        } else {
+            frmPizza.cargarInformacionPizza(pizzaFiltrada, idUsuario);
+        }
+
         frmPizza.setVisible(true);
         catalogo.dispose();
     }//GEN-LAST:event_btnAnadirMouseClicked

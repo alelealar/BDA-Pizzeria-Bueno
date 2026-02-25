@@ -26,7 +26,7 @@ import org.mindrot.jbcrypt.BCrypt;
  * @author Brian
  */
 public class PedidoExpressDAO implements IPedidoExpressDAO {
-    
+
     private final IConexionBD conexionBD;
     private static final Logger LOG = Logger.getLogger(ClienteDAO.class.getName());
 
@@ -57,19 +57,19 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
                         ?
                     )
                     """;
-        
+
         try (Connection conexion = conexionBD.crearConexion(); CallableStatement cs = conexion.prepareCall(sp)) {
             cs.setString(1, pedidoExpress.getNota());
-            cs.setString(2, pedidoExpress.getFolio());
+            cs.setInt(2, pedidoExpress.getFolio());
             cs.setString(3, pedidoExpress.getPin());
             cs.registerOutParameter(4, Types.INTEGER);
-            
+
             cs.execute();
-            
+
             int idGeneradoPedidoExpress = cs.getInt(4);
             pedidoExpress.setIdPedido(idGeneradoPedidoExpress);
             return pedidoExpress;
-            
+
         } catch (SQLException e) {
             LOG.severe(() -> "ERROR: Al intentar agregar un pedido express con el SP " + e);
             throw new PersistenciaException("ERROR: Al intentar agregar un pedido express con el SP " + e);
@@ -93,15 +93,15 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
                               FROM pedidosexpress
                               WHERE idPedido = ?
                               """;
-        
+
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(sentenciaSQL)) {
             ps.setInt(1, idPedidoExpress);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 PedidoExpress pedidoEx = extraerPedidoExpress(rs);
                 return pedidoEx;
             }
-            
+
         } catch (SQLException ex) {
             LOG.severe(() -> "ERROR al obtener el pedido express." + ex);
             throw new PersistenciaException("ERROR al obtener el pedido express." + ex);
@@ -145,9 +145,9 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
      */
     @Override
     public List<PedidoExpress> obtenerPedidosExpress() throws PersistenciaException {
-        
+
         List<PedidoExpress> pedidosEx = new ArrayList<>();
-        
+
         String sentenciaSQL = """
                               SELECT 
                               	idPedido, 
@@ -155,7 +155,7 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
                                   PIN
                               FROM pedidosexpress
                               """;
-        
+
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(sentenciaSQL)) {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -164,7 +164,7 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
                 }
             }
             return pedidosEx;
-            
+
         } catch (SQLException ex) {
             LOG.severe(() -> "ERROR al obtener el pedido express." + ex);
             throw new PersistenciaException("ERROR al obtener el pedido express." + ex);
@@ -183,11 +183,11 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
         try {
             PedidoExpress pedidoEx = new PedidoExpress();
             pedidoEx.setIdPedido(rs.getInt("idPedido"));
-            pedidoEx.setFolio(rs.getString("folio"));
+            pedidoEx.setFolio(rs.getInt("folio"));
             pedidoEx.setPin(rs.getString("PIN"));
-            
+
             return pedidoEx;
-            
+
         } catch (SQLException ex) {
             LOG.severe(() -> "Error al extraer el pedido express: " + ex);
             throw new PersistenciaException("Error al obtener el pedido express" + ex);
@@ -201,21 +201,30 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
      */
     @Override
     public int obtenerFolio() throws PersistenciaException {
-        String sentenciaSQL = "SELECT MAX(folio) FROM pedidosexpress";
-        
-        try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(sentenciaSQL); ResultSet rs = ps.executeQuery()) {
-            
+        String sql = """
+                     SELECT MAX(folio) FROM pedidosexpress
+                     """;
+
+        try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
             if (rs.next()) {
-                return rs.getInt(1);
+                int max = rs.getInt(1);
+
+                // Si la tabla está vacía, max devuelve null,
+                if (rs.wasNull()) {
+                    return 0;
+                }
+
+                return max;
             }
-            //devuelve 0 en caso de que no haya registros para evitar un null.
+
             return 0;
-        } catch (SQLException ex) {
-            LOG.severe(() -> "No fue posible recuperar el folio." + ex);
-            throw new PersistenciaException("No fue posible obtener el folio" + ex);
+
+        } catch (SQLException e) {
+            throw new PersistenciaException("No fue posible obtener el folio", e);
         }
     }
-    
+
     @Override
     public boolean obtenerPinValido(String pin) throws PersistenciaException {
         String sentenciaSQL = """
@@ -230,7 +239,7 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
                 if (BCrypt.checkpw(pin, codigoHash)) {
                     return true;
                 }
-                
+
             }
             return false;
         } catch (SQLException ex) {
@@ -238,7 +247,7 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
             throw new PersistenciaException("No fue posible obtener el pin" + ex);
         }
     }
-    
+
     @Override
     public PedidoExpress actualizarPedidoExpress(PedidoExpress pedidoExpress) throws PersistenciaException {
         String sentenciaSQL = """
@@ -246,7 +255,7 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
                               set estadoActual = ?
                               WHERE idPedido = ?;
                               """;
-        
+
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(sentenciaSQL)) {
             ps.setString(1, pedidoExpress.getEstadoActual());
             ps.setInt(2, pedidoExpress.getIdPedido());
@@ -256,13 +265,13 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
             } else {
                 LOG.info("El pedido no se ha podido actualizar");
             }
-            
+
             return pedidoExpress;
         } catch (SQLException ex) {
             LOG.severe(() -> "No fue posible actualizar el pedido" + ex);
             throw new PersistenciaException("No fue posible actualizar el pedido" + ex);
-            
+
         }
     }
-    
+
 }

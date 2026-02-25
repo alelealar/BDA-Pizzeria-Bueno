@@ -34,5 +34,5 @@ public interface IPedidoExpressBO {
      */
     public PedidoExpressDTO obtenerPedidoExpressPorId(int idPedidoExpress) throws NegocioException;
 
-    public PedidoExpressDTO actualizarPedidoExpress(PedidoExpressDTO pedto) throws NegocioException;
+    public String generarToken() throws NegocioException;
 }

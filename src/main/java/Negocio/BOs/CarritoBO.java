@@ -70,8 +70,7 @@ public class CarritoBO implements ICarritoBO {
                 carrito = carritoDAO.crearCarrito(carrito);
             }
 
-            DetalleCarrito detalleExistente
-                    = detalleCarritoDAO.obtenerDetalle(carrito.getIdCarrito(), idPizza, tamanio);
+            DetalleCarrito detalleExistente = detalleCarritoDAO.obtenerDetalle(carrito.getIdCarrito(), idPizza, tamanio);
 
             if (detalleExistente != null) {
 
@@ -99,10 +98,90 @@ public class CarritoBO implements ICarritoBO {
     }
 
     @Override
+    public void agregarProductoExpress(String token, int idPizza, String tamanio, int cantidad, String nota) throws NegocioException {
+
+        try {
+            // 1. Buscar carrito activo
+            Carrito carrito = carritoDAO.obtenerCarritoActivoExpress(token);
+
+            // 2. Si no existe, crearlo
+            if (carrito == null) {
+                carrito = new Carrito();
+                carrito.setToken(token);
+                carrito.setActivo(true);
+                carrito = carritoDAO.crearCarritoExpress(carrito);
+            }
+
+            DetalleCarrito detalleExistente = detalleCarritoDAO.obtenerDetalle(carrito.getIdCarrito(), idPizza, tamanio);
+
+            if (detalleExistente != null) {
+
+                int nuevaCantidad = detalleExistente.getCantidad() + cantidad;
+
+                detalleCarritoDAO.actualizarCantidad(
+                        detalleExistente.getIdDetalleCarrito(),
+                        nuevaCantidad
+                );
+
+            } else {
+
+                DetalleCarrito detalle = new DetalleCarrito();
+                detalle.setIdCarrito(carrito.getIdCarrito());
+                detalle.setIdPizza(idPizza);
+                detalle.setCantidad(cantidad);
+                detalle.setTamanio(tamanio);
+                detalle.setNota(nota);
+
+                detalleCarritoDAO.agregarProducto(detalle);
+            }
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("Error al agregar producto al carrito", ex);
+        }
+    }
+
+    @Override
+    public CarritoDTO obtenerOCrearCarritoExpress(String token) throws NegocioException {
+        try {
+            //1. buscar carrito
+            Carrito carrito = carritoDAO.obtenerCarritoActivoExpress(token);
+            if (carrito == null) {
+                //si el carrito no existe hay que crearlo
+                carrito = new Carrito();
+                carrito.setToken(token);
+                carrito.setActivo(true);
+                carrito = carritoDAO.crearCarrito(carrito);
+            }
+            CarritoDTO carritoDto = new CarritoDTO();
+            carritoDto.setIdCarrito(carrito.getIdCarrito());
+            carritoDto.setToken(carrito.getToken());
+
+            return carritoDto;
+        } catch (PersistenciaException ex) {
+            System.getLogger(CarritoBO.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            throw new NegocioException("Error al obtener carrito Express" + ex.getMessage());
+        }
+    }
+
+    @Override
     public CarritoDTO obtenerCarritoCompleto(int idUsuario) throws NegocioException {
 
         try {
             Carrito carrito = carritoDAO.obtenerCarritoActivoPorUsuario(idUsuario);
+            if (carrito == null) {
+                return null;
+            }
+            List<DetalleCarrito> detalles = detalleCarritoDAO.obtenerDetallesPorCarrito(carrito.getIdCarrito());
+            return convertirDTO(carrito, detalles);
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("Error al obtener carrito.", ex);
+        }
+    }
+
+    @Override
+    public CarritoDTO obtenerCarritoCompletoExpress(String token) throws NegocioException {
+
+        try {
+            Carrito carrito = carritoDAO.obtenerCarritoActivoExpress(token);
             if (carrito == null) {
                 return null;
             }
@@ -166,5 +245,19 @@ public class CarritoBO implements ICarritoBO {
 
         dto.setDetalles(listaDTO);
         return dto;
+    }
+
+    @Override
+    public void finalizarExpress(String token) throws NegocioException {
+        try {
+            Carrito carrito = carritoDAO.obtenerCarritoActivoExpress(token);
+
+            if (carrito == null) {
+                throw new NegocioException("No hay carrito activo.");
+            }
+            carritoDAO.desactivarCarrito(carrito.getIdCarrito());
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("Error al finalizar carrito.", ex);
+        }
     }
 }

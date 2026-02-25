@@ -3,15 +3,18 @@ package presentacion;
 import Negocio.BOs.DetalleCarritoBO;
 import Negocio.BOs.ICarritoBO;
 import Negocio.BOs.IDetalleCarritoBO;
+import Negocio.BOs.IPedidoExpressBO;
 import Negocio.DTOs.CarritoDTO;
 import Negocio.DTOs.DetalleCarritoDTO;
 import Negocio.DTOs.DetallePedidoDTO;
+import Negocio.DTOs.PedidoExpressDTO;
 import Negocio.Fabrica.FabricaBOs;
 import Negocio.excepciones.NegocioException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import static java.awt.Component.CENTER_ALIGNMENT;
 import java.awt.HeadlessException;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -19,6 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import negocio.bos.CarritoBO;
+import presentacion.vistas.frmAvisos;
 import presentacion.vistas.panPedido;
 
 /**
@@ -28,8 +32,10 @@ import presentacion.vistas.panPedido;
 public class frmCarrito extends javax.swing.JFrame {
 
     private ICarritoBO carritoBo;
+    private IPedidoExpressBO pedidoEx;
     private int idUsuario;
     private boolean express;
+    private String token;
     private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(frmCarrito.class.getName());
 
     public frmCarrito(int idUsuario) {
@@ -37,10 +43,31 @@ public class frmCarrito extends javax.swing.JFrame {
         initComponents();
         this.carritoBo = FabricaBOs.obtenerCarrito();
 
-        // CORRECCIÓN: Configuración del Layout para que las tarjetas se apilen verticalmente
+        // Configuración del Layout para que las tarjetas se apilen verticalmente
         panPedidos.setLayout(new BoxLayout(panPedidos, BoxLayout.Y_AXIS));
 
         // Carga inicial de datos
+        cargarCarrito();
+    }
+
+    public frmCarrito(String token) {
+        this.express = true;
+        this.token = token;
+
+        initComponents();
+
+        txtCupon.setVisible(false);
+        btnActualizar.setVisible(false);
+        jLabel3.setVisible(false);
+        btnPE.setVisible(false);
+        jSeparator1.setVisible(false);
+        btnValidar1.setVisible(false);
+        btnMispedidos.setVisible(false);
+
+        this.carritoBo = FabricaBOs.obtenerCarrito();
+
+        panPedidos.setLayout(new BoxLayout(panPedidos, BoxLayout.Y_AXIS));
+
         cargarCarrito();
     }
 
@@ -50,11 +77,17 @@ public class frmCarrito extends javax.swing.JFrame {
     }
 
     private void cargarPedidosEnElPanel() {
+        CarritoDTO carrito = null;
+
         try {
             panPedidos.removeAll(); // Limpiar el panel antes de redibujar
 
-            //obtenemos el carrito con los pedidos del usuario
-            CarritoDTO carrito = carritoBo.obtenerCarritoCompleto(4);
+            if (express) {
+                carrito = carritoBo.obtenerCarritoCompletoExpress(token);
+            } else {
+                //obtenemos el carrito con los pedidos del usuario
+                carrito = carritoBo.obtenerCarritoCompleto(idUsuario);
+            }
 
             //verificamos que el carrito tenga algo
             if (carrito != null && carrito.getDetalles() != null && !carrito.getDetalles().isEmpty()) {
@@ -79,7 +112,7 @@ public class frmCarrito extends javax.swing.JFrame {
             panPedidos.repaint();
 
         } catch (NegocioException ex) {
-            LOG.severe("Error al cargar paneles: " + ex.getMessage());
+            LOG.severe(() -> "Error al cargar paneles: " + ex.getMessage());
         }
     }
 
@@ -102,27 +135,46 @@ public class frmCarrito extends javax.swing.JFrame {
         }
     }
 
+    public void eliminarPaneles(DetalleCarritoDTO detalle) {
+        try {
+            IDetalleCarritoBO detalleBO = FabricaBOs.obtenerDetalleCarritoBO();
+
+            // Eliminación en la base de datos
+            detalleBO.eliminarDetallesPorCarrito(detalle.getIdDetalleCarrito());
+
+            // Actualización de la interfaz
+            cargarCarrito();
+
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(this, "Error al eliminar: " + ex.getMessage());
+        }
+    }
+
     /**
      * Calcula el total de la compra y lo muestra en el JTextArea lateral.
      */
     public void cargarPedidoTextArea() {
         try {
-            CarritoDTO carritoActual = carritoBo.obtenerCarritoCompleto(4);
-            double totalAcumulado = 0;
+            CarritoDTO carritoActual;
 
-            if (carritoActual != null && carritoActual.getDetalles() != null) {
-                for (DetalleCarritoDTO d : carritoActual.getDetalles()) {
-                    totalAcumulado += (d.getPrecioUnitario() * d.getCantidad());
-                }
+            if (express) {
+                carritoActual = carritoBo.obtenerCarritoCompletoExpress(token);
+            } else {
+                carritoActual = carritoBo.obtenerCarritoCompleto(idUsuario);
             }
 
-            // Formateo de moneda para que se vea profesional
+            if (carritoActual == null || carritoActual.getDetalles() == null || carritoActual.getDetalles().isEmpty()) {
+                txaDetallePedidos.setText("Tu carrito está vacío.");
+                return;
+            }
+
+            double totalAcumulado = 0;
             StringBuilder resumen = new StringBuilder();
 
             resumen.append("""
-                RESUMEN DE COMPRA
-                --------------------------
-                """);
+            RESUMEN DE COMPRA
+            --------------------------
+            """);
 
             for (DetalleCarritoDTO detalle : carritoActual.getDetalles()) {
 
@@ -137,6 +189,7 @@ public class frmCarrito extends javax.swing.JFrame {
                         .append(")   $")
                         .append(String.format("%.2f", subtotalProducto))
                         .append("\n");
+
                 if (detalle.getNota() != null && !detalle.getNota().isBlank()) {
                     resumen.append("   Nota: ")
                             .append(detalle.getNota())
@@ -145,11 +198,7 @@ public class frmCarrito extends javax.swing.JFrame {
             }
 
             resumen.append("--------------------------------\n");
-            resumen.append("Subtotal: $")
-                    .append(String.format("%.2f", totalAcumulado))
-                    .append("\n");
-
-            resumen.append("Total:    $")
+            resumen.append("Total: $")
                     .append(String.format("%.2f", totalAcumulado))
                     .append(" MXN\n");
 
@@ -157,27 +206,6 @@ public class frmCarrito extends javax.swing.JFrame {
 
         } catch (NegocioException e) {
             LOG.warning(() -> "No se pudo calcular el total: " + e.getMessage());
-        }
-    }
-
-    private void btnOrdenarActionPerformed(java.awt.event.ActionEvent evt) {
-        try {
-            CarritoDTO carrito = carritoBo.obtenerCarritoCompleto(idUsuario);
-            if (carrito == null || carrito.getDetalles().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No hay pizzas para ordenar.");
-                return;
-            }
-
-            int confirm = JOptionPane.showConfirmDialog(this, "¿Finalizar compra?");
-            if (confirm == JOptionPane.YES_OPTION) {
-                // Aquí llamarías a la lógica de negocio para crear el pedido real
-                // carritoBo.procesarPedido(idUsuario); 
-                JOptionPane.showMessageDialog(this, "¡Pedido enviado a cocina!");
-                cargarCarrito();
-            }
-        } catch (NegocioException ex) {
-            LOG.warning(ex.getMessage());
-            JOptionPane.showMessageDialog(this, "Error al ordenar.");
         }
     }
 
@@ -483,6 +511,11 @@ public class frmCarrito extends javax.swing.JFrame {
 
         btnOrdenar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         btnOrdenar.setText("Ordenar");
+        btnOrdenar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOrdenarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panPizzasLayout = new javax.swing.GroupLayout(panPizzas);
         panPizzas.setLayout(panPizzasLayout);
@@ -618,8 +651,57 @@ public class frmCarrito extends javax.swing.JFrame {
     }//GEN-LAST:event_btnPEMouseExited
 
     private void btnValidar1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnValidar1MouseClicked
-        
+
     }//GEN-LAST:event_btnValidar1MouseClicked
+
+    private void btnOrdenarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrdenarActionPerformed
+        try {
+            CarritoDTO carrito = null;
+            if (express) {
+                carrito = carritoBo.obtenerCarritoCompletoExpress(token);
+            } else {
+                carrito = carritoBo.obtenerCarritoCompleto(idUsuario);
+            }
+
+            if (carrito == null || carrito.getDetalles().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No hay pizzas para ordenar.");
+                return;
+            }
+
+            int confirm = JOptionPane.showConfirmDialog(this, "¿Finalizar compra?");
+            if (confirm == JOptionPane.YES_OPTION) {
+                if (express) {
+                    IPedidoExpressBO pedidoEx = FabricaBOs.obtenerPedidoExpress();
+                    CarritoDTO carritoDto = carritoBo.obtenerCarritoCompletoExpress(token);
+                    PedidoExpressDTO pedidoExDTO = new PedidoExpressDTO();
+                    pedidoExDTO.setFechaHoraPedido(LocalDateTime.now());
+                    PedidoExpressDTO pedidoExpressObtenido = pedidoEx.agregarPedidoExpress(pedidoExDTO);
+                    CarritoDTO carritoCompleto = carritoBo.obtenerCarritoCompletoExpress(token);
+                    List<DetalleCarritoDTO> detalles = carritoCompleto.getDetalles();
+                    for (DetalleCarritoDTO detalle : detalles) {
+                        eliminarPaneles(detalle);
+                    }
+                    String mensaje = "<html>"
+                            + "<div style='text-align: center; width: 200px; padding: 10px;'>"
+                            + "   <b style='font-size: 1.2em;'>¡Pedido Registrado!</b><br><br>"
+                            + "   Folio: <b>" + pedidoExpressObtenido.getFolio() + "</b><br>"
+                            + "   PIN: <span style='color: #14CBF5; font-size: 1.1em;'><b>" + pedidoExpressObtenido.getPIN() + "</b></span><br><br>"
+                            + "   <i style='color: #555555;'>Por favor, guarda estos datos.<br>Los necesitarás para tu pedido.</i>"
+                            + "</div>"
+                            + "</html>";
+                    frmAvisos aviso = new frmAvisos(mensaje);
+                    aviso.setVisible(true);
+                    carritoBo.finalizarExpress(token);
+                } else {
+                    JOptionPane.showMessageDialog(this, "¡Pedido Realizado!");
+                    cargarCarrito();
+                }
+            }
+        } catch (NegocioException ex) {
+            LOG.warning(ex.getMessage());
+            JOptionPane.showMessageDialog(this, "Error al ordenar.");
+        }
+    }//GEN-LAST:event_btnOrdenarActionPerformed
 
     /**
      * @param args the command line arguments

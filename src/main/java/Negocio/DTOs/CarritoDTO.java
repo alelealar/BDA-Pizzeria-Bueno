@@ -10,6 +10,7 @@ public class CarritoDTO {
     private LocalDateTime fechaCreacion;
     private boolean activo;
     private List<DetalleCarritoDTO> detalles;
+    private String token;
 
     // Constructor vacío
     public CarritoDTO() {
@@ -26,6 +27,12 @@ public class CarritoDTO {
     public CarritoDTO(int idCarrito, int idUsuario, LocalDateTime fechaCreacion, boolean activo) {
         this.idCarrito = idCarrito;
         this.idUsuario = idUsuario;
+        this.fechaCreacion = fechaCreacion;
+        this.activo = activo;
+    }
+
+    public CarritoDTO(String token, LocalDateTime fechaCreacion, boolean activo) {
+        this.token = token;
         this.fechaCreacion = fechaCreacion;
         this.activo = activo;
     }
@@ -69,6 +76,14 @@ public class CarritoDTO {
 
     public void setDetalles(List<DetalleCarritoDTO> detalles) {
         this.detalles = detalles;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
 }

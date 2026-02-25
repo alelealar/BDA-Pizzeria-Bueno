@@ -5,6 +5,7 @@
 package presentacion.vistas;
 
 import java.awt.Color;
+import presentacion.frmCatalogo;
 
 /**
  *

@@ -1,6 +1,7 @@
 
     package presentacion;//GEN-FIRST:event_btnInicioMouseExited
 //GEN-LAST:event_btnInicioMouseExited
+import Negocio.BOs.IPedidoExpressBO;
 import Negocio.BOs.IPizzaBO;
 import Negocio.BOs.PizzaBO;
 import Negocio.DTOs.PizzaDTO;
@@ -22,43 +23,62 @@ import presentacion.vistas.panTarjetasPizzas;
  * @author Brian
  */
 public class frmCatalogo extends javax.swing.JFrame {
-
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmCatalogo.class.getName());
-
+    
     private int idUsuario;
     private IPizzaBO pizzaBO;
-
+    private boolean express;
+    private String token;
+    
     public frmCatalogo() {
         initComponents();
         this.pizzaBO = FabricaBOs.obtenerProductos();
         cargarPizzasEnElPanel();
     }
-
+    
     public frmCatalogo(int idUsuario) {
         initComponents();
         this.idUsuario = idUsuario;
         this.pizzaBO = FabricaBOs.obtenerProductos();
         cargarPizzasEnElPanel();
     }
-
+    
+    public frmCatalogo(boolean express) {
+        try {
+            initComponents();
+            IPedidoExpressBO pedidoExBO = FabricaBOs.obtenerPedidoExpress();
+            this.token = pedidoExBO.generarToken();
+            this.express = express;
+            this.pizzaBO = FabricaBOs.obtenerProductos();
+            cargarPizzasEnElPanel();
+        } catch (NegocioException ex) {
+            System.getLogger(frmCatalogo.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+    }
+    
     private void cargarPizzasEnElPanel() {
-
+        
         panPizzas.removeAll();
         panPizzas.setLayout(new java.awt.GridLayout(0, 2, 15, 15));
-
+        
         try {
             List<PizzaDTO> pizzas = pizzaBO.obtenerProductos();
             List<PizzaDTO> pizzasFiltradas = pizzaBO.agruparPizzasPorNombre();
-
+            
             for (PizzaDTO pizza : pizzasFiltradas) {
                 if (pizza.getEstado() == PizzaDTO.EstadoPizza.DISPONIBLE) {
                     panTarjetasPizzas tarjeta = new panTarjetasPizzas();
-                    tarjeta.setDatosPizza(pizza, this, idUsuario);
+                    if (express) {
+                        tarjeta.setDatosPizzaExpress(pizza, this, token);
+                    } else {
+                        tarjeta.setDatosPizza(pizza, this, idUsuario);
+                    }
                     System.out.println(pizza);
                     panPizzas.add(tarjeta);
                 }
             }
-
+            
         } catch (NegocioException ex) {
             System.getLogger(frmCatalogo.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
@@ -74,7 +94,7 @@ public class frmCatalogo extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
-
+        
         panLogo = new javax.swing.JPanel();
         lblLogo = new javax.swing.JLabel();
         lblTituloLogo = new javax.swing.JLabel();
@@ -91,40 +111,40 @@ public class frmCatalogo extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         panPizzas = new javax.swing.JPanel();
-
+        
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setLocationByPlatform(true);
         setResizable(false);
-
+        
         panLogo.setBackground(new java.awt.Color(237, 96, 66));
-
+        
         lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo.jpeg"))); // NOI18N
         lblLogo.setText("jLabel1");
-
+        
         lblTituloLogo.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 100)); // NOI18N
         lblTituloLogo.setForeground(new java.awt.Color(255, 255, 255));
         lblTituloLogo.setText("PAPIZZA");
-
+        
         panNavegacion.setBackground(new java.awt.Color(255, 92, 56));
         panNavegacion.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
+        
         btnInicio.setBackground(new java.awt.Color(255, 92, 56));
         btnInicio.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnInicioMouseEntered(evt);
             }
-
+            
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btnInicioMouseExited(evt);
             }
         });
-
+        
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Inicio");
         jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
+        
         javax.swing.GroupLayout btnInicioLayout = new javax.swing.GroupLayout(btnInicio);
         btnInicio.setLayout(btnInicioLayout);
         btnInicioLayout.setHorizontalGroup(
@@ -135,26 +155,26 @@ public class frmCatalogo extends javax.swing.JFrame {
                 btnInicioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
         );
-
+        
         panNavegacion.add(btnInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, -2, 100, 60));
-
+        
         btnActualizar.setBackground(new java.awt.Color(255, 92, 56));
         btnActualizar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnActualizarMouseEntered(evt);
             }
-
+            
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btnActualizarMouseExited(evt);
             }
         });
-
+        
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Actualizar");
         jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
+        
         javax.swing.GroupLayout btnActualizarLayout = new javax.swing.GroupLayout(btnActualizar);
         btnActualizar.setLayout(btnActualizarLayout);
         btnActualizarLayout.setHorizontalGroup(
@@ -167,26 +187,26 @@ public class frmCatalogo extends javax.swing.JFrame {
                                 .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
                                 .addContainerGap())
         );
-
+        
         panNavegacion.add(btnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(814, -4, -1, 70));
-
+        
         btnCarrito.setBackground(new java.awt.Color(255, 92, 56));
         btnCarrito.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnCarritoMouseEntered(evt);
             }
-
+            
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btnCarritoMouseExited(evt);
             }
         });
-
+        
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Carrito");
         jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
+        
         javax.swing.GroupLayout btnCarritoLayout = new javax.swing.GroupLayout(btnCarrito);
         btnCarrito.setLayout(btnCarritoLayout);
         btnCarritoLayout.setHorizontalGroup(
@@ -199,26 +219,26 @@ public class frmCatalogo extends javax.swing.JFrame {
                                 .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
                                 .addContainerGap())
         );
-
+        
         panNavegacion.add(btnCarrito, new org.netbeans.lib.awtextra.AbsoluteConstraints(943, -4, -1, 70));
-
+        
         btnMispedidos.setBackground(new java.awt.Color(255, 92, 56));
         btnMispedidos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnMispedidosMouseEntered(evt);
             }
-
+            
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btnMispedidosMouseExited(evt);
             }
         });
-
+        
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Mis pedidos");
         jLabel6.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
+        
         javax.swing.GroupLayout btnMispedidosLayout = new javax.swing.GroupLayout(btnMispedidos);
         btnMispedidos.setLayout(btnMispedidosLayout);
         btnMispedidosLayout.setHorizontalGroup(
@@ -232,26 +252,26 @@ public class frmCatalogo extends javax.swing.JFrame {
                                 .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
                                 .addContainerGap())
         );
-
+        
         panNavegacion.add(btnMispedidos, new org.netbeans.lib.awtextra.AbsoluteConstraints(1069, -6, 130, 70));
-
+        
         btnPE.setBackground(new java.awt.Color(255, 92, 56));
         btnPE.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnPEMouseEntered(evt);
             }
-
+            
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btnPEMouseExited(evt);
             }
         });
-
+        
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Pedido Express");
         jLabel3.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
+        
         javax.swing.GroupLayout btnPELayout = new javax.swing.GroupLayout(btnPE);
         btnPE.setLayout(btnPELayout);
         btnPELayout.setHorizontalGroup(
@@ -264,9 +284,9 @@ public class frmCatalogo extends javax.swing.JFrame {
                                 .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
                                 .addContainerGap())
         );
-
+        
         panNavegacion.add(btnPE, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 2, 150, 60));
-
+        
         javax.swing.GroupLayout panLogoLayout = new javax.swing.GroupLayout(panLogo);
         panLogo.setLayout(panLogoLayout);
         panLogoLayout.setHorizontalGroup(
@@ -292,9 +312,9 @@ public class frmCatalogo extends javax.swing.JFrame {
                                 .addComponent(panNavegacion, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
         );
-
+        
         panPizzas.setBackground(new java.awt.Color(255, 232, 216));
-
+        
         javax.swing.GroupLayout panPizzasLayout = new javax.swing.GroupLayout(panPizzas);
         panPizzas.setLayout(panPizzasLayout);
         panPizzasLayout.setHorizontalGroup(
@@ -305,9 +325,9 @@ public class frmCatalogo extends javax.swing.JFrame {
                 panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGap(0, 533, Short.MAX_VALUE)
         );
-
+        
         jScrollPane1.setViewportView(panPizzas);
-
+        
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -322,7 +342,7 @@ public class frmCatalogo extends javax.swing.JFrame {
                                 .addGap(0, 0, 0)
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 535, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
-
+        
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>                        
@@ -330,39 +350,39 @@ public class frmCatalogo extends javax.swing.JFrame {
     private void btnInicioMouseEntered(java.awt.event.MouseEvent evt) {
         btnInicio.setBackground(Color.decode("#E82F07"));
     }
-
+    
     private void btnInicioMouseExited(java.awt.event.MouseEvent evt) {
         btnInicio.setBackground(Color.decode("#FF5C38"));
     }
-
+    
     private void btnActualizarMouseEntered(java.awt.event.MouseEvent evt) {
         btnActualizar.setBackground(Color.decode("#E82F07"));
     }
-
+    
     private void btnActualizarMouseExited(java.awt.event.MouseEvent evt) {
         btnActualizar.setBackground(Color.decode("#FF5C38"));
     }
-
+    
     private void btnCarritoMouseEntered(java.awt.event.MouseEvent evt) {
         btnCarrito.setBackground(Color.decode("#E82F07"));
     }
-
+    
     private void btnCarritoMouseExited(java.awt.event.MouseEvent evt) {
         btnCarrito.setBackground(Color.decode("#FF5C38"));
     }
-
+    
     private void btnMispedidosMouseEntered(java.awt.event.MouseEvent evt) {
         btnMispedidos.setBackground(Color.decode("#E82F07"));
     }
-
+    
     private void btnMispedidosMouseExited(java.awt.event.MouseEvent evt) {
         btnMispedidos.setBackground(Color.decode("#FF5C38"));
     }
-
+    
     private void btnPEMouseEntered(java.awt.event.MouseEvent evt) {
         btnCarrito.setBackground(Color.decode("#FF5C38"));
     }
-
+    
     private void btnPEMouseExited(java.awt.event.MouseEvent evt) {
         btnCarrito.setBackground(Color.decode("#FF5C38"));
     }

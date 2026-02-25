@@ -11,10 +11,12 @@ import java.time.LocalDateTime;
  * @author RAYMUNDO
  */
 public class Carrito {
+
     private int idCarrito;
     private int idUsuario;
     private LocalDateTime fechaCreacion;
     private boolean activo;
+    private String token;
 
     public Carrito() {
     }
@@ -22,6 +24,14 @@ public class Carrito {
     public Carrito(int idCarrito, int idUsuario, LocalDateTime fechaCreacion, boolean activo) {
         this.idCarrito = idCarrito;
         this.idUsuario = idUsuario;
+        this.fechaCreacion = fechaCreacion;
+        this.activo = activo;
+    }
+
+    //Pedido express
+    public Carrito(int idCarrito, String token, LocalDateTime fechaCreacion, boolean activo) {
+        this.idCarrito = idCarrito;
+        this.token = token;
         this.fechaCreacion = fechaCreacion;
         this.activo = activo;
     }
@@ -56,6 +66,14 @@ public class Carrito {
 
     public void setActivo(boolean activo) {
         this.activo = activo;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     @Override

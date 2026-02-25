@@ -12,11 +12,14 @@ import persistencia.excepciones.PersistenciaException;
  * @author RAYMUNDO
  */
 public interface ICarritoDAO {
-    
+
     Carrito crearCarrito(Carrito carrito) throws PersistenciaException;
 
     Carrito obtenerCarritoActivoPorUsuario(int idUsuario) throws PersistenciaException;
 
     void desactivarCarrito(int idCarrito) throws PersistenciaException;
-    
+
+    Carrito crearCarritoExpress(Carrito carrito) throws PersistenciaException;
+
+    Carrito obtenerCarritoActivoExpress(String token) throws PersistenciaException;
 }

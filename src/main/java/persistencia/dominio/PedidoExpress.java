@@ -25,7 +25,7 @@ public class PedidoExpress extends Pedido {
     /**
      * Folio identificador del pedido express.
      */
-    private String folio;
+    private int folio;
 
     /**
      * Constructor por omisión.
@@ -45,7 +45,7 @@ public class PedidoExpress extends Pedido {
      * @param fechaHoraEntrega fecha y hora de entrega
      * @param tipo
      */
-    public PedidoExpress(String pin, String folio, int idPedido, String nota,
+    public PedidoExpress(String pin, int folio, int idPedido, String nota,
             String estadoActual, LocalDateTime fechaHoraPedido,
             LocalDateTime fechaHoraEntrega, Tipo tipo) {
         super(idPedido, nota, estadoActual, fechaHoraPedido, fechaHoraEntrega, tipo);
@@ -62,8 +62,9 @@ public class PedidoExpress extends Pedido {
      * @param estadoActual estado actual
      * @param fechaHoraPedido fecha y hora del pedido
      * @param fechaHoraEntrega fecha y hora de entrega
+     * @param tipo
      */
-    public PedidoExpress(String pin, String folio, String nota,String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, Tipo tipo) {
+    public PedidoExpress(String pin, int folio, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, Tipo tipo) {
         super(nota, estadoActual, fechaHoraPedido, fechaHoraEntrega, tipo);
         this.pin = pin;
         this.folio = folio;
@@ -86,14 +87,14 @@ public class PedidoExpress extends Pedido {
     /**
      * @return folio del pedido
      */
-    public String getFolio() {
+    public int getFolio() {
         return folio;
     }
 
     /**
      * @param folio nuevo folio
      */
-    public void setFolio(String folio) {
+    public void setFolio(int folio) {
         this.folio = folio;
     }
 

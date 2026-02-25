@@ -277,7 +277,9 @@ public class frmInicio extends javax.swing.JFrame {
     }//GEN-LAST:event_btnIniciarSesionMouseClicked
 
     private void btnPedidoExpressMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPedidoExpressMousePressed
-        // TODO add your handling code here:
+        frmCatalogo catalogo = new frmCatalogo(true);
+        catalogo.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnPedidoExpressMousePressed
 
     private void btnInicioSesionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInicioSesionMouseClicked

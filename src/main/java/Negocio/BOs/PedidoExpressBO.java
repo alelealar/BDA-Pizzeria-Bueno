@@ -5,7 +5,9 @@ import Negocio.excepciones.NegocioException;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import java.util.logging.Logger;
+import org.mindrot.jbcrypt.BCrypt;
 import persistencia.daos.IPedidoExpressDAO;
 import persistencia.dominio.PedidoExpress;
 import persistencia.excepciones.PersistenciaException;
@@ -63,21 +65,10 @@ public class PedidoExpressBO implements IPedidoExpressBO {
             throw new NegocioException("El Pedido no debe tener un id asignado.");
         }
 
-        if (pedto.getNota() != null) {
-            pedto.setNota(pedto.getNota().trim());
-        }
-
-        if (pedto.getFechaHoraPedido().isAfter(LocalDateTime.now())) {
-            throw new NegocioException("La fecha del pedido no puede ser futura.");
-        }
-
-        if (pedto.getFechaHoraEntrega().isBefore(pedto.getFechaHoraPedido())) {
-            throw new NegocioException("La fecha de entrega no puede ser anterior a la fecha del pedido.");
-        }
-
         PedidoExpress pedidoEx = new PedidoExpress();
-        pedidoEx.setFolio(String.format("PEDEX-%05d", generarFolio()).trim());
-        pedidoEx.setPin(String.valueOf(generarFolio()).trim());
+        pedidoEx.setFolio(generarFolio());
+        String pinPlano = generarPIN();
+        pedidoEx.setPin(BCrypt.hashpw(generarPIN(), BCrypt.gensalt()));
         pedidoEx.setNota(pedto.getNota());
 
         try {
@@ -90,8 +81,8 @@ public class PedidoExpressBO implements IPedidoExpressBO {
             PedidoExpressDTO pedidoExAgregado = new PedidoExpressDTO();
             pedidoExAgregado.setEstadoActual(pedidoExpressObtenido.getEstadoActual());
             pedidoExAgregado.setFechaHoraPedido(pedidoExpressObtenido.getFechaHoraPedido());
-            pedidoExAgregado.setFolio(pedidoExpressObtenido.getFolio());
-            pedidoExAgregado.setPIN(pedidoExpressObtenido.getPin());
+            pedidoExAgregado.setFolio(String.format("PEDEX-%05d", pedidoExpressObtenido.getFolio()));
+            pedidoExAgregado.setPIN(pinPlano);
             return pedidoExAgregado;
 
         } catch (PersistenciaException e) {
@@ -127,7 +118,7 @@ public class PedidoExpressBO implements IPedidoExpressBO {
             PedidoExpressDTO pedidoExConsultado = new PedidoExpressDTO();
             pedidoExConsultado.setEstadoActual(pedidoExpressConsultado.getEstadoActual());
             pedidoExConsultado.setFechaHoraPedido(pedidoExpressConsultado.getFechaHoraPedido());
-            pedidoExConsultado.setFolio(pedidoExpressConsultado.getFolio());
+            pedidoExConsultado.setFolio(String.format("PEDEX-%05d", pedidoExConsultado.getFolio()));
             pedidoExConsultado.setPIN(pedidoExpressConsultado.getPin());
 
             LOG.info(() -> "Se obtuvo el pedidoExpress: " + pedidoExpressConsultado.toString());
@@ -139,40 +130,25 @@ public class PedidoExpressBO implements IPedidoExpressBO {
         }
     }
 
-    @Override
-    public PedidoExpressDTO actualizarPedidoExpress(PedidoExpressDTO pedto) throws NegocioException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
     public String generarPIN() throws NegocioException {
         SecureRandom random = new SecureRandom();
         int digitos = 10000000 + random.nextInt(90000000);
         return String.valueOf(digitos);
     }
 
-    public String generarPinUnico() throws NegocioException {
-        try {
-            String pin;
-
-            do {
-                pin = generarPIN();
-            } while (pedidoExpressDAO.obtenerPinValido(pin));
-            return pin;
-        } catch (PersistenciaException ex) {
-            LOG.severe(ex.getMessage());
-            throw new NegocioException(ex.getMessage());
-        }
-
-    }
-
     public int generarFolio() throws NegocioException {
-        int ultimo;
         try {
-            ultimo = pedidoExpressDAO.obtenerFolio();
+            int ultimo = pedidoExpressDAO.obtenerFolio();
             return ultimo + 1;
         } catch (PersistenciaException ex) {
-            LOG.severe(ex.getMessage());
             throw new NegocioException(ex.getMessage());
         }
+    }
+
+    @Override
+    public String generarToken() throws NegocioException {
+        String tokenSesion = UUID.randomUUID().toString();
+        return tokenSesion;
+
     }
 }
