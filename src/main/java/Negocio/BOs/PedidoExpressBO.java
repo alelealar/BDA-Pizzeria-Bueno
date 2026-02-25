@@ -144,11 +144,4 @@ public class PedidoExpressBO implements IPedidoExpressBO {
             throw new NegocioException(ex.getMessage());
         }
     }
-
-    @Override
-    public String generarToken() throws NegocioException {
-        String tokenSesion = UUID.randomUUID().toString();
-        return tokenSesion;
-
-    }
 }

@@ -33,6 +33,4 @@ public interface IPedidoExpressBO {
      * pedido.
      */
     public PedidoExpressDTO obtenerPedidoExpressPorId(int idPedidoExpress) throws NegocioException;
-
-    public String generarToken() throws NegocioException;
 }

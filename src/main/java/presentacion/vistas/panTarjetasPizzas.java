@@ -12,7 +12,6 @@ import Negocio.Fabrica.FabricaBOs;
 import java.awt.Color;
 import presentacion.frmCatalogo;
 import presentacion.frmDetallesPizza;
-import presentacion.frmPedidoExpress;
 
 /**
  *
@@ -23,7 +22,6 @@ public class panTarjetasPizzas extends javax.swing.JPanel {
     private PizzaDTO pizzaFiltrada;
     private PizzaDTO pizza;
     private frmCatalogo catalogo;
-    private frmPedidoExpress pedidoEx;
     private int idUsuario;
     private String token;
     private boolean express;

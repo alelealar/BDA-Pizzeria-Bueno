@@ -940,7 +940,7 @@ public class frmMisPedidos extends javax.swing.JFrame {
     }//GEN-LAST:event_btnMispedidosMouseClicked
 
     private void btnPEMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPEMouseClicked
-        frmPedidoExpress pe = new frmPedidoExpress();
+        frmCatalogo pe = new frmCatalogo(true);
         pe.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnPEMouseClicked
