@@ -5,7 +5,9 @@
 package Negocio.DTOs;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -17,23 +19,20 @@ public class PizzaDTO {
 
     private int idPizza;
     private String nombre;
-    private String tamanio;
     private String descripcion;
     private String rutaImagen;
-    private double precio;
 
     public enum EstadoPizza {
         DISPONIBLE,
         NO_DISPONIBLE
     }
-    
-    //hay 3 tamaños de pizza, ocupo almacenarlos todos para poder mostrar en la venta los disponibles.
+
     private List<String> tamanios = new ArrayList<>();
-    //cada tamaño de pízza tiene un preecio diferente-
     private List<Double> precios = new ArrayList<>();
-    //cada pizza tiene un id eapecifico, ocupo almacenar los de los 3 tamaños.
-    private List<Integer> idPizzas = new ArrayList<>();
     private EstadoPizza estado;
+    //Es la forma mas sencilla que se me ocurrio de almacenar los ids por tamaño de pizza.
+    //Basicamente la llave es el tamaño y el valor es el id, se hace de esta manera ya que un tipo de pizza contiene 3 diferentes tamaños y precios
+    private Map<String, Integer> idsPorTamanio = new LinkedHashMap<>();
 
     public PizzaDTO(int idPizza, String nombre, String descripcion, String rutaImagen, EstadoPizza estado) {
         this.idPizza = idPizza;
@@ -43,38 +42,13 @@ public class PizzaDTO {
         this.estado = estado;
     }
 
-    public double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
-    }
-
     public void setVariante(String tamanio, double precio, int idPizza) {
         this.tamanios.add(tamanio);
         this.precios.add(precio);
-        this.idPizzas.add(idPizza);
+        this.idsPorTamanio.put(tamanio, idPizza);
     }
 
     public PizzaDTO() {
-    }
-
-    public PizzaDTO(int idPizza, String nombre, String tamanio, String descripcion, String rutaImagen, EstadoPizza estado) {
-        this.idPizza = idPizza;
-        this.nombre = nombre;
-        this.tamanio = tamanio;
-        this.descripcion = descripcion;
-        this.rutaImagen = rutaImagen;
-        this.estado = estado;
-    }
-
-    public String getTamanio() {
-        return tamanio;
-    }
-
-    public void setTamanio(String tamanio) {
-        this.tamanio = tamanio;
     }
 
     public int getIdPizza() {
@@ -123,6 +97,10 @@ public class PizzaDTO {
 
     public List<Double> getPrecios() {
         return precios;
+    }
+
+    public Map<String, Integer> getIdsPorTamanio() {
+        return idsPorTamanio;
     }
 
     @Override

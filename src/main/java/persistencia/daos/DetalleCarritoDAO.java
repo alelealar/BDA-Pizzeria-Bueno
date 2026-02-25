@@ -49,16 +49,17 @@ public class DetalleCarritoDAO implements IDetalleCarritoDAO {
     public void agregarProducto(DetalleCarrito detalle) throws PersistenciaException {
         System.out.println("ID Pizza enviado: " + detalle.getIdPizza());
         String comandoSQL = """
-            INSERT INTO DetallesCarrito (idCarrito, idPizza, cantidad, nota)
-            VALUES (?, ?, ?, ?);
+            INSERT INTO DetallesCarrito (idCarrito, idPizza, tamaño, cantidad, nota)
+                VALUES (?, ?, ?, ?, ?);
             """;
 
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
 
             ps.setInt(1, detalle.getIdCarrito());
             ps.setInt(2, detalle.getIdPizza());
-            ps.setInt(3, detalle.getCantidad());
-            ps.setString(4, detalle.getNota());
+            ps.setString(3, detalle.getTamanio());
+            ps.setInt(4, detalle.getCantidad());
+            ps.setString(5, detalle.getNota());
 
             if (ps.executeUpdate() == 0) {
                 throw new PersistenciaException("No se pudo agregar el producto al carrito.");
@@ -101,7 +102,7 @@ public class DetalleCarritoDAO implements IDetalleCarritoDAO {
     }
 
     @Override
-    public void eliminarDetallesPorCarrito(int idCarrito) throws PersistenciaException {
+    public void eliminarDetalleCarrito(int idDetalleCarrito) throws PersistenciaException {
 
         String comandoSQL = """
             DELETE FROM DetallesCarrito
@@ -110,7 +111,7 @@ public class DetalleCarritoDAO implements IDetalleCarritoDAO {
 
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
 
-            ps.setInt(1, idCarrito);
+            ps.setInt(1, idDetalleCarrito);
             ps.executeUpdate();
 
         } catch (SQLException ex) {
@@ -135,12 +136,10 @@ public class DetalleCarritoDAO implements IDetalleCarritoDAO {
     }
 
     @Override
-    public void actualizarCantidad(int idDetalle,
-            int nuevaCantidad)
-            throws PersistenciaException {
+    public void actualizarCantidad(int idDetalle, int nuevaCantidad) throws PersistenciaException {
 
         String sql = """
-        UPDATE DetallesCarritos
+        UPDATE DetallesCarrito
         SET cantidad = ?
         WHERE idDetalleCarrito = ?
         """;

@@ -43,7 +43,7 @@ public class frmCarritoExpress extends javax.swing.JFrame {
         panPizzas.repaint();
     }
 
-    public void eliminarPanel(DetallePedido detalle) {
+    public void eliminarPanel(DetallePedidoDTO detalle) {
 
         pedidos.remove(detalle);
 

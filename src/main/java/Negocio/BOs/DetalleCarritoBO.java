@@ -58,16 +58,16 @@ public class DetalleCarritoBO implements IDetalleCarritoBO {
     }
 
     @Override
-    public void eliminarDetallesPorCarrito(int idCarrito) throws NegocioException {
+    public void eliminarDetallesPorCarrito(int idDetalleCarrito) throws NegocioException {
         try {
-            if (idCarrito <= 0) {
+            if (idDetalleCarrito <= 0) {
                 throw new NegocioException("El ID del carrito no es válido.");
             }
-            detalleCarritoDAO.eliminarDetallesPorCarrito(idCarrito);
+            detalleCarritoDAO.eliminarDetalleCarrito(idDetalleCarrito);
 
         } catch (PersistenciaException ex) {
-            LOG.log(Level.SEVERE, "Error en la capa de persistencia al eliminar detalles", ex);
-            throw new NegocioException("No se pudieron eliminar los detalles del carrito.", ex);
+            LOG.log(Level.SEVERE, "Error en la capa de persistencia al eliminar detalle", ex);
+            throw new NegocioException("No se pudo eliminar el detalle del carrito.", ex);
         }
     }
 

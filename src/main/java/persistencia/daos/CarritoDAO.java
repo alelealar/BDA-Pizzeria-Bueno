@@ -86,7 +86,7 @@ public class CarritoDAO implements ICarritoDAO {
         String comandoSQL = """
             SELECT idCarrito, idUsuario, fechaCreacion, activo
             FROM Carritos
-            WHERE idUsuario = ? AND activo = TRUE;
+            WHERE idUsuario = ? AND activo = 1;
             """;
 
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {

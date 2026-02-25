@@ -18,7 +18,7 @@ public interface IDetalleCarritoDAO {
     
     public List<DetalleCarrito> obtenerDetallesPorCarrito(int idCarrito) throws PersistenciaException;
     
-    public void eliminarDetallesPorCarrito(int idCarrito) throws PersistenciaException;
+    public void eliminarDetalleCarrito(int idDetalleCarrito) throws PersistenciaException;
     
     void actualizarCantidad(int idDetalle, int nuevaCantidad) throws PersistenciaException;
     

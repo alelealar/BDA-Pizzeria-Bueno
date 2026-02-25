@@ -1,8 +1,19 @@
 package presentacion;
 
+import Negocio.BOs.ICarritoBO;
+import Negocio.BOs.IPizzaBO;
+import Negocio.DTOs.CarritoDTO;
+import Negocio.DTOs.DetalleCarritoDTO;
 import Negocio.DTOs.PizzaDTO;
+import Negocio.Fabrica.FabricaBOs;
+import Negocio.excepciones.NegocioException;
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import javax.swing.JPanel;
+import negocio.bos.CarritoBO;
+import presentacion.vistas.frmAvisos;
 
 /**
  *
@@ -11,12 +22,17 @@ import javax.swing.JPanel;
 public class frmDetallesPizza extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmDetallesPizza.class.getName());
+    private int idUsuario;
+    PizzaDTO pizza;
 
     public frmDetallesPizza() {
         initComponents();
     }
 
-    public void cargarInformacionPizza(PizzaDTO pizza) {
+    public void cargarInformacionPizza(PizzaDTO pizza, int idUsuario) {
+        this.idUsuario = idUsuario;
+        this.pizza = pizza;
+
         lblDescripcionPizza.setText(pizza.getDescripcion());
         lblTituloPïzza.setText(pizza.getNombre());
         lblImagenPizza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizza.getRutaImagen())));
@@ -25,19 +41,21 @@ public class frmDetallesPizza extends javax.swing.JFrame {
         jrbMediana.setVisible(false);
         jrbGrande.setVisible(false);
 
-        if (pizza.getTamanios().size() >= 1) {
-            jrbChica.setText(pizza.getTamanios().get(0) + ": $" + String.valueOf(pizza.getPrecios().get(0)) + " MXN");
-            jrbChica.setVisible(true);
+        int cantidadDeTamanios = pizza.getTamanios().size();
 
+        if (cantidadDeTamanios > 0) {
+            jrbChica.setText(pizza.getTamanios().get(0) + ": $" + pizza.getPrecios().get(0) + " MXN");
+            jrbChica.setVisible(true);
         }
-        if (pizza.getTamanios().size() >= 2) {
-            jrbMediana.setText(pizza.getTamanios().get(1) + ": $" + String.valueOf(pizza.getPrecios().get(1)) + " MXN");
+
+        if (cantidadDeTamanios > 1) {
+            jrbMediana.setText(pizza.getTamanios().get(1) + ": $" + pizza.getPrecios().get(1) + " MXN");
             jrbMediana.setVisible(true);
         }
-        if (pizza.getTamanios().size() >= 3) {
-            jrbGrande.setText(pizza.getTamanios().get(2) + ": $" + String.valueOf(pizza.getPrecios().get(2)) + " MXN");
-            jrbGrande.setVisible(true);
 
+        if (cantidadDeTamanios > 2) {
+            jrbGrande.setText(pizza.getTamanios().get(2) + ": $" + pizza.getPrecios().get(2) + " MXN");
+            jrbGrande.setVisible(true);
         }
     }
 
@@ -104,6 +122,8 @@ public class frmDetallesPizza extends javax.swing.JFrame {
         );
 
         panPizzas.setBackground(new java.awt.Color(255, 232, 216));
+
+        lblImagenPizza.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         lblTituloPïzza.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
 
@@ -294,7 +314,43 @@ public class frmDetallesPizza extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAnadirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAnadirMouseClicked
-        //frmCarrito carrito = new frmCarrito();
+        String tamanioSeleccionado = null;
+        ICarritoBO carrito = FabricaBOs.obtenerCarrito();
+
+        int cantidadDeTamanios = pizza.getTamanios().size();
+        if (jrbChica.isSelected()) {
+            tamanioSeleccionado = pizza.getTamanios().get(0);
+        } else if (jrbMediana.isSelected()) {
+            tamanioSeleccionado = pizza.getTamanios().get(1);
+        } else if (jrbGrande.isSelected()) {
+            tamanioSeleccionado = pizza.getTamanios().get(2);
+        }
+        if (tamanioSeleccionado == null) {
+            frmAvisos aviso = new frmAvisos("Por favor selecciona un tamaño");
+            aviso.setVisible(true);
+            return;
+        }
+
+        IPizzaBO pizzita = FabricaBOs.obtenerProductos();
+        try {
+            ArrayList<PizzaDTO> pizzasFil = pizzita.agruparPizzasPorNombre();
+            Map<String, Integer> mapaIds = pizza.getIdsPorTamanio();
+            int idPizza = mapaIds.get(tamanioSeleccionado);
+
+            String nota;
+
+            if (txtNota.getText().equals("Ingrese una nota")) {
+                nota = "";
+            } else {
+                nota = txtNota.getText();
+            }
+            carrito.agregarProducto(4, idPizza, tamanioSeleccionado, 1, nota);
+            frmCarrito pantallaCarrito = new frmCarrito(3);
+            pantallaCarrito.setVisible(true);
+            this.dispose();
+        } catch (NegocioException ex) {
+            System.getLogger(frmDetallesPizza.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
     }//GEN-LAST:event_btnAnadirMouseClicked
 
     private void btnAnadirMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAnadirMouseEntered

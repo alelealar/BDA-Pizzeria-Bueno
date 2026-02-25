@@ -29,6 +29,7 @@ public class frmCarrito extends javax.swing.JFrame {
 
     private ICarritoBO carritoBo;
     private int idUsuario;
+    private boolean express;
     private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(frmCarrito.class.getName());
 
     public frmCarrito(int idUsuario) {
@@ -53,7 +54,7 @@ public class frmCarrito extends javax.swing.JFrame {
             panPedidos.removeAll(); // Limpiar el panel antes de redibujar
 
             //obtenemos el carrito con los pedidos del usuario
-            CarritoDTO carrito = carritoBo.obtenerCarritoCompleto(idUsuario);
+            CarritoDTO carrito = carritoBo.obtenerCarritoCompleto(4);
 
             //verificamos que el carrito tenga algo
             if (carrito != null && carrito.getDetalles() != null && !carrito.getDetalles().isEmpty()) {
@@ -90,7 +91,7 @@ public class frmCarrito extends javax.swing.JFrame {
                 IDetalleCarritoBO detalleBO = FabricaBOs.obtenerDetalleCarritoBO();
 
                 // Eliminación en la base de datos
-                detalleBO.eliminarDetallesPorCarrito(detalle.getIdCarrito());
+                detalleBO.eliminarDetallesPorCarrito(detalle.getIdDetalleCarrito());
 
                 // Actualización de la interfaz
                 cargarCarrito();
@@ -106,7 +107,7 @@ public class frmCarrito extends javax.swing.JFrame {
      */
     public void cargarPedidoTextArea() {
         try {
-            CarritoDTO carritoActual = carritoBo.obtenerCarritoCompleto(idUsuario);
+            CarritoDTO carritoActual = carritoBo.obtenerCarritoCompleto(4);
             double totalAcumulado = 0;
 
             if (carritoActual != null && carritoActual.getDetalles() != null) {
@@ -116,13 +117,43 @@ public class frmCarrito extends javax.swing.JFrame {
             }
 
             // Formateo de moneda para que se vea profesional
-            txaDetallePedidos.setText("""
-                                      
-                                         RESUMEN DE COMPRA
-                                         --------------------------
-                                      
-                                         Subtotal: $""" + String.format("%.2f", totalAcumulado) + "\n"
-                    + "   Total:    $" + String.format("%.2f", totalAcumulado) + " MXN");
+            StringBuilder resumen = new StringBuilder();
+
+            resumen.append("""
+                RESUMEN DE COMPRA
+                --------------------------
+                """);
+
+            for (DetalleCarritoDTO detalle : carritoActual.getDetalles()) {
+
+                double subtotalProducto = detalle.getCantidad() * detalle.getPrecioUnitario();
+                totalAcumulado += subtotalProducto;
+
+                resumen.append(detalle.getCantidad())
+                        .append("x ")
+                        .append(detalle.getNombrePizza())
+                        .append(" (")
+                        .append(detalle.getTamanio())
+                        .append(")   $")
+                        .append(String.format("%.2f", subtotalProducto))
+                        .append("\n");
+                if (detalle.getNota() != null && !detalle.getNota().isBlank()) {
+                    resumen.append("   Nota: ")
+                            .append(detalle.getNota())
+                            .append("\n");
+                }
+            }
+
+            resumen.append("--------------------------------\n");
+            resumen.append("Subtotal: $")
+                    .append(String.format("%.2f", totalAcumulado))
+                    .append("\n");
+
+            resumen.append("Total:    $")
+                    .append(String.format("%.2f", totalAcumulado))
+                    .append(" MXN\n");
+
+            txaDetallePedidos.setText(resumen.toString());
 
         } catch (NegocioException e) {
             LOG.warning(() -> "No se pudo calcular el total: " + e.getMessage());
@@ -405,6 +436,9 @@ public class frmCarrito extends javax.swing.JFrame {
 
         btnValidar1.setBackground(new java.awt.Color(255, 135, 109));
         btnValidar1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnValidar1MouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnValidarMouseEntered(evt);
             }
@@ -582,6 +616,10 @@ public class frmCarrito extends javax.swing.JFrame {
     private void btnPEMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPEMouseExited
         btnCarrito.setBackground(Color.decode("#FF5C38"));
     }//GEN-LAST:event_btnPEMouseExited
+
+    private void btnValidar1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnValidar1MouseClicked
+        
+    }//GEN-LAST:event_btnValidar1MouseClicked
 
     /**
      * @param args the command line arguments

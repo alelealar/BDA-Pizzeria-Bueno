@@ -37,6 +37,8 @@ public class frmCatalogo extends javax.swing.JFrame {
     public frmCatalogo(int idUsuario) {
         initComponents();
         this.idUsuario = idUsuario;
+        this.pizzaBO = FabricaBOs.obtenerProductos();
+        cargarPizzasEnElPanel();
     }
 
     private void cargarPizzasEnElPanel() {
@@ -46,12 +48,12 @@ public class frmCatalogo extends javax.swing.JFrame {
 
         try {
             List<PizzaDTO> pizzas = pizzaBO.obtenerProductos();
-            List<PizzaDTO> pizzasFiltradas = agruparPizzasPorNombre();
+            List<PizzaDTO> pizzasFiltradas = pizzaBO.agruparPizzasPorNombre();
 
             for (PizzaDTO pizza : pizzasFiltradas) {
                 if (pizza.getEstado() == PizzaDTO.EstadoPizza.DISPONIBLE) {
                     panTarjetasPizzas tarjeta = new panTarjetasPizzas();
-                    tarjeta.setDatosPizza(pizza, this);
+                    tarjeta.setDatosPizza(pizza, this, idUsuario);
                     System.out.println(pizza);
                     panPizzas.add(tarjeta);
                 }
@@ -62,29 +64,6 @@ public class frmCatalogo extends javax.swing.JFrame {
         }
         panPizzas.revalidate();
         panPizzas.repaint();
-    }
-
-    private ArrayList<PizzaDTO> agruparPizzasPorNombre() {
-        Map<String, PizzaDTO> pizzasFiltradas = new LinkedHashMap<>();
-        try {
-            List<PizzaDTO> pizzas = pizzaBO.obtenerProductos();
-
-            for (PizzaDTO pizza : pizzas) {
-                if (!pizzasFiltradas.containsKey(pizza.getNombre())) {
-                    pizzasFiltradas.put(pizza.getNombre(), pizza);
-                } else {
-                    //guardamos los ids, tamaños y precios de las demas pizzas.
-                    String tamanio = pizza.getTamanios().get(0);
-                    double precio = pizza.getPrecios().get(0);
-                    int id = pizza.getIdPizza();
-                    pizzasFiltradas.get(pizza.getNombre()).setVariante(tamanio, precio, id);
-                }
-
-            }
-        } catch (NegocioException ex) {
-            System.getLogger(frmCatalogo.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-        }
-        return new ArrayList(pizzasFiltradas.values());
     }
 
     /**

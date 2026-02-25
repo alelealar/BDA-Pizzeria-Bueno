@@ -24,6 +24,7 @@ public class panTarjetasPizzas extends javax.swing.JPanel {
     private PizzaDTO pizza;
     private frmCatalogo catalogo;
     private frmPedidoExpress pedidoEx;
+    private int idUsuario;
 
     /**
      * Creates new form panTarjetasPizzas
@@ -32,8 +33,9 @@ public class panTarjetasPizzas extends javax.swing.JPanel {
         initComponents();
     }
 
-    public void setDatosPizza(PizzaDTO pizzaFiltrada, frmCatalogo catalogo) {
+    public void setDatosPizza(PizzaDTO pizzaFiltrada, frmCatalogo catalogo, int idUsuario) {
         this.catalogo = catalogo;
+        this.idUsuario = idUsuario;
         this.pizzaFiltrada = pizzaFiltrada;
         lblNombre.setText(pizzaFiltrada.getNombre());
         lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizzaFiltrada.getRutaImagen())));
@@ -54,6 +56,8 @@ public class panTarjetasPizzas extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(253, 207, 175));
+
+        lblImagen.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         lblNombre.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
 
@@ -118,7 +122,7 @@ public class panTarjetasPizzas extends javax.swing.JPanel {
 
     private void btnAnadirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAnadirMouseClicked
         frmDetallesPizza frmPizza = new frmDetallesPizza();
-        frmPizza.cargarInformacionPizza(pizzaFiltrada);
+        frmPizza.cargarInformacionPizza(pizzaFiltrada, idUsuario);
         frmPizza.setVisible(true);
         catalogo.dispose();
     }//GEN-LAST:event_btnAnadirMouseClicked
@@ -126,7 +130,7 @@ public class panTarjetasPizzas extends javax.swing.JPanel {
     private void btnAnadirMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAnadirMouseEntered
         btnAnadir.setBackground(Color.decode("#E82F07"));
 
-        
+
     }//GEN-LAST:event_btnAnadirMouseEntered
 
     private void btnAnadirMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAnadirMouseExited

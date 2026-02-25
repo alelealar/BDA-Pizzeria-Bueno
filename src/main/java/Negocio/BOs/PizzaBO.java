@@ -95,4 +95,22 @@ public class PizzaBO implements IPizzaBO {
             throw new NegocioException(ex);
         }
     }
+
+    @Override
+    public ArrayList<PizzaDTO> agruparPizzasPorNombre() throws NegocioException {
+        Map<String, PizzaDTO> pizzasFiltradas = new LinkedHashMap<>();
+        List<PizzaDTO> pizzas = obtenerProductos();
+        for (PizzaDTO pizza : pizzas) {
+            if (!pizzasFiltradas.containsKey(pizza.getNombre())) {
+                pizzasFiltradas.put(pizza.getNombre(), pizza);
+            } else {
+                //guardamos los ids, tamaños y precios de las demas pizzas.
+                String tamanio = pizza.getTamanios().get(0);
+                double precio = pizza.getPrecios().get(0);
+                int id = pizza.getIdPizza();
+                pizzasFiltradas.get(pizza.getNombre()).setVariante(tamanio, precio, id);
+            }
+        }
+        return new ArrayList(pizzasFiltradas.values());
+    }
 }

@@ -4,7 +4,13 @@
  */
 package presentacion.vistas;
 
+import Negocio.BOs.DetalleCarritoBO;
+import Negocio.BOs.IDetalleCarritoBO;
+import Negocio.BOs.PizzaBO;
 import Negocio.DTOs.DetalleCarritoDTO;
+import Negocio.DTOs.PizzaDTO;
+import Negocio.Fabrica.FabricaBOs;
+import Negocio.excepciones.NegocioException;
 import java.awt.Color;
 import java.awt.Dimension;
 import presentacion.frmCarrito;
@@ -18,100 +24,110 @@ public class panPedido extends javax.swing.JPanel {
 
     private DetalleCarritoDTO detalle;
     private frmCarrito carrito;
+    private frmCarritoExpress carritoExpress;
+    private IDetalleCarritoBO detalleBO = FabricaBOs.obtenerDetalleCarritoBO();
 
     /**
      * Creates new form panPedido
      *
      * @param detalle
+     * @param carrito
      */
     public panPedido(DetalleCarritoDTO detalle, frmCarrito carrito) {
         initComponents();
         this.detalle = detalle;
         this.carrito = carrito;
+
         setDatosPizza();
         cargarInfo();
+
         setPreferredSize(new Dimension(600, 200));
         setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
     }
-    
+
     public panPedido(DetalleCarritoDTO detalle, frmCarritoExpress carritoExpress) {
         initComponents();
         this.detalle = detalle;
-        this.carrito = carrito;
+        this.carritoExpress = carritoExpress;
+
         setDatosPizza();
         cargarInfo();
+
         setPreferredSize(new Dimension(600, 200));
         setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
     }
-    
 
     public void setDatosPizza() {
+        try {
+            lblNombrePizza.setText(detalle.getNombrePizza());
+            System.out.println("Precio unitario: " + detalle.getPrecioUnitario());
+            PizzaBO pizzaBO = FabricaBOs.obtenerProductos();
+            PizzaDTO pizza = pizzaBO.obtenerPizzaPorId(detalle.getIdPizza());
 
-        lblNombrePizza.setText(detalle.getNombrePizza());
+            lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizza.getRutaImagen())));
 
-        switch (detalle.getNombrePizza()) {
-            case "La Papi-Margarita":
-                lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/papiPizza.jpg")));
-                break;
-            case "Pepperoni Supreme":
-                lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pepperoni.jpg")));
-                break;
-            case "Hawaiian Punch":
-                lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hawaiian.jpg")));
-                break;
-            case "Mar y Tierra":
-                lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mar.jpg")));
-                break;
-            case "Clásica Americana":
-                lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/clasica.jpg")));
-                break;
-            case "Bosque Blanco":
-                lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/bosqueBlanco.jpg")));
-                break;
-            case "Veggie Deluxe":
-                lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/deluxe.jpg")));
-                break;
-            case "Cheese Bomb":
-                lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/bomb.jpg")));
-                break;
-            case "Fundición Suprema":
-                lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/suprema.jpg")));
-                break;
-            default:
-                lblImagen.setIcon(null);
+            lblPrecioPizza.setText("$" + detalle.getPrecioUnitario() + " MXN");
+            lblCantidad.setText(String.valueOf(detalle.getCantidad()));
+            lblTamanio.setText(detalle.getTamanio());
+
+        } catch (NegocioException ex) {
+            // System.getLogger(panPedido.class.getName()).log(System.Logger.Level.ERROR, null, ex);
         }
-
-        lblPrecioPizza.setText("$" + detalle.getPrecioUnitario() + " MXN");
-        lblCantidad.setText(String.valueOf(detalle.getCantidad()));
     }
 
     public void aumentarCantidadPedido() {
-        detalle.setCantidad(detalle.getCantidad() + 1);
-        lblCantidad.setText(String.valueOf(detalle.getCantidad()));
+
+        int nuevaCantidad = detalle.getCantidad() + 1;
+        detalle.setCantidad(nuevaCantidad);
+        lblCantidad.setText(String.valueOf(nuevaCantidad));
+
+        try {
+            detalleBO.actualizarCantidad(detalle.getIdDetalleCarrito(), nuevaCantidad);
+        } catch (NegocioException e) {
+            e.printStackTrace();
+        }
+
         cargarInfo();
-        carrito.cargarPedidoTextArea();
+
+        if (carrito != null) {
+            carrito.cargarPedidoTextArea();
+        } else if (carritoExpress != null) {
+            carritoExpress.cargarPedidoTextArea();
+        }
     }
 
     public void disminuirCantidadPedido() {
+
         if (detalle.getCantidad() > 1) {
-            detalle.setCantidad(detalle.getCantidad() - 1);
-            lblCantidad.setText(String.valueOf(detalle.getCantidad()));
+
+            int nuevaCantidad = detalle.getCantidad() - 1;
+            detalle.setCantidad(nuevaCantidad);
+            lblCantidad.setText(String.valueOf(nuevaCantidad));
+
+            try {
+                detalleBO.actualizarCantidad(detalle.getIdDetalleCarrito(), nuevaCantidad);
+            } catch (NegocioException e) {
+                e.printStackTrace();
+            }
+
             cargarInfo();
-            carrito.cargarPedidoTextArea();
+
+            if (carrito != null) {
+                carrito.cargarPedidoTextArea();
+            } else if (carritoExpress != null) {
+                carritoExpress.cargarPedidoTextArea();
+            }
         }
     }
 
     public void cargarInfo() {
-        if (!(detalle.getCantidad() != 1)) {
-            btnMenos.setVisible(false);
-        } else {
-            btnMenos.setVisible(true);
-        }
+        btnMenos.setVisible(detalle.getCantidad() > 1);
     }
 
     public void eliminarPedido() {
         carrito.eliminarPanel(detalle);
         carrito.cargarPedidoTextArea();
+
     }
 
     /**
@@ -133,8 +149,11 @@ public class panPedido extends javax.swing.JPanel {
         btnMas = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         lblCantidad = new javax.swing.JLabel();
+        lblTamanio = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(234, 225, 218));
+
+        lblImagen.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         btnEliminar.setBackground(new java.awt.Color(255, 43, 43));
         btnEliminar.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -235,6 +254,8 @@ public class panPedido extends javax.swing.JPanel {
         lblCantidad.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblCantidad.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
+        lblTamanio.setText("jLabel4");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -255,7 +276,8 @@ public class panPedido extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblPrecioPizza)
-                            .addComponent(lblNombrePizza, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(lblNombrePizza, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblTamanio))))
                 .addContainerGap(68, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -268,7 +290,9 @@ public class panPedido extends javax.swing.JPanel {
                         .addComponent(lblNombrePizza)
                         .addGap(26, 26, 26)
                         .addComponent(lblPrecioPizza)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblTamanio)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                         .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -326,5 +350,6 @@ public class panPedido extends javax.swing.JPanel {
     private javax.swing.JLabel lblImagen;
     private javax.swing.JLabel lblNombrePizza;
     private javax.swing.JLabel lblPrecioPizza;
+    private javax.swing.JLabel lblTamanio;
     // End of variables declaration//GEN-END:variables
 }

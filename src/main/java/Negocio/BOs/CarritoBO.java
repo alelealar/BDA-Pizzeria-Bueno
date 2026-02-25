@@ -21,6 +21,10 @@ import persistencia.daos.CarritoDAO;
 import persistencia.daos.DetalleCarritoDAO;
 import persistencia.daos.PizzaDAO;
 
+/**
+ *
+ * @author Brian
+ */
 public class CarritoBO implements ICarritoBO {
 
     private final ICarritoDAO carritoDAO;
@@ -66,17 +70,31 @@ public class CarritoBO implements ICarritoBO {
                 carrito = carritoDAO.crearCarrito(carrito);
             }
 
-            DetalleCarrito detalle = new DetalleCarrito();
-            detalle.setIdCarrito(carrito.getIdCarrito());
-            detalle.setIdPizza(idPizza);
-            detalle.setCantidad(cantidad);
-            detalle.setTamanio(tamanio);
-            detalle.setNota(nota);
+            DetalleCarrito detalleExistente
+                    = detalleCarritoDAO.obtenerDetalle(carrito.getIdCarrito(), idPizza, tamanio);
 
-            //Enviarto al dao
-            detalleCarritoDAO.agregarProducto(detalle);
-        } catch (PersistenciaException e) {
-            throw new NegocioException("Error al agregar producto al carrito", e);
+            if (detalleExistente != null) {
+
+                int nuevaCantidad = detalleExistente.getCantidad() + cantidad;
+
+                detalleCarritoDAO.actualizarCantidad(
+                        detalleExistente.getIdDetalleCarrito(),
+                        nuevaCantidad
+                );
+
+            } else {
+
+                DetalleCarrito detalle = new DetalleCarrito();
+                detalle.setIdCarrito(carrito.getIdCarrito());
+                detalle.setIdPizza(idPizza);
+                detalle.setCantidad(cantidad);
+                detalle.setTamanio(tamanio);
+                detalle.setNota(nota);
+
+                detalleCarritoDAO.agregarProducto(detalle);
+            }
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("Error al agregar producto al carrito", ex);
         }
     }
 
