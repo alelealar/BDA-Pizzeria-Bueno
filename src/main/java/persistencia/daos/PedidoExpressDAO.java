@@ -1,5 +1,6 @@
 package persistencia.daos;
 
+import Negocio.DTOs.DetallePedidoDTO;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,6 +10,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.DAOS.ClienteDAO;
 import persistencia.conexion.IConexionBD;
@@ -116,6 +118,7 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
      *
      * @throws PersistenciaException Si ocurre un error durante el update.
      */
+    @Override
     public void actualizarPedidoExpressNoRecolectado() throws PersistenciaException {
         String sentenciaSQL = """
                               UPDATE Pedidos
@@ -273,5 +276,19 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
 
         }
     }
-
+    
+    @Override
+    public void insertarDetalle(int idPedido, int idPizza, int cantidad, String nota) throws PersistenciaException {
+        String sql = "INSERT INTO DetallesPedidos (idPedido, idPizza, cantidad, nota) VALUES (?, ?, ?, ?)";
+        try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idPedido);
+            ps.setInt(2, idPizza);
+            ps.setInt(3, cantidad);
+            ps.setString(4, nota != null ? nota : "");
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            LOG.log(Level.SEVERE, "Error al insertar detalle de pedido", ex);
+            throw new PersistenciaException("Error al insertar detalle de pedido", ex);
+        }
+    }
 }

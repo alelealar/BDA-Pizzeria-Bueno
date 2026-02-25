@@ -90,4 +90,9 @@ public class FabricaDAO {
         IPedidoProgramadoDAO pp = new PedidoProgramadoDAO(conexion);
         return pp;
     }
+    
+     public static IPedidoExpressDAO crearPedidoExpressDAO() {
+        IPedidoExpressDAO pe = new PedidoExpressDAO(conexion);
+        return pe;
+    }
 }

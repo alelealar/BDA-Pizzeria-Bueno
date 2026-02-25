@@ -40,7 +40,7 @@ public class PedidoBO implements IPedidoBO {
             throw new NegocioException("Error al agregar el pedido", ex);
         }
     }
-
+    
     @Override
     public PedidoDTO actualizarPedido(PedidoDTO pedidoDTO) throws NegocioException {
         try {

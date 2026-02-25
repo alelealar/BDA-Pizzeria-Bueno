@@ -12,6 +12,7 @@ import Negocio.BOs.ICarritoBO;
 import Negocio.BOs.ICuponBO;
 import Negocio.BOs.IDetalleCarritoBO;
 import Negocio.BOs.IPedidoBO;
+import Negocio.BOs.IPedidoExpressBO;
 import Negocio.BOs.IPedidoProgramadoBO;
 import Negocio.BOs.PedidoBO;
 import Negocio.BOs.PedidoExpressBO;
@@ -79,9 +80,13 @@ public class FabricaBOs {
     public static ICuponBO obtenerCupon() {
         return new CuponBO(FabricaDAO.obtenerCuponDAO());
     }
-    
+
     public static IPedidoProgramadoBO crearPedidoProgramado() {
         return new PedidoProgramadoBO(FabricaDAO.crearPedidoProgramadoDAO());
+    }
+
+    public static IPedidoExpressBO crearPedidoExpressBO() {
+        return new PedidoExpressBO(FabricaDAO.crearPedidoExpressDAO());
     }
 
 }

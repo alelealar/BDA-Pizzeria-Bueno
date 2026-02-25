@@ -6,6 +6,10 @@ package Negocio.BOs;
 
 import Negocio.DTOs.PedidoProgramadoDTO;
 import Negocio.excepciones.NegocioException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import persistencia.daos.IPedidoProgramadoDAO;
 import persistencia.dominio.Cliente;
 import persistencia.dominio.Cupon;
@@ -29,19 +33,24 @@ public class PedidoProgramadoBO implements IPedidoProgramadoBO {
     public PedidoProgramadoBO() {
         this.pedidoProgramadoDAO = FabricaDAO.crearPedidoProgramadoDAO();
     }
+
     
-     @Override
+    
+    @Override
     public PedidoProgramadoDTO agregarPedidoProgramado(PedidoProgramadoDTO dto)
             throws NegocioException {
 
-        if (dto == null)
+        if (dto == null) {
             throw new NegocioException("El pedido está vacío");
+        }
 
-        if (dto.getIdCliente() <= 0)
+        if (dto.getIdCliente() <= 0) {
             throw new NegocioException("Cliente inválido");
+        }
 
-        if (dto.getFechaHoraEntrega() == null)
+        if (dto.getFechaHoraEntrega() == null) {
             throw new NegocioException("Debe indicar fecha y hora de entrega");
+        }
 
         try {
 
@@ -77,6 +86,37 @@ public class PedidoProgramadoBO implements IPedidoProgramadoBO {
 
         } catch (PersistenciaException e) {
             throw new NegocioException("Error al agregar pedido programado", e);
+        }
+    }
+
+    public List<PedidoProgramadoDTO> obtenerPedidosProgramados() throws PersistenciaException {
+        List<PedidoProgramado> pedidos = pedidoProgramadoDAO.obtenerPedidosProgramados();
+        List<PedidoProgramadoDTO> dtos = new ArrayList<>();
+
+        for (PedidoProgramado p : pedidos) {
+            PedidoProgramadoDTO dto = new PedidoProgramadoDTO();
+            dto.setIdPedido(p.getIdPedido());
+            dto.setNota(p.getNota());
+            dto.setEstadoActual(p.getEstadoActual());
+            dto.setFechaHoraPedido(p.getFechaHoraPedido());
+            dto.setNombreCliente(p.getCliente().getNombres());
+            dto.setIdCliente(p.getCliente().getIdUsuario());
+            dtos.add(dto);
+        }
+
+        return dtos;
+    }
+
+    public double calcularTotalPedidoProgramado(int idPedido) throws PersistenciaException {
+        return pedidoProgramadoDAO.calcularTotalProgramado(idPedido);
+    }
+
+    @Override
+    public void agregarDetallePedido(int idPedido, int idPizza, int cantidad, String nota) throws NegocioException {
+        try {
+            pedidoProgramadoDAO.insertarDetalle(idPedido, idPizza, cantidad, nota);
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error al agregar detalle pedido programado", e);
         }
     }
 }

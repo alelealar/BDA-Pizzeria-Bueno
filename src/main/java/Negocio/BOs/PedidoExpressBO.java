@@ -11,6 +11,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import persistencia.daos.IPedidoExpressDAO;
 import persistencia.dominio.PedidoExpress;
 import persistencia.excepciones.PersistenciaException;
+import persistencia.fabrica.FabricaDAO;
 
 /**
  * Clase que contiene la lógica de negocio para PedidoExpress.
@@ -43,6 +44,12 @@ public class PedidoExpressBO implements IPedidoExpressBO {
     public PedidoExpressBO(IPedidoExpressDAO pedidoExpressDAO) {
         this.pedidoExpressDAO = pedidoExpressDAO;
     }
+    
+    public PedidoExpressBO() {
+        this.pedidoExpressDAO = FabricaDAO.crearPedidoExpressDAO();
+    }
+    
+    
 
     /**
      * Método que valida y registra un nuevo PedidoExpress.
@@ -149,6 +156,65 @@ public class PedidoExpressBO implements IPedidoExpressBO {
     public String generarToken() throws NegocioException {
         String tokenSesion = UUID.randomUUID().toString();
         return tokenSesion;
-
     }
+
+    /**
+     * Valida que un PIN ingresado coincida con el PIN encriptado almacenado.
+     *
+     * @param pinIngresado el PIN que el usuario proporciona en texto plano
+     * @param pinEncriptado el PIN almacenado en la base de datos (hash de
+     * BCrypt)
+     * @return true si coincide, false si no
+     */
+    public boolean validarPIN(String pinIngresado, String pinEncriptado) {
+        if (pinIngresado == null || pinEncriptado == null) {
+            return false;
+        }
+        return BCrypt.checkpw(pinIngresado, pinEncriptado);
+    }
+
+    /**
+     * Valida que el folio y PIN ingresados correspondan con un pedido EXPRESS.
+     *
+     * @param idPedido id del pedido en la base de datos
+     * @param folioIngresado folio ingresado por el empleado
+     * @param pinIngresado PIN ingresado por el empleado
+     * @return true si folio y PIN coinciden, false en caso contrario
+     * @throws NegocioException si ocurre algún error de acceso a datos
+     */
+    public boolean validarFolioYPIN(int idPedido, String folioIngresado, String pinIngresado) throws NegocioException {
+        PedidoExpressDTO pedido = obtenerPedidoExpressPorId(idPedido); // tu método que obtiene el pedido
+        if (pedido == null) {
+            throw new NegocioException("Pedido EXPRESS no encontrado.");
+        }
+
+        // Validar folio
+        if (!pedido.getFolio().equalsIgnoreCase(folioIngresado)) {
+            return false;
+        }
+
+        // Validar PIN usando BCrypt
+        String hashAlmacenado = pedido.getPIN();
+        return validarPIN(pinIngresado, hashAlmacenado); // este método lo agregaste antes en PedidoExpressBO
+    }
+
+    @Override
+    public void pedido20minutos() throws NegocioException {
+        try {
+            pedidoExpressDAO.actualizarPedidoExpressNoRecolectado();
+        } catch (PersistenciaException ex) {
+            LOG.severe("Error al actualizar pedidos EXPRESS: " + ex.getMessage());
+            throw new NegocioException("Error al actualizar pedidos EXPRESS: " + ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void agregarDetallePedido(int idPedido, int idPizza, int cantidad, String nota) throws NegocioException {
+        try {
+            pedidoExpressDAO.insertarDetalle(idPedido, idPizza, cantidad, nota);
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error al agregar detalle pedido express", e);
+        }
+    }
+
 }

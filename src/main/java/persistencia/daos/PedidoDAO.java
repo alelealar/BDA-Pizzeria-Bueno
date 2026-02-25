@@ -289,67 +289,7 @@ public class PedidoDAO implements IPedidoDAO {
         }
     }
 
-    @Override
-    public List<PedidoResumen> obtenerPedidosTabla() throws PersistenciaException {
-
-        String sql = """
-        SELECT 
-            p.idPedido,
-            COALESCE(CONCAT(c.nombres, ' ', c.apellidoPaterno), '') AS cliente,
-            COALESCE(t.telefono, '') AS telefono,
-            p.fechaHoraPedido AS fechaHora,
-            p.estadoActual AS estado,
-            p.tipo,
-            pe.folio,
-            COALESCE((
-                SELECT SUM(dp.cantidad * pz.precio)
-                FROM DetallesPedidos dp
-                INNER JOIN Pizzas pz ON dp.idPizza = pz.idPizza
-                WHERE dp.idPedido = p.idPedido
-            ), 0) AS total
-        FROM Pedidos p
-        LEFT JOIN PedidosProgramados pp ON p.idPedido = pp.idPedido
-        LEFT JOIN PedidosExpress pe ON p.idPedido = pe.idPedido
-        LEFT JOIN Clientes c ON c.idUsuario = pp.idUsuario
-        LEFT JOIN TelefonosClientes t ON t.idCliente = c.idUsuario
-    """;
-
-        List<PedidoResumen> lista = new ArrayList<>();
-
-        try (Connection con = conexionBD.crearConexion(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-
-                int idPedido = rs.getInt("idPedido");
-                String cliente = rs.getString("cliente");
-                String telefono = rs.getString("telefono");
-                LocalDateTime fechaHora = rs.getTimestamp("fechaHora").toLocalDateTime();
-                String estado = rs.getString("estado");
-                String tipo = rs.getString("tipo");
-                String folio = rs.getString("folio");
-                double total = rs.getDouble("total");
-
-                lista.add(new PedidoResumen(
-                        idPedido,
-                        folio,
-                        cliente,
-                        telefono,
-                        fechaHora,
-                        total,
-                        estado,
-                        tipo
-                ));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new PersistenciaException(
-                    "Error al obtener pedidos para la tabla: " + e.getMessage(), e);
-        }
-
-        return lista;
-    }
-
+    
     @Override
     public List<PedidoResumen> obtenerPedidosFiltrados(String filtro)
             throws PersistenciaException {
@@ -589,6 +529,66 @@ WHERE (COALESCE(pe.folio, pp.numPedido) LIKE ?
         }
     }
 
-    
-    
+        @Override
+    public List<PedidoResumen> obtenerPedidosTabla() throws PersistenciaException {
+        String sql = """
+        SELECT 
+            p.idPedido,
+            p.tipo,
+            COALESCE(CONCAT(c.nombres, ' ', c.apellidoPaterno), '') AS cliente,
+            COALESCE(t.telefono, '') AS telefono,
+            p.fechaHoraPedido AS fechaHora,
+            p.estadoActual AS estado,
+            pe.folio,
+            pp.numPedido,
+            COALESCE((
+                SELECT SUM(dp.cantidad * pz.precio)
+                FROM DetallesPedidos dp
+                INNER JOIN Pizzas pz ON dp.idPizza = pz.idPizza
+                WHERE dp.idPedido = p.idPedido
+            ), 0) AS total
+        FROM Pedidos p
+        LEFT JOIN PedidosProgramados pp ON p.idPedido = pp.idPedido
+        LEFT JOIN PedidosExpress pe ON p.idPedido = pe.idPedido
+        LEFT JOIN Clientes c ON c.idUsuario = pp.idUsuario
+        LEFT JOIN TelefonosClientes t ON t.idCliente = c.idUsuario
+        ORDER BY p.fechaHoraPedido DESC
+    """;
+
+        List<PedidoResumen> lista = new ArrayList<>();
+
+        try (Connection con = conexionBD.crearConexion(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                int idPedido = rs.getInt("idPedido");
+                String cliente = rs.getString("cliente");
+                String telefono = rs.getString("telefono");
+                LocalDateTime fechaHora = rs.getTimestamp("fechaHora").toLocalDateTime();
+                String estado = rs.getString("estado");
+                String tipo = rs.getString("tipo");
+                String folio = rs.getString("folio");          // Solo para EXPRESS
+                int numPedido = rs.getInt("numPedido");       // Solo para PROGRAMADO
+                double total = rs.getDouble("total");
+
+                lista.add(new PedidoResumen(
+                        idPedido,
+                        tipo.equals("EXPRESS") ? folio : String.valueOf(numPedido),
+                        cliente,
+                        telefono,
+                        fechaHora,
+                        total,
+                        estado,
+                        tipo
+                ));
+            }
+
+        } catch (SQLException e) {
+            throw new PersistenciaException(
+                    "Error al obtener pedidos para la tabla: " + e.getMessage(), e);
+        }
+
+        return lista;
+    }
+
+
 }

@@ -5,11 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
 import Negocio.BOs.IPedidoBO;
+import Negocio.BOs.IPedidoExpressBO;
 import Negocio.BOs.PedidoBO;
 import Negocio.DTOs.PedidoDetalleDTO;
 import Negocio.DTOs.PedidoTablaDTO;
 import Negocio.Fabrica.FabricaBOs;
 import Negocio.excepciones.NegocioException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -27,18 +30,25 @@ public class frmEmpleados extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmEmpleados.class.getName());
 
     private IPedidoBO pedidoBO;
+    private IPedidoExpressBO pedidoExpressBO;
 
     private List<PedidoTablaDTO> listaPedidosActual = new ArrayList<>();
 
     public frmEmpleados() {
         initComponents();
-
         btnCambiarEstado.setEnabled(false);
-
         tablaPedidos.getSelectionModel().addListSelectionListener(e -> validarBoton());
-
         pedidoBO = FabricaBOs.crearPedidoBO();
+        pedidoExpressBO = FabricaBOs.crearPedidoExpressBO();
 
+        try {
+            pedidoExpressBO.pedido20minutos();
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Error al actualizar pedidos EXPRESS: " + ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
         cargarTabla();
     }
 
@@ -368,10 +378,12 @@ public class frmEmpleados extends javax.swing.JFrame {
     private void cargarTabla() {
 
         try {
+            // Primero actualizar los pedidos EXPRESS automáticamente
+            pedidoExpressBO.pedido20minutos();
 
+            // Luego cargar la tabla normalmente
             List<PedidoTablaDTO> pedidos = pedidoBO.obtenerPedidosTabla();
             llenarTabla(pedidos);
-
         } catch (NegocioException ex) {
             javax.swing.JOptionPane.showMessageDialog(
                     this,
@@ -413,13 +425,11 @@ public class frmEmpleados extends javax.swing.JFrame {
     }
 
     private void cambiarEstado() {
-
         int fila = tablaPedidos.getSelectedRow();
         if (fila == -1) {
             JOptionPane.showMessageDialog(this, "Selecciona un pedido");
             return;
         }
-
         PedidoTablaDTO pedidoSeleccionado = listaPedidosActual.get(fila);
         int idPedido = pedidoSeleccionado.getIdPedido();
         String estadoActual = pedidoSeleccionado.getEstado();
@@ -428,24 +438,19 @@ public class frmEmpleados extends javax.swing.JFrame {
         if (estadoActual.equals("ENTREGADO")
                 || estadoActual.equals("CANCELADO")
                 || estadoActual.equals("NO ENTREGADO")) {
-
             JOptionPane.showMessageDialog(this,
                     "Este pedido ya está finalizado y no puede modificarse.");
             return;
         }
 
         String[] estadosDisponibles;
-
         boolean esExpress = pedidoSeleccionado.getTipo().equalsIgnoreCase("EXPRESS");
-
         if (estadoActual.equals("LISTO")) {
-
             if (esExpress) {
                 estadosDisponibles = new String[]{"ENTREGADO"};
             } else {
                 estadosDisponibles = new String[]{"ENTREGADO", "CANCELADO"};
             }
-
         } else if (estadoActual.equals("PENDIENTE")) {
             estadosDisponibles = new String[]{"LISTO", "CANCELADO"};
         } else {
@@ -461,7 +466,6 @@ public class frmEmpleados extends javax.swing.JFrame {
                 estadosDisponibles,
                 estadosDisponibles[0]
         );
-
         if (nuevoEstado == null) {
             return;
         }
@@ -480,44 +484,68 @@ public class frmEmpleados extends javax.swing.JFrame {
         }
 
         try {
-            // Antes de marcar ENTREGADO 
-            if (nuevoEstado.equals("ENTREGADO")) {
+            // Validación especial para pedidos EXPRESS
+            if (nuevoEstado.equals("ENTREGADO") && esExpress) {
+                LocalDateTime fechaPedido = pedidoSeleccionado.getFechaHora();
+                LocalDateTime ahora = LocalDateTime.now();
+                Duration duracion = Duration.between(fechaPedido, ahora);
 
-                double total = pedidoSeleccionado.getTotal();
+                if (duracion.toMinutes() > 20) {
+                    int confirm = JOptionPane.showConfirmDialog(this,
+                            "El pedido EXPRESS ya excedió los 20 minutos.\n"
+                            + "¿Deseas marcarlo como NO ENTREGADO?",
+                            "Confirmar",
+                            JOptionPane.YES_NO_OPTION);
 
-                int confirmarPago = JOptionPane.showConfirmDialog(
-                        this,
-                        "Total del pedido: $" + String.format("%.2f", total)
-                        + "\n\n¿Se ha recibido el pago del pedido?",
-                        "Confirmar pago",
-                        JOptionPane.YES_NO_OPTION
-                );
-                if (confirmarPago != JOptionPane.YES_OPTION) {
-                    JOptionPane.showMessageDialog(this,
-                            "No se puede entregar un pedido sin registrar el pago.");
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        try {
+                            pedidoBO.cambiarEstado(idPedido, "NO_ENTREGADO"); // <- cambio directo
+                            JOptionPane.showMessageDialog(this,
+                                    "Pedido marcado como NO ENTREGADO.");
+                            cargarTabla();
+                        } catch (NegocioException ex) {
+                            JOptionPane.showMessageDialog(this,
+                                    "Error al actualizar el estado del pedido: " + ex.getMessage(),
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                    return; // salimos del método
+                }
+            }
+
+            // Confirmar pago
+            double total = pedidoSeleccionado.getTotal();
+            int confirmarPago = JOptionPane.showConfirmDialog(
+                    this,
+                    "Total del pedido: $" + String.format("%.2f", total)
+                    + "\n\n¿Se ha recibido el pago del pedido?",
+                    "Confirmar pago",
+                    JOptionPane.YES_NO_OPTION
+            );
+            if (confirmarPago != JOptionPane.YES_OPTION) {
+                JOptionPane.showMessageDialog(this,
+                        "No se puede entregar un pedido sin registrar el pago.");
+                return;
+            }
+
+            // Pedidos EXPRESS requieren folio y PIN
+            if (esExpress) {
+                String folio = JOptionPane.showInputDialog(this, "Ingresa el folio del cliente:");
+                if (folio == null || folio.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Folio requerido para pedido EXPRESS.");
                     return;
                 }
-
-                // Si es pedido EXPRESS, pedir folio y PIN
-                if (pedidoSeleccionado.getTipo().equalsIgnoreCase("EXPRESS")) {
-                    String folio = JOptionPane.showInputDialog(this, "Ingresa el folio del cliente:");
-                    if (folio == null || folio.isEmpty()) {
-                        JOptionPane.showMessageDialog(this, "Folio requerido para pedido EXPRESS.");
-                        return;
-                    }
-                    String pin = JOptionPane.showInputDialog(this, "Ingresa el PIN de seguridad:");
-                    if (pin == null || pin.isEmpty()) {
-                        JOptionPane.showMessageDialog(this, "PIN requerido para pedido EXPRESS.");
-                        return;
-                    }
-
-                    // Validar folio y PIN con la base de datos
-                    boolean valido = pedidoBO.validarFolioYPIN(idPedido, folio, pin);
-                    if (!valido) {
-                        JOptionPane.showMessageDialog(this,
-                                "Folio o PIN incorrectos, no se puede entregar el pedido.");
-                        return;
-                    }
+                String pin = JOptionPane.showInputDialog(this, "Ingresa el PIN de seguridad:");
+                if (pin == null || pin.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "PIN requerido para pedido EXPRESS.");
+                    return;
+                }
+                boolean valido = pedidoBO.validarFolioYPIN(idPedido, folio, pin);
+                if (!valido) {
+                    JOptionPane.showMessageDialog(this,
+                            "Folio o PIN incorrectos, no se puede entregar el pedido.");
+                    return;
                 }
             }
 
@@ -527,7 +555,10 @@ public class frmEmpleados extends javax.swing.JFrame {
             cargarTabla();
 
         } catch (NegocioException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
+            JOptionPane.showMessageDialog(this,
+                    "Error al actualizar el estado del pedido: " + ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 

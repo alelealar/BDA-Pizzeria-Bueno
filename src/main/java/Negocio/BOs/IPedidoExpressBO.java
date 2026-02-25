@@ -35,4 +35,8 @@ public interface IPedidoExpressBO {
     public PedidoExpressDTO obtenerPedidoExpressPorId(int idPedidoExpress) throws NegocioException;
 
     public String generarToken() throws NegocioException;
+    
+     public void pedido20minutos() throws NegocioException;
+    
+    public void agregarDetallePedido(int idPedido, int idPizza, int cantidad, String nota) throws NegocioException;
 }

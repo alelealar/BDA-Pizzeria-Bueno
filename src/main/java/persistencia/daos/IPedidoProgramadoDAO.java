@@ -4,6 +4,8 @@
  */
 package persistencia.daos;
 
+import Negocio.DTOs.DetallePedidoDTO;
+import java.sql.SQLException;
 import java.util.List;
 import persistencia.dominio.PedidoProgramado;
 import persistencia.excepciones.PersistenciaException;
@@ -22,5 +24,10 @@ public interface IPedidoProgramadoDAO {
     
     List<PedidoProgramado> obtenerPedidosPorCliente(int idCliente) throws PersistenciaException;
     
-    List<PedidoProgramado> obtenerPedidosPorTelefono(String telefono) throws PersistenciaException;   
+    List<PedidoProgramado> obtenerPedidosPorTelefono(String telefono) throws PersistenciaException;
+    
+    public double calcularTotalProgramado(int idPedido) throws PersistenciaException;
+    
+    public void insertarDetalle(int idPedido, int idPizza, int cantidad, String nota) throws PersistenciaException;
+    
 }

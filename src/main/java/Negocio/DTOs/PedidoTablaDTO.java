@@ -30,6 +30,9 @@ public class PedidoTablaDTO {
         this.estado = estado;
         this.tipo = tipo;
     }
+
+    public PedidoTablaDTO() {
+    }
     
     public String getTipo() {
         return tipo;

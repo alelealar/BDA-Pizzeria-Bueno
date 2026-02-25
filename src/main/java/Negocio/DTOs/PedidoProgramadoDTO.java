@@ -2,14 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package Negocio.DTOs;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-
-
 
 /**
  *
@@ -17,22 +13,22 @@ import java.time.LocalDateTime;
  * @author Alejandra Leal Armenta - 00000262719
  * @author Paulina Michel Guevara Cervantez - 00000262724
  */
-
-
 public class PedidoProgramadoDTO {
+
     private int idPedido;
-    private String nota; 
+    private String nota;
     private String estadoActual;
     private LocalDateTime fechaHoraPedido;
     private LocalDateTime fechaHoraEntrega;
-
-    private int numPedido;  
+    
+    private int numPedido;
     private int idCliente;
     private String nombreCliente;
     private String idCupon;
     private double porcentajeDescuento;
+    private double total;
 
-    public PedidoProgramadoDTO(int idPedido, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, int numPedido, int idCliente, String nombreCliente, String idCupon, double porcentajeDescuento) {
+    public PedidoProgramadoDTO(int idPedido, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, int numPedido, int idCliente, String nombreCliente, String idCupon, double porcentajeDescuento, double total) {
         this.idPedido = idPedido;
         this.nota = nota;
         this.estadoActual = estadoActual;
@@ -43,6 +39,7 @@ public class PedidoProgramadoDTO {
         this.nombreCliente = nombreCliente;
         this.idCupon = idCupon;
         this.porcentajeDescuento = porcentajeDescuento;
+        this.total = total;
     }
 
     public PedidoProgramadoDTO(String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, int numPedido, int idCliente, String nombreCliente, String idCupon, double porcentajeDescuento) {
@@ -149,5 +146,13 @@ public class PedidoProgramadoDTO {
 
     public void setPorcentajeDescuento(double porcentajeDescuento) {
         this.porcentajeDescuento = porcentajeDescuento;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
     }
 }

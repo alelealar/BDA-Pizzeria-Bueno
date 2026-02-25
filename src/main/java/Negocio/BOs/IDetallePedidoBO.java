@@ -4,17 +4,14 @@
  */
 package Negocio.BOs;
 
-import Negocio.DTOs.PedidoProgramadoDTO;
 import Negocio.excepciones.NegocioException;
 
 /**
  *
  * @author RAYMUNDO
  */
-public interface IPedidoProgramadoBO {
+public interface IDetallePedidoBO {
     
-    public PedidoProgramadoDTO agregarPedidoProgramado(PedidoProgramadoDTO dto) throws NegocioException;
-    
-    public void agregarDetallePedido(int idPedido, int idPizza, int cantidad, String nota) throws NegocioException;
+    void agregarDetallePedido(int idPedido, int idPizza, int cantidad, String nota) throws NegocioException;
     
 }
