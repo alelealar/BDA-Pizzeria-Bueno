@@ -27,6 +27,8 @@ public class PedidoExpress extends Pedido {
      */
     private int folio;
 
+    private String token;
+
     /**
      * Constructor por omisión.
      */
@@ -44,13 +46,15 @@ public class PedidoExpress extends Pedido {
      * @param fechaHoraPedido fecha y hora del pedido
      * @param fechaHoraEntrega fecha y hora de entrega
      * @param tipo
+     * @param token
      */
     public PedidoExpress(String pin, int folio, int idPedido, String nota,
             String estadoActual, LocalDateTime fechaHoraPedido,
-            LocalDateTime fechaHoraEntrega, Tipo tipo) {
+            LocalDateTime fechaHoraEntrega, Tipo tipo, String token) {
         super(idPedido, nota, estadoActual, fechaHoraPedido, fechaHoraEntrega, tipo);
         this.pin = pin;
         this.folio = folio;
+        this.token = token;
     }
 
     /**
@@ -63,11 +67,13 @@ public class PedidoExpress extends Pedido {
      * @param fechaHoraPedido fecha y hora del pedido
      * @param fechaHoraEntrega fecha y hora de entrega
      * @param tipo
+     * @param token
      */
-    public PedidoExpress(String pin, int folio, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, Tipo tipo) {
+    public PedidoExpress(String pin, int folio, String nota, String estadoActual, LocalDateTime fechaHoraPedido, LocalDateTime fechaHoraEntrega, Tipo tipo, String token) {
         super(nota, estadoActual, fechaHoraPedido, fechaHoraEntrega, tipo);
         this.pin = pin;
         this.folio = folio;
+        this.token = token;
     }
 
     /**
@@ -96,6 +102,14 @@ public class PedidoExpress extends Pedido {
      */
     public void setFolio(int folio) {
         this.folio = folio;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     @Override

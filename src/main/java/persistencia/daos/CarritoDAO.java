@@ -103,7 +103,7 @@ public class CarritoDAO implements ICarritoDAO {
             }
 
         } catch (SQLException ex) {
-            LOG.severe("Error SQL al obtener carrito activo: " + ex);
+            LOG.severe(() -> "Error SQL al obtener carrito activo: " + ex);
             throw new PersistenciaException("Error al obtener carrito activo.", ex);
         }
     }
@@ -126,7 +126,7 @@ public class CarritoDAO implements ICarritoDAO {
             }
 
         } catch (SQLException ex) {
-            LOG.severe("Error SQL al desactivar carrito: " + ex);
+            LOG.severe(() -> "Error SQL al desactivar carrito: " + ex);
             throw new PersistenciaException("Error al desactivar carrito.", ex);
         }
     }

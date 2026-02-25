@@ -12,12 +12,12 @@ package presentacion.sesion;
  */
 public class SesionExpress {
 
-    private static String tokenExpress;
+    private static String token;
 
     public static String getToken() {
-        if (tokenExpress == null) {
-            tokenExpress = java.util.UUID.randomUUID().toString();
+        if (token == null) {
+            token = java.util.UUID.randomUUID().toString();
         }
-        return tokenExpress;
+        return token;
     }
 }

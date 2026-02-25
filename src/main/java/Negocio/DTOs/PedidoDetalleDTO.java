@@ -12,8 +12,8 @@ public class PedidoDetalleDTO {
     public PedidoDetalleDTO() {
     }
 
-    public PedidoDetalleDTO(int idPedido, String nombreCliente, 
-                            double total, List<DetallePedidoDTO> detalles) {
+    public PedidoDetalleDTO(int idPedido, String nombreCliente,
+            double total, List<DetallePedidoDTO> detalles) {
         this.idPedido = idPedido;
         this.nombreCliente = nombreCliente;
         this.total = total;
@@ -21,7 +21,6 @@ public class PedidoDetalleDTO {
     }
 
     // Getters y Setters
-
     public int getIdPedido() {
         return idPedido;
     }

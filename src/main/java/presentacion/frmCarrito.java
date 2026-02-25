@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import negocio.bos.CarritoBO;
+import presentacion.sesion.SesionExpress;
 import presentacion.vistas.frmAvisos;
 import presentacion.vistas.panPedido;
 
@@ -719,6 +720,7 @@ public class frmCarrito extends javax.swing.JFrame {
                     CarritoDTO carritoDto = carritoBo.obtenerCarritoCompletoExpress(token);
                     PedidoExpressDTO pedidoExDTO = new PedidoExpressDTO();
                     pedidoExDTO.setFechaHoraPedido(LocalDateTime.now());
+                    pedidoExDTO.setToken(token);
                     PedidoExpressDTO pedidoExpressObtenido = pedidoEx.agregarPedidoExpress(pedidoExDTO);
                     CarritoDTO carritoCompleto = carritoBo.obtenerCarritoCompletoExpress(token);
                     List<DetalleCarritoDTO> detalles = carritoCompleto.getDetalles();
@@ -754,7 +756,9 @@ public class frmCarrito extends javax.swing.JFrame {
                     for (DetalleCarritoDTO detalle : detalles) {
                         eliminarPaneles(detalle);
                     }
-
+                    
+                    
+                    
                     JOptionPane.showMessageDialog(this,
                             "Pedido programado registrado.\nFolio: "
                             + resultado.getIdPedido()
