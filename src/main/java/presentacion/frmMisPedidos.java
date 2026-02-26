@@ -4,6 +4,7 @@ import Negocio.BOs.IPedidoBO;
 import Negocio.BOs.PedidoBO;
 import Negocio.DTOs.PedidoDTO;
 import Negocio.DTOs.PedidoProgramadoDTO;
+import Negocio.excepciones.NegocioException;
 import java.awt.Color;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
@@ -747,7 +748,7 @@ public class frmMisPedidos extends javax.swing.JFrame {
             try {
                 pedidoBO.cambiarEstado(idPedido, "CANCELADO");
                 cargarPedidos();
-            } catch (Exception e) {
+            } catch (NegocioException e) {
                 javax.swing.JOptionPane.showMessageDialog(this,
                         "No se pudo cancelar: " + e.getMessage());
             }
@@ -927,19 +928,22 @@ public class frmMisPedidos extends javax.swing.JFrame {
         }    }//GEN-LAST:event_txtDia1KeyTyped
 
     private void btnInicioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInicioMouseClicked
+
         frmCatalogo catalogo = new frmCatalogo();
         catalogo.setVisible(true);
         this.dispose();
      }//GEN-LAST:event_btnInicioMouseClicked
 
     private void btnActualizarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnActualizarMouseClicked
-        // TODO add your handling code here:
+        frmActualizarCliente actualizar = new frmActualizarCliente();
+        actualizar.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnActualizarMouseClicked
 
     private void btnCarritoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCarritoMouseClicked
-//        frmCarrito carrito = new frmCarrito();
-//        carrito.setVisible(true);
-//        this.dispose();
+        frmCarrito carrito = new frmCarrito(idCliente);
+        carrito.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnCarritoMouseClicked
 
     private void btnMispedidosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMispedidosMouseClicked
