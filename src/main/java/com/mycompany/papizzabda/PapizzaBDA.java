@@ -1,5 +1,6 @@
 package com.mycompany.papizzabda;
 
+import presentacion.frmCatalogo;
 import presentacion.frmIniciarSesion;
 import presentacion.frmInicio;
 
@@ -10,7 +11,7 @@ import presentacion.frmInicio;
 public class PapizzaBDA {
 
     public static void main(String[] args) {
-        frmInicio login = new frmInicio();
+        frmCatalogo login = new frmCatalogo();
         login.setVisible(true);
         
         

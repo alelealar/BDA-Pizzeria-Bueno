@@ -72,29 +72,43 @@ public class PedidoExpressBO implements IPedidoExpressBO {
             throw new NegocioException("El Pedido no debe tener un id asignado.");
         }
 
+        try {
+
+            int cantidadPedidos = pedidoExpressDAO.obtenerCantidadPedidosPorToken(pedto.getToken());
+            if (cantidadPedidos >= 3) {
+                throw new NegocioException("Has alcanzado el máximo de 3 pedidos activos por sesión.");
+            }
+        } catch (PersistenciaException ex) {
+            LOG.severe("Error al validar cantidad de pedidos: " + ex.getMessage());
+            throw new NegocioException("No se pudo verificar el historial de pedidos.");
+        }
+
         PedidoExpress pedidoEx = new PedidoExpress();
         pedidoEx.setFolio(generarFolio());
-        String pinPlano = generarPIN();
-        pedidoEx.setPin(BCrypt.hashpw(generarPIN(), BCrypt.gensalt()));
         pedidoEx.setNota(pedto.getNota());
+        pedidoEx.setToken(pedto.getToken());
+
+        String pinPlano = generarPIN();
+        pedidoEx.setPin(BCrypt.hashpw(pinPlano, BCrypt.gensalt()));
 
         try {
             PedidoExpress pedidoExpressObtenido = pedidoExpressDAO.agregarPedidoExpress(pedidoEx);
+
             if (pedidoExpressObtenido == null || pedidoExpressObtenido.getIdPedido() <= 0) {
-                LOG.warning("Problemas al insertar el pedidoExpress. No se pudo obtener el id.");
-                throw new NegocioException("No se inserto el podidoExpress correctamente.");
+                throw new NegocioException("No se insertó el pedidoExpress correctamente.");
             }
 
             PedidoExpressDTO pedidoExAgregado = new PedidoExpressDTO();
-            pedidoExAgregado.setEstadoActual(pedidoExpressObtenido.getEstadoActual());
-            pedidoExAgregado.setFechaHoraPedido(pedidoExpressObtenido.getFechaHoraPedido());
+            pedidoExAgregado.setIdPedido(pedidoExpressObtenido.getIdPedido());
             pedidoExAgregado.setFolio(String.format("PEDEX-%05d", pedidoExpressObtenido.getFolio()));
-            pedidoExAgregado.setPIN(pinPlano);
+            pedidoExAgregado.setPIN(pinPlano); // Devolvemos el PIN sin encriptar para que el usuario lo vea
+            pedidoExAgregado.setToken(pedidoExpressObtenido.getToken());
+
             return pedidoExAgregado;
 
         } catch (PersistenciaException e) {
             LOG.severe(e.getMessage());
-            throw new NegocioException(e.getMessage());
+            throw new NegocioException("Error en la base de datos al registrar el pedido.");
         }
     }
 
@@ -127,6 +141,7 @@ public class PedidoExpressBO implements IPedidoExpressBO {
             pedidoExConsultado.setFechaHoraPedido(pedidoExpressConsultado.getFechaHoraPedido());
             pedidoExConsultado.setFolio(String.format("PEDEX-%05d", pedidoExConsultado.getFolio()));
             pedidoExConsultado.setPIN(pedidoExpressConsultado.getPin());
+            pedidoExConsultado.setToken(pedidoExpressConsultado.getToken());
 
             LOG.info(() -> "Se obtuvo el pedidoExpress: " + pedidoExpressConsultado.toString());
             return pedidoExConsultado;

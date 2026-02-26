@@ -57,4 +57,5 @@ public interface IPedidoExpressDAO {
     
     public void actualizarPedidoExpressNoRecolectado() throws PersistenciaException;
     
+    int obtenerCantidadPedidosPorToken(String token) throws PersistenciaException;
 }

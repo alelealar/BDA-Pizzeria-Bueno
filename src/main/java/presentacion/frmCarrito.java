@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import negocio.bos.CarritoBO;
+import presentacion.sesion.SesionExpress;
 import presentacion.vistas.frmAvisos;
 import presentacion.vistas.panPedido;
 
@@ -278,6 +279,9 @@ public class frmCarrito extends javax.swing.JFrame {
 
         btnInicio.setBackground(new java.awt.Color(255, 92, 56));
         btnInicio.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnInicioMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnInicioMouseEntered(evt);
             }
@@ -307,6 +311,9 @@ public class frmCarrito extends javax.swing.JFrame {
 
         btnActualizar.setBackground(new java.awt.Color(255, 92, 56));
         btnActualizar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnActualizarMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnActualizarMouseEntered(evt);
             }
@@ -338,6 +345,9 @@ public class frmCarrito extends javax.swing.JFrame {
 
         btnCarrito.setBackground(new java.awt.Color(255, 92, 56));
         btnCarrito.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCarritoMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnCarritoMouseEntered(evt);
             }
@@ -369,6 +379,9 @@ public class frmCarrito extends javax.swing.JFrame {
 
         btnMispedidos.setBackground(new java.awt.Color(255, 92, 56));
         btnMispedidos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnMispedidosMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnMispedidosMouseEntered(evt);
             }
@@ -705,10 +718,9 @@ public class frmCarrito extends javax.swing.JFrame {
             if (express) {
                 // --- PEDIDO EXPRESS ---
                 IPedidoExpressBO pedidoExBO = FabricaBOs.obtenerPedidoExpress();
-
-                // Crear pedido Express
                 PedidoExpressDTO pedidoExDTO = new PedidoExpressDTO();
                 pedidoExDTO.setFechaHoraPedido(LocalDateTime.now());
+                pedidoExDTO.setToken(token);
                 PedidoExpressDTO pedidoRegistrado = pedidoExBO.agregarPedidoExpress(pedidoExDTO);
 
                 // Agregar detalles del carrito al pedido
@@ -742,9 +754,8 @@ public class frmCarrito extends javax.swing.JFrame {
             } else {
                 // --- PEDIDO PROGRAMADO ---
                 IPedidoProgramadoBO pedidoProgBO = pedidoProgramadoBO;
-
                 PedidoProgramadoDTO pedidoDTO = new PedidoProgramadoDTO();
-                pedidoDTO.setFechaHoraEntrega(LocalDateTime.now().plusHours(1)); // ejemplo de hora de entrega
+                pedidoDTO.setFechaHoraEntrega(LocalDateTime.now().plusHours(1));
                 pedidoDTO.setNota("Pedido programado desde carrito");
                 pedidoDTO.setIdCliente(carrito.getIdUsuario());
                 pedidoDTO.setIdCupon(cuponAplicado != null ? cuponAplicado.getIdCupon() : null);
@@ -777,6 +788,35 @@ public class frmCarrito extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Error al ordenar.");
         }
     }//GEN-LAST:event_btnOrdenarActionPerformed
+
+    private void btnInicioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInicioMouseClicked
+        if (express) {
+            frmCatalogo catalogo = new frmCatalogo(express);
+            catalogo.setVisible(true);
+            this.dispose();
+        } else {
+            frmCatalogo catalogo = new frmCatalogo(idUsuario);
+            catalogo.setVisible(true);
+            this.dispose();
+        }
+
+    }//GEN-LAST:event_btnInicioMouseClicked
+
+    private void btnActualizarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnActualizarMouseClicked
+        frmActualizarCliente actualizar = new frmActualizarCliente();
+        actualizar.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnActualizarMouseClicked
+
+    private void btnCarritoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCarritoMouseClicked
+
+    }//GEN-LAST:event_btnCarritoMouseClicked
+
+    private void btnMispedidosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMispedidosMouseClicked
+        frmMisPedidos misPedidos = new frmMisPedidos(idUsuario);
+        misPedidos.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnMispedidosMouseClicked
 
     /**
      * @param args the command line arguments

@@ -51,30 +51,30 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
      */
     @Override
     public PedidoExpress agregarPedidoExpress(PedidoExpress pedidoExpress) throws PersistenciaException {
-        String sp = """
-                    CALL SP_REGISTAR_PEDIDO_EXPRESS(
-                        ?,
-                        ?,
-                        ?,
-                        ?
-                    )
-                    """;
+        String sp = "{ CALL SP_REGISTAR_PEDIDO_EXPRESS(?, ?, ?, ?, ?) }";
 
         try (Connection conexion = conexionBD.crearConexion(); CallableStatement cs = conexion.prepareCall(sp)) {
             cs.setString(1, pedidoExpress.getNota());
             cs.setInt(2, pedidoExpress.getFolio());
             cs.setString(3, pedidoExpress.getPin());
-            cs.registerOutParameter(4, Types.INTEGER);
+            cs.setString(4, pedidoExpress.getToken());
+
+            cs.registerOutParameter(5, Types.INTEGER);
 
             cs.execute();
 
-            int idGeneradoPedidoExpress = cs.getInt(4);
-            pedidoExpress.setIdPedido(idGeneradoPedidoExpress);
+            int idGenerado = cs.getInt(5);
+
+            if (idGenerado == -1) {
+                throw new PersistenciaException("El Store Procedure devolvió un error");
+            }
+
+            pedidoExpress.setIdPedido(idGenerado);
             return pedidoExpress;
 
         } catch (SQLException e) {
-            LOG.severe(() -> "ERROR: Al intentar agregar un pedido express con el SP " + e);
-            throw new PersistenciaException("ERROR: Al intentar agregar un pedido express con el SP " + e);
+            LOG.severe(() -> "ERROR: Al intentar agregar un pedido express con el SP: " + e.getMessage());
+            throw new PersistenciaException("Error al registrar el pedido express en la base de datos.", e);
         }
     }
 
@@ -155,7 +155,8 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
                               SELECT 
                               	idPedido, 
                                   folio, 
-                                  PIN
+                                  PIN,
+                                  token
                               FROM pedidosexpress
                               """;
 
@@ -188,6 +189,7 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
             pedidoEx.setIdPedido(rs.getInt("idPedido"));
             pedidoEx.setFolio(rs.getInt("folio"));
             pedidoEx.setPin(rs.getString("PIN"));
+            pedidoEx.setToken("token");
 
             return pedidoEx;
 
@@ -276,6 +278,26 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
 
         }
     }
+
+    @Override
+    public int obtenerCantidadPedidosPorToken(String token) throws PersistenciaException {
+        String sql = "SELECT COUNT(*) FROM pedidosexpress WHERE token = ?";
+
+        try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, token);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al validar cantidad de pedidos.", e);
+        }
+        return 0;
+    }
+
+
     
     @Override
     public void insertarDetalle(int idPedido, int idPizza, int cantidad, String nota) throws PersistenciaException {

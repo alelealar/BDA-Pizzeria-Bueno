@@ -20,81 +20,81 @@ import presentacion.vistas.frmAvisos;
  * @author Brian
  */
 public class frmDetallesPizza extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frmDetallesPizza.class.getName());
     private int idUsuario;
     private String token;
     PizzaDTO pizza;
     boolean express;
-    
+
     public frmDetallesPizza() {
         initComponents();
     }
-    
+
     public void cargarInformacionPizza(PizzaDTO pizza, int idUsuario) {
         this.idUsuario = idUsuario;
         this.pizza = pizza;
-        
+
         lblDescripcionPizza.setText(pizza.getDescripcion());
         lblTituloPïzza.setText(pizza.getNombre());
         lblImagenPizza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizza.getRutaImagen())));
-        
+
         jrbChica.setVisible(false);
         jrbMediana.setVisible(false);
         jrbGrande.setVisible(false);
-        
+
         int cantidadDeTamanios = pizza.getTamanios().size();
-        
+
         if (cantidadDeTamanios > 0) {
             jrbChica.setText(pizza.getTamanios().get(0) + ": $" + pizza.getPrecios().get(0) + " MXN");
             jrbChica.setVisible(true);
         }
-        
+
         if (cantidadDeTamanios > 1) {
             jrbMediana.setText(pizza.getTamanios().get(1) + ": $" + pizza.getPrecios().get(1) + " MXN");
             jrbMediana.setVisible(true);
         }
-        
+
         if (cantidadDeTamanios > 2) {
             jrbGrande.setText(pizza.getTamanios().get(2) + ": $" + pizza.getPrecios().get(2) + " MXN");
             jrbGrande.setVisible(true);
         }
     }
-    
+
     public void cargarInformacionPizzaExpress(PizzaDTO pizza, String token) {
         this.pizza = pizza;
         this.token = token;
         this.express = true;
-        
+
         txtNota.setVisible(false);
         jSeparator1.setVisible(false);
         jLabel8.setVisible(false);
-        
+
         lblDescripcionPizza.setText(pizza.getDescripcion());
         lblTituloPïzza.setText(pizza.getNombre());
         lblImagenPizza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizza.getRutaImagen())));
-        
+
         jrbChica.setVisible(false);
         jrbMediana.setVisible(false);
         jrbGrande.setVisible(false);
-        
+
         int cantidadDeTamanios = pizza.getTamanios().size();
-        
+
         if (cantidadDeTamanios > 0) {
             jrbChica.setText(pizza.getTamanios().get(0) + ": $" + pizza.getPrecios().get(0) + " MXN");
             jrbChica.setVisible(true);
         }
-        
+
         if (cantidadDeTamanios > 1) {
             jrbMediana.setText(pizza.getTamanios().get(1) + ": $" + pizza.getPrecios().get(1) + " MXN");
             jrbMediana.setVisible(true);
         }
-        
+
         if (cantidadDeTamanios > 2) {
             jrbGrande.setText(pizza.getTamanios().get(2) + ": $" + pizza.getPrecios().get(2) + " MXN");
             jrbGrande.setVisible(true);
         }
-        
+
     }
 
     /**
@@ -354,7 +354,7 @@ public class frmDetallesPizza extends javax.swing.JFrame {
     private void btnAnadirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAnadirMouseClicked
         String tamanioSeleccionado = null;
         ICarritoBO carrito = FabricaBOs.obtenerCarrito();
-        
+
         int cantidadDeTamanios = pizza.getTamanios().size();
         if (jrbChica.isSelected()) {
             tamanioSeleccionado = pizza.getTamanios().get(0);
@@ -368,33 +368,36 @@ public class frmDetallesPizza extends javax.swing.JFrame {
             aviso.setVisible(true);
             return;
         }
-        
+
         IPizzaBO pizzita = FabricaBOs.obtenerProductos();
         try {
             ArrayList<PizzaDTO> pizzasFil = pizzita.agruparPizzasPorNombre();
             Map<String, Integer> mapaIds = pizza.getIdsPorTamanio();
             int idPizza = mapaIds.get(tamanioSeleccionado);
-            
+
             String nota;
-            
-            if (txtNota.getText().equals("Ingrese una nota")) {
+
+            if (txtNota.getText().equals("Ingrese la nota")) {
                 nota = "";
             } else {
                 nota = txtNota.getText();
             }
+
             if (express) {
+                if (token == null || token.isEmpty()) {
+                    throw new NegocioException("Token inválido");
+                }
                 carrito.agregarProductoExpress(token, idPizza, tamanioSeleccionado, 1, nota);
                 frmCarrito pantallaCarrito = new frmCarrito(token);
                 pantallaCarrito.setVisible(true);
                 this.dispose();
             } else {
-                int idUsuario = 1;
                 carrito.agregarProducto(idUsuario, idPizza, tamanioSeleccionado, 1, nota);
                 frmCarrito pantallaCarrito = new frmCarrito(idUsuario);
                 pantallaCarrito.setVisible(true);
                 this.dispose();
             }
-            
+
         } catch (NegocioException ex) {
             System.getLogger(frmDetallesPizza.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
@@ -452,7 +455,7 @@ public class frmDetallesPizza extends javax.swing.JFrame {
             catalogo.setVisible(true);
             this.dispose();
         }
-        
+
 
     }//GEN-LAST:event_btnVolverMouseClicked
 

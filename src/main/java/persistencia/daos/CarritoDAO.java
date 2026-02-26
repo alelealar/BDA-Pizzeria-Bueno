@@ -50,7 +50,7 @@ public class CarritoDAO implements ICarritoDAO {
 
         String comandoSQL = """
             INSERT INTO Carritos (idUsuario, fechaCreacion, activo)
-            VALUES (?, NOW(), TRUE);
+            VALUES (?, NOW(), TRUE)
             """;
 
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL, Statement.RETURN_GENERATED_KEYS)) {
@@ -86,7 +86,7 @@ public class CarritoDAO implements ICarritoDAO {
         String comandoSQL = """
             SELECT idCarrito, idUsuario, fechaCreacion, activo
             FROM Carritos
-            WHERE idUsuario = ? AND activo = 1;
+            WHERE idUsuario = ? AND activo = 1
             """;
 
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
@@ -103,7 +103,7 @@ public class CarritoDAO implements ICarritoDAO {
             }
 
         } catch (SQLException ex) {
-            LOG.severe("Error SQL al obtener carrito activo: " + ex);
+            LOG.severe(() -> "Error SQL al obtener carrito activo: " + ex);
             throw new PersistenciaException("Error al obtener carrito activo.", ex);
         }
     }
@@ -114,7 +114,7 @@ public class CarritoDAO implements ICarritoDAO {
         String comandoSQL = """
             UPDATE Carritos
             SET activo = 0
-            WHERE idCarrito = ?;
+            WHERE idCarrito = ?
             """;
 
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
@@ -126,7 +126,7 @@ public class CarritoDAO implements ICarritoDAO {
             }
 
         } catch (SQLException ex) {
-            LOG.severe("Error SQL al desactivar carrito: " + ex);
+            LOG.severe(() -> "Error SQL al desactivar carrito: " + ex);
             throw new PersistenciaException("Error al desactivar carrito.", ex);
         }
     }
@@ -157,7 +157,7 @@ public class CarritoDAO implements ICarritoDAO {
 
         String comandoSQL = """
             INSERT INTO Carritos (token, fechaCreacion, activo)
-            VALUES (?, NOW(), TRUE);
+            VALUES (?, NOW(), TRUE)
             """;
 
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL, Statement.RETURN_GENERATED_KEYS)) {
@@ -190,11 +190,7 @@ public class CarritoDAO implements ICarritoDAO {
     @Override
     public Carrito obtenerCarritoActivoExpress(String token) throws PersistenciaException {
 
-        String comandoSQL = """
-            SELECT idCarrito, token, fechaCreacion, activo
-            FROM Carritos
-            WHERE token = ? AND activo = 1;
-            """;
+        String comandoSQL = "SELECT idCarrito, token, fechaCreacion, activo FROM Carritos WHERE token = ? AND activo = 1";
 
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
 

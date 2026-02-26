@@ -50,7 +50,7 @@ public class DetalleCarritoDAO implements IDetalleCarritoDAO {
         System.out.println("ID Pizza enviado: " + detalle.getIdPizza());
         String comandoSQL = """
             INSERT INTO DetallesCarrito (idCarrito, idPizza, tamaño, cantidad, nota)
-                VALUES (?, ?, ?, ?, ?);
+                VALUES (?, ?, ?, ?, ?)
             """;
 
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
@@ -77,7 +77,7 @@ public class DetalleCarritoDAO implements IDetalleCarritoDAO {
         String comandoSQL = """
         SELECT idDetalleCarrito, idCarrito, idPizza, tamaño, cantidad, nota
         FROM DetallesCarrito
-        WHERE idCarrito = ? AND idPizza = ? AND tamaño = ?;
+        WHERE idCarrito = ? AND idPizza = ? AND tamaño = ?
         """;
 
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
@@ -106,7 +106,7 @@ public class DetalleCarritoDAO implements IDetalleCarritoDAO {
 
         String comandoSQL = """
             DELETE FROM DetallesCarrito
-            WHERE idDetalleCarrito = ?;
+            WHERE idDetalleCarrito = ?
             """;
 
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(comandoSQL)) {
@@ -162,7 +162,7 @@ public class DetalleCarritoDAO implements IDetalleCarritoDAO {
         String comandoSQL = """
         SELECT idDetalleCarrito, idCarrito, idPizza, tamaño, cantidad, nota
         FROM DetallesCarrito
-        WHERE idCarrito = ?;
+        WHERE idCarrito = ?
         """;
 
         List<DetalleCarrito> lista = new ArrayList<>();

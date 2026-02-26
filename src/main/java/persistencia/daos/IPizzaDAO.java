@@ -18,5 +18,11 @@ public interface IPizzaDAO {
     public List<Pizza> obtenerPizzas() throws PersistenciaException;
 
     public Pizza obtenerPizzaPorId(int id) throws PersistenciaException;
+    
+    Pizza obtenerPizzaPorTamano(String nombre, String tamPizza) throws PersistenciaException;
+    
+    void actualizarPrecioPizza(String nombre, String tam, double precioNuevo) throws PersistenciaException;
+    
+    void actualizarEstadoPizza(int idPizza) throws PersistenciaException;
 
 }
