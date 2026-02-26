@@ -1,8 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 package Negocio.BOs;
 
 import Negocio.DTOs.ClienteDTO;
@@ -23,21 +18,72 @@ import persistencia.dominio.Telefono;
 import persistencia.excepciones.PersistenciaException;
 
 /**
+ * Clase de lógica de negocio encargada de la gestión de clientes.
+ *
+ * <p>
+ * Esta clase pertenece a la capa de negocio (BO - Business Object) y se encarga
+ * de aplicar las validaciones necesarias antes de interactuar con la capa de
+ * persistencia (DAO).
+ * </p>
+ *
+ * <h2>Responsabilidades principales:</h2>
+ * <ul>
+ * <li>Registrar nuevos clientes.</li>
+ * <li>Actualizar información de clientes.</li>
+ * <li>Validar datos personales y domicilio.</li>
+ * <li>Validar fecha de nacimiento.</li>
+ * <li>Gestionar teléfonos asociados al cliente.</li>
+ * <li>Convertir objetos DTO a entidades de dominio y viceversa.</li>
+ * </ul>
+ *
+ * <p>
+ * Aplica reglas de negocio como: validación de campos obligatorios, validación
+ * de fecha de nacimiento, validación de domicilio completo, y control de
+ * errores provenientes de la capa de persistencia.
+ * </p>
+ *
  * @author Brian Kaleb Sandoval Rodríguez - 00000262741
  * @author Alejandra Leal Armenta - 00000262719
  * @author Paulina Michel Guevara Cervantez - 00000262724
  */
+public class ClienteBO implements IClienteBO {
 
-public class ClienteBO implements IClienteBO{
     private IClienteDAO clienteDAO;
     private ClienteDTO clienteActual;
     private static final Logger LOG = Logger.getLogger(ClienteBO.class.getName());
 
-    public ClienteBO(IClienteDAO cliente    ) {
+    /**
+     * Constructor que recibe la dependencia DAO para acceso a datos.
+     *
+     * @param cliente Implementación de IClienteDAO.
+     */
+    public ClienteBO(IClienteDAO cliente) {
         this.clienteDAO = cliente;
     }
-    
+
+    /**
+     * Registra un nuevo cliente en el sistema.
+     *
+     * <p>
+     * Realiza validaciones de:
+     * <ul>
+     * <li>Campos obligatorios.</li>
+     * <li>Domicilio completo si se empieza a llenar.</li>
+     * <li>Fecha de nacimiento válida y no futura.</li>
+     * <li>Usuario y contraseña obligatorios.</li>
+     * </ul>
+     * </p>
+     *
+     * @param cliente Información del cliente en formato DTO.
+     * @param usuario Nombre de usuario para autenticación.
+     * @param contrasena Contraseña del usuario.
+     * @param telefonos Lista de teléfonos asociados.
+     * @return ClienteDTO registrado con información persistida.
+     * @throws NegocioException Si alguna validación falla o hay error en
+     * persistencia.
+     */
     public ClienteDTO registrarCliente(ClienteDTO cliente, String usuario, String contrasena, List<TelefonoDTO> telefonos) throws NegocioException {
+
         if (cliente == null) {
             LOG.warning("Cliente nulo");
             throw new NegocioException("El cliente no puede ser nulo");
@@ -56,7 +102,6 @@ public class ClienteBO implements IClienteBO{
                 throw new NegocioException("Debe proporcionar el domicilio completo si empieza a llenarlo");
             }
         }
-        
 
         LocalDate fechaNacimiento;
         try {
@@ -70,13 +115,13 @@ public class ClienteBO implements IClienteBO{
             LOG.warning("Fecha de nacimiento futura");
             throw new NegocioException("La fecha de nacimiento no puede ser posterior a hoy.");
         }
-        
-        if(usuario.isBlank() || usuario == null){
+
+        if (usuario.isBlank() || usuario == null) {
             LOG.warning("no se ingreso usuario, error");
             throw new NegocioException("Ingrese un usuario");
         }
-        
-        if(contrasena.isBlank() || contrasena == null){
+
+        if (contrasena.isBlank() || contrasena == null) {
             LOG.warning("No se ingreso ninguna contraseña");
             throw new NegocioException("Contraseña obligatoria.");
         }
@@ -87,16 +132,13 @@ public class ClienteBO implements IClienteBO{
             clienteDominio.setContraseniaUsuario(contrasena);
 
             Cliente clienteRegistrado = clienteDAO.agregarCliente(clienteDominio);
-            
-            if (telefonos != null && !telefonos.isEmpty()) {
-                
-                List<Telefono> listaTelefonosDominio = convertirListaTelefonos(telefonos, clienteRegistrado);
 
+            if (telefonos != null && !telefonos.isEmpty()) {
+                List<Telefono> listaTelefonosDominio = convertirListaTelefonos(telefonos, clienteRegistrado);
                 clienteDAO.agregarTelefonos(clienteRegistrado.getIdCliente(), listaTelefonosDominio);
             }
 
             ClienteDTO resultado = mapearDominioaDTO(clienteRegistrado);
-
             return resultado;
 
         } catch (PersistenciaException ex) {
@@ -105,7 +147,15 @@ public class ClienteBO implements IClienteBO{
         }
     }
 
+    /**
+     * Actualiza la información de un cliente existente.
+     *
+     * @param cliente ClienteDTO con información actualizada.
+     * @return ClienteDTO actualizado.
+     * @throws NegocioException Si falla validación o persistencia.
+     */
     public ClienteDTO actualizarCliente(ClienteDTO cliente) throws NegocioException {
+
         if (cliente == null) {
             LOG.warning("Cliente nulo");
             throw new NegocioException("El cliente no puede ser nulo");
@@ -124,20 +174,18 @@ public class ClienteBO implements IClienteBO{
                 throw new NegocioException("Debe proporcionar el domicilio completo si empieza a llenarlo");
             }
         }
+
         LocalDate fechaNac = LocalDate.of(cliente.getAnio(), cliente.getMesNum(), cliente.getDia());
-        
-        if(fechaNac.isAfter(LocalDate.now())){
+
+        if (fechaNac.isAfter(LocalDate.now())) {
             LOG.warning("fecha nacimiento invalida. despues de hoy ");
             throw new NegocioException("Debe proporcionar una fecha de nacimiento válida.");
         }
 
         try {
             Cliente clienteDominio = mapearDTOaDominio(cliente);
-
             Cliente clienteActualizado = clienteDAO.actualizarCliente(clienteDominio);
-
             ClienteDTO resultado = mapearDominioaDTO(clienteActualizado);
-
             return resultado;
 
         } catch (PersistenciaException ex) {
@@ -146,27 +194,36 @@ public class ClienteBO implements IClienteBO{
         }
     }
 
+    /**
+     * Método pendiente para agregar teléfono a un cliente.
+     */
     @Override
     public void agregarTelefono(int idCliente, Telefono telefono) throws NegocioException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * Método pendiente para eliminar teléfono de un cliente.
+     */
     @Override
     public void eliminarTelefono(int idCliente, Telefono telefono) throws NegocioException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-    private Cliente mapearDTOaDominio(ClienteDTO dto) {
-        Cliente dominio = new Cliente();
 
+    /**
+     * Convierte un ClienteDTO en entidad de dominio Cliente.
+     */
+    private Cliente mapearDTOaDominio(ClienteDTO dto) {
+
+        Cliente dominio = new Cliente();
         dominio.setNombres(dto.getNombres());
-        
+
         String apellidosCompletos = dto.getApellidos();
-        
+
         if (apellidosCompletos != null && !apellidosCompletos.isBlank()) {
             String[] partes = apellidosCompletos.split(" ");
-            
-            if(partes.length >= 2){
+
+            if (partes.length >= 2) {
                 dominio.setApellidoPaterno(partes[0]);
                 dominio.setApellidoMaterno(partes[1]);
             } else {
@@ -187,8 +244,11 @@ public class ClienteBO implements IClienteBO{
         return dominio;
     }
 
-    // Convierte de Dominio a DTO
+    /**
+     * Convierte una entidad Cliente en ClienteDTO.
+     */
     private ClienteDTO mapearDominioaDTO(Cliente cliente) {
+
         ClienteDTO dto = new ClienteDTO();
         dto.setIdCliente(cliente.getIdCliente());
         dto.setNombres(cliente.getNombres());
@@ -205,33 +265,39 @@ public class ClienteBO implements IClienteBO{
 
         return dto;
     }
-    
+
+    /**
+     * Convierte una lista de TelefonoDTO a entidades Telefono asociadas a un
+     * cliente.
+     */
     private List<Telefono> convertirListaTelefonos(List<TelefonoDTO> listaDTO, Cliente cliente) {
+
         List<Telefono> listaDominio = new ArrayList<>();
 
         for (TelefonoDTO dto : listaDTO) {
             Telefono entidad = new Telefono();
             entidad.setEtiqueta(dto.getEtiqueta());
             entidad.setTelefono(dto.getTelefono());
-            entidad.setCliente(cliente); // Vinculamos la entidad al cliente registrado
-
+            entidad.setCliente(cliente);
             listaDominio.add(entidad);
         }
 
         return listaDominio;
     }
-    
+
     /**
-     * Devuelve el cliente actualmente manejado por este BO
-     * @return ClienteDTO actual
+     * Devuelve el cliente actualmente manejado por este BO.
+     *
+     * @return ClienteDTO actual.
      */
     public ClienteDTO getCliente() {
         return clienteActual;
     }
 
     /**
-     * Permite asignar un cliente al BO (opcional)
-     * @param cliente ClienteDTO a asignar
+     * Permite asignar un cliente al BO.
+     *
+     * @param cliente ClienteDTO a asignar.
      */
     public void setCliente(ClienteDTO cliente) {
         this.clienteActual = cliente;

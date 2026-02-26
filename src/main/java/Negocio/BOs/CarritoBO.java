@@ -22,8 +22,28 @@ import persistencia.daos.DetalleCarritoDAO;
 import persistencia.daos.PizzaDAO;
 
 /**
+ * Clase de lógica de negocio encargada de gestionar las operaciones
+ * relacionadas con el carrito de compras dentro del sistema.
  *
- * @author Brian
+ * <p>
+ * Esta clase implementa la interfaz ICarritoBO y actúa como intermediaria entre
+ * la capa de presentación y la capa de persistencia (DAO). Se encarga de
+ * aplicar las reglas de negocio antes de interactuar con la base de datos.
+ * </p>
+ *
+ * <h2>Responsabilidades principales:</h2>
+ * <ul>
+ * <li>Crear o recuperar un carrito activo para un usuario.</li>
+ * <li>Crear o recuperar un carrito Express mediante token.</li>
+ * <li>Agregar productos al carrito.</li>
+ * <li>Actualizar cantidades si el producto ya existe.</li>
+ * <li>Obtener el carrito completo con sus detalles.</li>
+ * <li>Finalizar (desactivar) un carrito.</li>
+ * </ul>
+ *
+ * @author Brian Kaleb Sandoval Rodríguez
+ * @author Paulina Michel Guevara Cervantes
+ * @author Alejandra Leal Armenta
  */
 public class CarritoBO implements ICarritoBO {
 
@@ -31,6 +51,14 @@ public class CarritoBO implements ICarritoBO {
     private final IDetalleCarritoDAO detalleCarritoDAO;
     private final IPizzaDAO pizzaDAO;
 
+    /**
+     * Constructor que recibe las dependencias necesarias para operar.
+     *
+     * @param carritoDAO DAO encargado de la persistencia de Carrito.
+     * @param detalleCarritoDAO DAO encargado de la persistencia de
+     * DetalleCarrito.
+     * @param pizzaDAO DAO encargado de la persistencia de Pizza.
+     */
     public CarritoBO(ICarritoDAO carritoDAO, IDetalleCarritoDAO detalleCarritoDAO, IPizzaDAO pizzaDAO) {
 
         this.carritoDAO = carritoDAO;
@@ -38,11 +66,17 @@ public class CarritoBO implements ICarritoBO {
         this.pizzaDAO = pizzaDAO;
     }
 
+    /**
+     * Obtiene el carrito activo de un usuario. Si no existe, lo crea
+     * automáticamente.
+     *
+     * @param idUsuario Identificador del usuario.
+     * @return CarritoDTO con la información básica del carrito.
+     * @throws PersistenciaException Si ocurre un error en la base de datos.
+     */
     public CarritoDTO obtenerOCrearCarritoEntidad(int idUsuario) throws PersistenciaException {
-        //1. buscar carrito
         Carrito carrito = carritoDAO.obtenerCarritoActivoPorUsuario(idUsuario);
         if (carrito == null) {
-            //si el carrito no existe hay que crearlo
             carrito = new Carrito();
             carrito.setIdUsuario(idUsuario);
             carrito.setActivo(true);
@@ -55,14 +89,24 @@ public class CarritoBO implements ICarritoBO {
         return carritoDto;
     }
 
+    /**
+     * Agrega un producto al carrito de un usuario registrado. Si el carrito no
+     * existe, lo crea. Si el producto ya existe con el mismo tamaño, actualiza
+     * la cantidad.
+     *
+     * @param idUsuario ID del usuario.
+     * @param idPizza ID de la pizza.
+     * @param tamanio Tamaño seleccionado.
+     * @param cantidad Cantidad a agregar.
+     * @param nota Nota adicional del producto.
+     * @throws NegocioException Si ocurre un error.
+     */
     @Override
     public void agregarProducto(int idUsuario, int idPizza, String tamanio, int cantidad, String nota) throws NegocioException {
 
         try {
-            // 1. Buscar carrito activo
             Carrito carrito = carritoDAO.obtenerCarritoActivoPorUsuario(idUsuario);
 
-            // 2. Si no existe, crearlo
             if (carrito == null) {
                 carrito = new Carrito();
                 carrito.setIdUsuario(idUsuario);
@@ -97,14 +141,23 @@ public class CarritoBO implements ICarritoBO {
         }
     }
 
+    /**
+     * Agrega un producto a un carrito Express identificado por token. Si el
+     * carrito no existe, se crea automáticamente.
+     *
+     * @param token Token identificador del carrito Express.
+     * @param idPizza ID de la pizza.
+     * @param tamanio Tamaño seleccionado.
+     * @param cantidad Cantidad a agregar.
+     * @param nota Nota adicional.
+     * @throws NegocioException Si ocurre un error.
+     */
     @Override
     public void agregarProductoExpress(String token, int idPizza, String tamanio, int cantidad, String nota) throws NegocioException {
 
         try {
-            // 1. Buscar carrito activo
             Carrito carrito = carritoDAO.obtenerCarritoActivoExpress(token);
 
-            // 2. Si no existe, crearlo
             if (carrito == null) {
                 carrito = new Carrito();
                 carrito.setToken(token);
@@ -139,13 +192,18 @@ public class CarritoBO implements ICarritoBO {
         }
     }
 
+    /**
+     * Obtiene un carrito Express activo mediante token. Si no existe, lo crea.
+     *
+     * @param token Token único del carrito Express.
+     * @return CarritoDTO con la información básica.
+     * @throws NegocioException Si ocurre un error.
+     */
     @Override
     public CarritoDTO obtenerOCrearCarritoExpress(String token) throws NegocioException {
         try {
-            //1. buscar carrito
             Carrito carrito = carritoDAO.obtenerCarritoActivoExpress(token);
             if (carrito == null) {
-                //si el carrito no existe hay que crearlo
                 carrito = new Carrito();
                 carrito.setToken(token);
                 carrito.setActivo(true);
@@ -162,6 +220,13 @@ public class CarritoBO implements ICarritoBO {
         }
     }
 
+    /**
+     * Obtiene el carrito completo de un usuario, incluyendo todos sus detalles.
+     *
+     * @param idUsuario ID del usuario.
+     * @return CarritoDTO con lista de detalles o null si no existe.
+     * @throws NegocioException Si ocurre un error.
+     */
     @Override
     public CarritoDTO obtenerCarritoCompleto(int idUsuario) throws NegocioException {
 
@@ -177,6 +242,13 @@ public class CarritoBO implements ICarritoBO {
         }
     }
 
+    /**
+     * Obtiene el carrito completo Express incluyendo sus detalles.
+     *
+     * @param token Token del carrito Express.
+     * @return CarritoDTO con lista de detalles o null si no existe.
+     * @throws NegocioException Si ocurre un error.
+     */
     @Override
     public CarritoDTO obtenerCarritoCompletoExpress(String token) throws NegocioException {
 
@@ -193,9 +265,10 @@ public class CarritoBO implements ICarritoBO {
     }
 
     /**
+     * Finaliza (desactiva) el carrito activo de un usuario.
      *
-     * @param idUsuario
-     * @throws NegocioException
+     * @param idUsuario ID del usuario.
+     * @throws NegocioException Si no existe carrito activo o hay error.
      */
     @Override
     public void finalizarCarrito(int idUsuario) throws NegocioException {
@@ -212,6 +285,10 @@ public class CarritoBO implements ICarritoBO {
         }
     }
 
+    /**
+     * Convierte una entidad Carrito y su lista de detalles en un objeto
+     * CarritoDTO para la capa de presentación.
+     */
     private CarritoDTO convertirDTO(Carrito carrito, List<DetalleCarrito> detalles) {
         CarritoDTO dto = new CarritoDTO();
         dto.setIdCarrito(carrito.getIdCarrito());
@@ -225,7 +302,6 @@ public class CarritoBO implements ICarritoBO {
             try {
                 DetalleCarritoDTO detDTO = new DetalleCarritoDTO();
                 detDTO.setIdDetalleCarrito(d.getIdDetalleCarrito());
-
                 detDTO.setIdPizza(d.getIdPizza());
                 detDTO.setCantidad(d.getCantidad());
                 detDTO.setTamanio(d.getTamanio());
@@ -247,6 +323,12 @@ public class CarritoBO implements ICarritoBO {
         return dto;
     }
 
+    /**
+     * Finaliza (desactiva) un carrito Express.
+     *
+     * @param token Token del carrito Express.
+     * @throws NegocioException Si ocurre un error.
+     */
     @Override
     public void finalizarExpress(String token) throws NegocioException {
         try {
