@@ -84,6 +84,7 @@ public class frmEmpleados extends javax.swing.JFrame {
         panLogo = new javax.swing.JPanel();
         lblLogo = new javax.swing.JLabel();
         lblTituloLogo = new javax.swing.JLabel();
+        btnCerrarSesion = new javax.swing.JButton();
         panPizzas = new javax.swing.JPanel();
         txtBuscador = new javax.swing.JTextField();
         btnCambiarEstado = new javax.swing.JPanel();
@@ -116,6 +117,16 @@ public class frmEmpleados extends javax.swing.JFrame {
         lblTituloLogo.setForeground(new java.awt.Color(255, 255, 255));
         lblTituloLogo.setText("PAPIZZA");
 
+        btnCerrarSesion.setBackground(new java.awt.Color(206, 90, 25));
+        btnCerrarSesion.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        btnCerrarSesion.setForeground(new java.awt.Color(255, 255, 255));
+        btnCerrarSesion.setText("Cerrar Sesión");
+        btnCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCerrarSesionActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panLogoLayout = new javax.swing.GroupLayout(panLogo);
         panLogo.setLayout(panLogoLayout);
         panLogoLayout.setHorizontalGroup(
@@ -125,7 +136,9 @@ public class frmEmpleados extends javax.swing.JFrame {
                 .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(lblTituloLogo)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnCerrarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29))
         );
         panLogoLayout.setVerticalGroup(
             panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -135,6 +148,10 @@ public class frmEmpleados extends javax.swing.JFrame {
                     .addComponent(lblLogo)
                     .addComponent(lblTituloLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(60, 60, 60))
+            .addGroup(panLogoLayout.createSequentialGroup()
+                .addGap(41, 41, 41)
+                .addComponent(btnCerrarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         panPizzas.setBackground(new java.awt.Color(255, 232, 216));
@@ -300,7 +317,7 @@ public class frmEmpleados extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tablaPedidos);
 
-        jButton1.setBackground(new java.awt.Color(213, 104, 0));
+        jButton1.setBackground(new java.awt.Color(0, 0, 0));
         jButton1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Productos");
@@ -460,6 +477,15 @@ public class frmEmpleados extends javax.swing.JFrame {
     private void txtBuscadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscadorActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtBuscadorActionPerformed
+
+    private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
+        // Abrir frmInicio
+        frmInicio inicio = new frmInicio();
+        inicio.setVisible(true);
+
+        // Cerrar esta ventana
+        this.dispose();
+    }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
     private void cargarTabla() {
 
@@ -675,6 +701,7 @@ public class frmEmpleados extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel btnCambiarEstado;
+    private javax.swing.JButton btnCerrarSesion;
     private javax.swing.JPanel btnDetalles;
     private javax.swing.JPanel btnDetalles1;
     private javax.swing.JButton jButton1;
