@@ -123,7 +123,7 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
         String sentenciaSQL = """
                               UPDATE Pedidos
                               SET estadoActual = 'NO_ENTREGADO'
-                              WHERE estadoActual = 'PENDIENTE'
+                              WHERE estadoActual = 'LISTO'
                               AND TIMESTAMPDIFF(MINUTE, fechaHoraPedido, NOW()) >= 20
                               AND tipo = 'EXPRESS'
                               """;

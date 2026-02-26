@@ -50,11 +50,12 @@ public interface IPedidoExpressDAO {
      * @throws PersistenciaException
      */
     boolean obtenerPinValido(String pin) throws PersistenciaException;
+
     PedidoExpress actualizarPedidoExpress(PedidoExpress pedidoExpress) throws PersistenciaException;
-    
-     public void insertarDetalle(int idPedido, int idPizza, int cantidad, String nota) throws PersistenciaException;
-    
+
+    public void insertarDetalle(int idPedido, int idPizza, int cantidad, String nota) throws PersistenciaException;
+
     public void actualizarPedidoExpressNoRecolectado() throws PersistenciaException;
-    
+
     int obtenerCantidadPedidosPorToken(String token) throws PersistenciaException;
 }

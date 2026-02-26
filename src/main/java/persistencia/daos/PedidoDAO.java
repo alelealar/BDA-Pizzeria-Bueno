@@ -289,7 +289,6 @@ public class PedidoDAO implements IPedidoDAO {
         }
     }
 
-    
     @Override
     public List<PedidoResumen> obtenerPedidosFiltrados(String filtro)
             throws PersistenciaException {
@@ -297,34 +296,38 @@ public class PedidoDAO implements IPedidoDAO {
         List<PedidoResumen> lista = new ArrayList<>();
 
         String sql = """
-SELECT 
-    p.idPedido,
-    p.tipo,
-    COALESCE(pe.folio, pp.numPedido) AS folio,
-    CONCAT(IFNULL(c.nombres,''),' ',IFNULL(c.apellidoPaterno,'')) AS cliente,
-    tel.telefono,
-    p.fechaHoraPedido,
-    (
-        SELECT SUM(dp.cantidad * piz.precio)
-        FROM DetallesPedidos dp
-        JOIN Pizzas piz ON dp.idPizza = piz.idPizza
-        WHERE dp.idPedido = p.idPedido
-    ) AS total,
-    p.estadoActual
-FROM Pedidos p
-LEFT JOIN PedidosProgramados pp ON p.idPedido = pp.idPedido
-LEFT JOIN PedidosExpress pe ON p.idPedido = pe.idPedido
-LEFT JOIN Clientes c ON pp.idUsuario = c.idUsuario
-LEFT JOIN (
-    SELECT idCliente, MIN(telefono) telefono
-    FROM TelefonosClientes
-    GROUP BY idCliente
-) tel ON tel.idCliente = c.idUsuario
-WHERE (COALESCE(pe.folio, pp.numPedido) LIKE ?
-       OR CONCAT(IFNULL(c.nombres,''),' ',IFNULL(c.apellidoPaterno,'')) LIKE ?
-       OR p.tipo LIKE ?
-       OR p.estadoActual LIKE ?)
-""";
+        SELECT 
+            p.idPedido,
+            p.tipo,
+            COALESCE(pe.folio, pp.numPedido) AS folio,
+            CONCAT(IFNULL(c.nombres,''),' ',IFNULL(c.apellidoPaterno,'')) AS cliente,
+            tel.telefono,
+            p.fechaHoraPedido,
+            (
+                SELECT SUM(dp.cantidad * piz.precio)
+                FROM DetallesPedidos dp
+                JOIN Pizzas piz ON dp.idPizza = piz.idPizza
+                WHERE dp.idPedido = p.idPedido
+            ) AS total,
+            p.estadoActual
+        FROM Pedidos p
+        LEFT JOIN PedidosProgramados pp ON p.idPedido = pp.idPedido
+        LEFT JOIN PedidosExpress pe ON p.idPedido = pe.idPedido
+        LEFT JOIN Clientes c ON c.idUsuario = pp.idUsuario
+        LEFT JOIN (
+            SELECT idCliente, MIN(telefono) AS telefono
+            FROM TelefonosClientes
+            GROUP BY idCliente
+        ) tel ON tel.idCliente = c.idUsuario
+        WHERE (
+               COALESCE(pe.folio, pp.numPedido) LIKE ?
+            OR CONCAT(IFNULL(c.nombres,''),' ',IFNULL(c.apellidoPaterno,'')) LIKE ?
+            OR tel.telefono LIKE ?
+            OR p.tipo LIKE ?
+            OR p.estadoActual LIKE ?
+        )
+        ORDER BY p.fechaHoraPedido DESC
+        """;
 
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -332,30 +335,41 @@ WHERE (COALESCE(pe.folio, pp.numPedido) LIKE ?
 
             ps.setString(1, like);
             ps.setString(2, like);
-            ps.setString(3, like);
+            ps.setString(3, like); // TELEFONO
             ps.setString(4, like);
+            ps.setString(5, like);
 
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
 
-                PedidoResumen pt = new PedidoResumen(
+                String cliente = rs.getString("cliente");
+                if (cliente == null || cliente.trim().isEmpty()) {
+                    cliente = "Público General";
+                }
+
+                String telefono = rs.getString("telefono");
+                if (telefono == null || telefono.trim().isEmpty()) {
+                    telefono = "N/A";
+                }
+
+                Double total = rs.getDouble("total");
+                if (rs.wasNull()) {
+                    total = 0.0;
+                }
+
+                PedidoResumen pedido = new PedidoResumen(
                         rs.getInt("idPedido"),
                         rs.getString("folio"),
-                        rs.getString("cliente") != null
-                        && !rs.getString("cliente").trim().isEmpty()
-                        ? rs.getString("cliente")
-                        : "Público General",
-                        rs.getString("telefono") != null
-                        ? rs.getString("telefono")
-                        : "N/A",
+                        cliente,
+                        telefono,
                         rs.getTimestamp("fechaHoraPedido").toLocalDateTime(),
-                        rs.getDouble("total"),
+                        total,
                         rs.getString("estadoActual"),
                         rs.getString("tipo")
                 );
 
-                lista.add(pt);
+                lista.add(pedido);
             }
 
             return lista;
@@ -364,24 +378,23 @@ WHERE (COALESCE(pe.folio, pp.numPedido) LIKE ?
             throw new PersistenciaException("Error al filtrar pedidos", ex);
         }
     }
-    
+
     @Override
     public void cambiarEstado(int idPedido, String nuevoEstado) throws PersistenciaException {
 
-    String sql = "{CALL SP_CAMBIAR_ESTADO(?, ?)}";
+        String sql = "{CALL SP_CAMBIAR_ESTADO(?, ?)}";
 
-    try (Connection con = conexionBD.crearConexion();
-         CallableStatement cs = con.prepareCall(sql)) {
+        try (Connection con = conexionBD.crearConexion(); CallableStatement cs = con.prepareCall(sql)) {
 
-        cs.setInt(1, idPedido);
-        cs.setString(2, nuevoEstado);
+            cs.setInt(1, idPedido);
+            cs.setString(2, nuevoEstado);
 
-        cs.execute();
+            cs.execute();
 
-    } catch (SQLException e) {
-        throw new PersistenciaException("Error al cambiar estado", e);
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al cambiar estado", e);
+        }
     }
-}
 //    @Override
 //    public void cambiarEstado(int idPedido, String nuevoEstado) throws PersistenciaException {
 //
@@ -398,6 +411,7 @@ WHERE (COALESCE(pe.folio, pp.numPedido) LIKE ?
 //            throw new PersistenciaException("Error al cambiar estado del pedido");
 //        }
 //    }
+
     @Override
     public Pedido obtenerDetallePedido(int idPedido) throws PersistenciaException {
 
@@ -529,7 +543,7 @@ WHERE (COALESCE(pe.folio, pp.numPedido) LIKE ?
         }
     }
 
-        @Override
+    @Override
     public List<PedidoResumen> obtenerPedidosTabla() throws PersistenciaException {
         String sql = """
         SELECT 
@@ -589,6 +603,5 @@ WHERE (COALESCE(pe.folio, pp.numPedido) LIKE ?
 
         return lista;
     }
-
 
 }

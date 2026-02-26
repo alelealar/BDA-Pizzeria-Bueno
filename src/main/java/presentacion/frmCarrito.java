@@ -716,15 +716,29 @@ public class frmCarrito extends javax.swing.JFrame {
                 if (express) {
                     IPedidoExpressBO pedidoEx = FabricaBOs.obtenerPedidoExpress();
                     CarritoDTO carritoDto = carritoBo.obtenerCarritoCompletoExpress(token);
+
                     PedidoExpressDTO pedidoExDTO = new PedidoExpressDTO();
                     pedidoExDTO.setFechaHoraPedido(LocalDateTime.now());
                     pedidoExDTO.setToken(token);
+
                     PedidoExpressDTO pedidoExpressObtenido = pedidoEx.agregarPedidoExpress(pedidoExDTO);
                     CarritoDTO carritoCompleto = carritoBo.obtenerCarritoCompletoExpress(token);
-                    List<DetalleCarritoDTO> detalles = carritoCompleto.getDetalles();
-                    for (DetalleCarritoDTO detalle : detalles) {
+
+                    // Agregar detalles del carrito al pedido
+                    for (DetalleCarritoDTO detalle : carrito.getDetalles()) {
+                        pedidoEx.agregarDetallePedido(
+                                pedidoExpressObtenido.getIdPedido(),
+                                detalle.getIdPizza(),
+                                detalle.getCantidad(),
+                                detalle.getNota()
+                        );
+                    }
+
+                    // Limpiar carrito
+                    for (DetalleCarritoDTO detalle : carrito.getDetalles()) {
                         eliminarPaneles(detalle);
                     }
+
                     String mensaje = "<html>"
                             + "<div style='text-align: center; width: 200px; padding: 10px;'>"
                             + "   <b style='font-size: 1.2em;'>¡Pedido Registrado!</b><br><br>"
@@ -737,104 +751,75 @@ public class frmCarrito extends javax.swing.JFrame {
                     aviso.setVisible(true);
                     carritoBo.finalizarExpress(token);
                 } else {
-                    CarritoDTO carritoDto = carritoBo.obtenerCarritoCompleto(idUsuario);
-
+                    // --- PEDIDO PROGRAMADO ---
+                    IPedidoProgramadoBO pedidoProgBO = pedidoProgramadoBO;
                     PedidoProgramadoDTO pedidoDTO = new PedidoProgramadoDTO();
-
-                    pedidoDTO.setFechaHoraEntrega(LocalDateTime.now().plusHours(1)); // ejemplo
+                    pedidoDTO.setFechaHoraEntrega(LocalDateTime.now().plusHours(1));
                     pedidoDTO.setNota("Pedido programado desde carrito");
-                    pedidoDTO.setIdCliente(carritoDto.getIdUsuario());
-                    pedidoDTO.setIdCupon(
-                            cuponAplicado != null ? cuponAplicado.getIdCupon() : null
-                    );
-                    PedidoProgramadoDTO resultado = pedidoProgramadoBO.agregarPedidoProgramado(pedidoDTO);
+                    pedidoDTO.setIdCliente(idUsuario);
+                    pedidoDTO.setIdCupon(cuponAplicado != null ? cuponAplicado.getIdCupon() : null);
 
-                    List<DetalleCarritoDTO> detalles = carritoDto.getDetalles();
+                    PedidoProgramadoDTO pedidoRegistrado = pedidoProgBO.agregarPedidoProgramado(pedidoDTO);
 
-                    for (DetalleCarritoDTO detalle : detalles) {
+                    // Agregar detalles del carrito al pedido
+                    for (DetalleCarritoDTO detalle : carrito.getDetalles()) {
+                        pedidoProgBO.agregarDetallePedido(
+                                pedidoRegistrado.getIdPedido(),
+                                detalle.getIdPizza(),
+                                detalle.getCantidad(),
+                                detalle.getNota()
+                        );
+                    }
+
+                    // Limpiar carrito
+                    for (DetalleCarritoDTO detalle : carrito.getDetalles()) {
                         eliminarPaneles(detalle);
                     }
-                    
-                    
-                    
-                    JOptionPane.showMessageDialog(this,
-                            "Pedido programado registrado.\nFolio: "
-                            + resultado.getIdPedido()
-                    );
 
+                    JOptionPane.showMessageDialog(this,
+                            "Pedido programado registrado.\nFolio: " + pedidoRegistrado.getIdPedido()
+                    );
                     cargarCarrito();
                 }
             }
 
-            if (express) {
-                // --- PEDIDO EXPRESS ---
-                IPedidoExpressBO pedidoExBO = FabricaBOs.obtenerPedidoExpress();
-                PedidoExpressDTO pedidoExDTO = new PedidoExpressDTO();
-                pedidoExDTO.setFechaHoraPedido(LocalDateTime.now());
-                pedidoExDTO.setToken(token);
-                PedidoExpressDTO pedidoRegistrado = pedidoExBO.agregarPedidoExpress(pedidoExDTO);
+//            if (express) {
+//                // --- PEDIDO EXPRESS ---
+//                IPedidoExpressBO pedidoExBO = FabricaBOs.obtenerPedidoExpress();
+//                PedidoExpressDTO pedidoExDTO = new PedidoExpressDTO();
+//                pedidoExDTO.setFechaHoraPedido(LocalDateTime.now());
+//                pedidoExDTO.setToken(token);
+//                PedidoExpressDTO pedidoRegistrado = pedidoExBO.agregarPedidoExpress(pedidoExDTO);
+//
+//                // Agregar detalles del carrito al pedido
+//                for (DetalleCarritoDTO detalle : carrito.getDetalles()) {
+//                    pedidoExBO.agregarDetallePedido(
+//                            pedidoRegistrado.getIdPedido(),
+//                            detalle.getIdPizza(),
+//                            detalle.getCantidad(),
+//                            detalle.getNota()
+//                    );
+//                }
+//
+//                // Limpiar carrito
+//                for (DetalleCarritoDTO detalle : carrito.getDetalles()) {
+//                    eliminarPaneles(detalle);
+//                }
+//                carritoBo.finalizarExpress(token);
+//
+//                // Mostrar folio y PIN
+//                String mensaje = "<html>"
+//                        + "<div style='text-align: center; width: 200px; padding: 10px;'>"
+//                        + "   <b style='font-size: 1.2em;'>¡Pedido Registrado!</b><br><br>"
+//                        + "   Folio: <b>" + pedidoRegistrado.getFolio() + "</b><br>"
+//                        + "   PIN: <span style='color: #14CBF5; font-size: 1.1em;'><b>" + pedidoRegistrado.getPIN() + "</b></span><br><br>"
+//                        + "   <i style='color: #555555;'>Por favor, guarda estos datos.<br>Los necesitarás para tu pedido.</i>"
+//                        + "</div>"
+//                        + "</html>";
+//                frmAvisos aviso = new frmAvisos(mensaje);
+//                aviso.setVisible(true);
 
-                // Agregar detalles del carrito al pedido
-                for (DetalleCarritoDTO detalle : carrito.getDetalles()) {
-                    pedidoExBO.agregarDetallePedido(
-                            pedidoRegistrado.getIdPedido(),
-                            detalle.getIdPizza(),
-                            detalle.getCantidad(),
-                            detalle.getNota()
-                    );
-                }
-
-                // Limpiar carrito
-                for (DetalleCarritoDTO detalle : carrito.getDetalles()) {
-                    eliminarPaneles(detalle);
-                }
-                carritoBo.finalizarExpress(token);
-
-                // Mostrar folio y PIN
-                String mensaje = "<html>"
-                        + "<div style='text-align: center; width: 200px; padding: 10px;'>"
-                        + "   <b style='font-size: 1.2em;'>¡Pedido Registrado!</b><br><br>"
-                        + "   Folio: <b>" + pedidoRegistrado.getFolio() + "</b><br>"
-                        + "   PIN: <span style='color: #14CBF5; font-size: 1.1em;'><b>" + pedidoRegistrado.getPIN() + "</b></span><br><br>"
-                        + "   <i style='color: #555555;'>Por favor, guarda estos datos.<br>Los necesitarás para tu pedido.</i>"
-                        + "</div>"
-                        + "</html>";
-                frmAvisos aviso = new frmAvisos(mensaje);
-                aviso.setVisible(true);
-
-            } else {
-                // --- PEDIDO PROGRAMADO ---
-                IPedidoProgramadoBO pedidoProgBO = pedidoProgramadoBO;
-                PedidoProgramadoDTO pedidoDTO = new PedidoProgramadoDTO();
-                pedidoDTO.setFechaHoraEntrega(LocalDateTime.now().plusHours(1));
-                pedidoDTO.setNota("Pedido programado desde carrito");
-                pedidoDTO.setIdCliente(carrito.getIdUsuario());
-                pedidoDTO.setIdCupon(cuponAplicado != null ? cuponAplicado.getIdCupon() : null);
-
-                PedidoProgramadoDTO pedidoRegistrado = pedidoProgBO.agregarPedidoProgramado(pedidoDTO);
-
-                // Agregar detalles del carrito al pedido
-                for (DetalleCarritoDTO detalle : carrito.getDetalles()) {
-                    pedidoProgBO.agregarDetallePedido(
-                            pedidoRegistrado.getIdPedido(),
-                            detalle.getIdPizza(),
-                            detalle.getCantidad(),
-                            detalle.getNota()
-                    );
-                }
-
-                // Limpiar carrito
-                for (DetalleCarritoDTO detalle : carrito.getDetalles()) {
-                    eliminarPaneles(detalle);
-                }
-
-                JOptionPane.showMessageDialog(this,
-                        "Pedido programado registrado.\nFolio: " + pedidoRegistrado.getIdPedido()
-                );
-                cargarCarrito();
-            }
-
-        } catch (NegocioException ex) {
+            }catch (NegocioException ex) {
             LOG.warning(ex.getMessage());
             JOptionPane.showMessageDialog(this, "Error al ordenar.");
         }

@@ -68,46 +68,58 @@ public class PedidoProgramadoDAO implements IPedidoProgramadoDAO {
     public PedidoProgramado agregarPedidoProgramado(PedidoProgramado pedido)
             throws PersistenciaException {
 
-        String sp = "{CALL SP_REGISTAR_PEDIDO_PROGRAMADO(?, ?, ?, ?, ?)}";
+        String sp = "{CALL SP_REGISTAR_PEDIDO_PROGRAMADO(?, ?, ?, ?)}";
 
-        try (Connection conn = conexionBD.crearConexion(); CallableStatement cs = conn.prepareCall(sp)) {
+        try (
+                Connection conn = conexionBD.crearConexion(); CallableStatement cs = conn.prepareCall(sp);) {
 
             // IN 1: nota
             cs.setString(1, pedido.getNota());
 
-            // IN 2: idCupon (nullable)
-            if (pedido.getCupon() != null) {
+            // IN 2: idCupon (puede ser null)
+            if (pedido.getCupon() != null
+                    && pedido.getCupon().getIdCupon() != null
+                    && !pedido.getCupon().getIdCupon().isEmpty()) {
+
                 cs.setString(2, pedido.getCupon().getIdCupon());
+
             } else {
                 cs.setNull(2, Types.VARCHAR);
             }
 
             // IN 3: idUsuario
+            if (pedido.getCliente() == null) {
+                throw new PersistenciaException("El cliente no puede ser null");
+            }
+
             cs.setInt(3, pedido.getCliente().getIdUsuario());
 
-            // IN 4: fechaHoraProgramada
-            cs.setTimestamp(4, Timestamp.valueOf(pedido.getFechaHoraEntrega()));
+            // OUT 4: idPedido generado
+            cs.registerOutParameter(4, Types.INTEGER);
 
-            // OUT 5: idPedido generado
-            cs.registerOutParameter(5, Types.INTEGER);
-
+            // Ejecutar SP
             cs.execute();
 
-            int idGenerado = cs.getInt(5);
+            int idGenerado = cs.getInt(4);
 
             if (idGenerado <= 0) {
                 throw new PersistenciaException("No se pudo insertar el pedido programado");
             }
 
+            // asignar ID al objeto
             pedido.setIdPedido(idGenerado);
 
-            LOG.info("Pedido programado insertado con ID: " + idGenerado);
+            LOG.log(Level.INFO, "Pedido programado insertado con ID: {0}", idGenerado);
 
             return pedido;
 
         } catch (SQLException ex) {
-            LOG.severe("Error al insertar pedido programado: " + ex.getMessage());
-            throw new PersistenciaException("Error al insertar pedido programado", ex);
+
+            LOG.log(Level.SEVERE, "Error al insertar pedido programado", ex);
+
+            throw new PersistenciaException(
+                    "Error al insertar pedido programado: " + ex.getMessage(), ex);
+
         }
     }
 

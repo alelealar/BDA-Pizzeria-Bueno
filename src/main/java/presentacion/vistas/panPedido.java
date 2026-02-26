@@ -50,7 +50,7 @@ public class panPedido extends javax.swing.JPanel {
             PizzaBO pizzaBO = FabricaBOs.obtenerProductos();
             PizzaDTO pizza = pizzaBO.obtenerPizzaPorId(detalle.getIdPizza());
 
-            lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizza.getRutaImagen())));
+            lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/" + pizza.getRutaImagen())));
 
             lblPrecioPizza.setText("$" + detalle.getPrecioUnitario() + " MXN");
             lblCantidad.setText(String.valueOf(detalle.getCantidad()));

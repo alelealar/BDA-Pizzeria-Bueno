@@ -38,7 +38,7 @@ public class panTarjetasPizzas extends javax.swing.JPanel {
         this.idUsuario = idUsuario;
         this.pizzaFiltrada = pizzaFiltrada;
         lblNombre.setText(pizzaFiltrada.getNombre());
-        lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizzaFiltrada.getRutaImagen())));
+        lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/" + pizzaFiltrada.getRutaImagen())));
     }
 
     public void setDatosPizzaExpress(PizzaDTO pizzaFiltrada, frmCatalogo catalogo, String token) {
@@ -48,7 +48,7 @@ public class panTarjetasPizzas extends javax.swing.JPanel {
         this.pizzaFiltrada = pizzaFiltrada;
 
         lblNombre.setText(pizzaFiltrada.getNombre());
-        lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/" + pizzaFiltrada.getRutaImagen())));
+        lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/" + pizzaFiltrada.getRutaImagen())));
     }
 
     /**
