@@ -297,7 +297,6 @@ public class PedidoExpressDAO implements IPedidoExpressDAO {
         return 0;
     }
 
-
     
     @Override
     public void insertarDetalle(int idPedido, int idPizza, int cantidad, String nota) throws PersistenciaException {

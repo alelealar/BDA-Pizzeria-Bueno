@@ -711,8 +711,59 @@ public class frmCarrito extends javax.swing.JFrame {
             }
 
             int confirm = JOptionPane.showConfirmDialog(this, "¿Finalizar compra?");
-            if (confirm != JOptionPane.YES_OPTION) {
-                return;
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                if (express) {
+                    IPedidoExpressBO pedidoEx = FabricaBOs.obtenerPedidoExpress();
+                    CarritoDTO carritoDto = carritoBo.obtenerCarritoCompletoExpress(token);
+                    PedidoExpressDTO pedidoExDTO = new PedidoExpressDTO();
+                    pedidoExDTO.setFechaHoraPedido(LocalDateTime.now());
+                    pedidoExDTO.setToken(token);
+                    PedidoExpressDTO pedidoExpressObtenido = pedidoEx.agregarPedidoExpress(pedidoExDTO);
+                    CarritoDTO carritoCompleto = carritoBo.obtenerCarritoCompletoExpress(token);
+                    List<DetalleCarritoDTO> detalles = carritoCompleto.getDetalles();
+                    for (DetalleCarritoDTO detalle : detalles) {
+                        eliminarPaneles(detalle);
+                    }
+                    String mensaje = "<html>"
+                            + "<div style='text-align: center; width: 200px; padding: 10px;'>"
+                            + "   <b style='font-size: 1.2em;'>¡Pedido Registrado!</b><br><br>"
+                            + "   Folio: <b>" + pedidoExpressObtenido.getFolio() + "</b><br>"
+                            + "   PIN: <span style='color: #14CBF5; font-size: 1.1em;'><b>" + pedidoExpressObtenido.getPIN() + "</b></span><br><br>"
+                            + "   <i style='color: #555555;'>Por favor, guarda estos datos.<br>Los necesitarás para tu pedido.</i>"
+                            + "</div>"
+                            + "</html>";
+                    frmAvisos aviso = new frmAvisos(mensaje);
+                    aviso.setVisible(true);
+                    carritoBo.finalizarExpress(token);
+                } else {
+                    CarritoDTO carritoDto = carritoBo.obtenerCarritoCompleto(idUsuario);
+
+                    PedidoProgramadoDTO pedidoDTO = new PedidoProgramadoDTO();
+
+                    pedidoDTO.setFechaHoraEntrega(LocalDateTime.now().plusHours(1)); // ejemplo
+                    pedidoDTO.setNota("Pedido programado desde carrito");
+                    pedidoDTO.setIdCliente(carritoDto.getIdUsuario());
+                    pedidoDTO.setIdCupon(
+                            cuponAplicado != null ? cuponAplicado.getIdCupon() : null
+                    );
+                    PedidoProgramadoDTO resultado = pedidoProgramadoBO.agregarPedidoProgramado(pedidoDTO);
+
+                    List<DetalleCarritoDTO> detalles = carritoDto.getDetalles();
+
+                    for (DetalleCarritoDTO detalle : detalles) {
+                        eliminarPaneles(detalle);
+                    }
+                    
+                    
+                    
+                    JOptionPane.showMessageDialog(this,
+                            "Pedido programado registrado.\nFolio: "
+                            + resultado.getIdPedido()
+                    );
+
+                    cargarCarrito();
+                }
             }
 
             if (express) {
