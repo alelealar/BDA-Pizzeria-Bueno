@@ -115,12 +115,12 @@ public class frmMisPedidos extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         btnPE = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
+        btnCerrarSesion = new javax.swing.JButton();
         panPizzas = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaPedidos = new javax.swing.JTable();
         btnCancelar = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        cmbTipo = new javax.swing.JComboBox<>();
         txtAnio = new javax.swing.JTextField();
         txtMes = new javax.swing.JTextField();
         txtDia = new javax.swing.JTextField();
@@ -316,6 +316,16 @@ public class frmMisPedidos extends javax.swing.JFrame {
 
         panNavegacion.add(btnPE, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 2, 150, 60));
 
+        btnCerrarSesion.setBackground(new java.awt.Color(206, 90, 25));
+        btnCerrarSesion.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        btnCerrarSesion.setForeground(new java.awt.Color(255, 255, 255));
+        btnCerrarSesion.setText("Cerrar Sesión");
+        btnCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCerrarSesionActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panLogoLayout = new javax.swing.GroupLayout(panLogo);
         panLogo.setLayout(panLogoLayout);
         panLogoLayout.setHorizontalGroup(
@@ -326,18 +336,25 @@ public class frmMisPedidos extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(lblTituloLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(lblTituloLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnCerrarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(33, 33, 33))
                     .addComponent(panNavegacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         panLogoLayout.setVerticalGroup(
             panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panLogoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblLogo)
-                    .addComponent(lblTituloLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0)
+                .addGroup(panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panLogoLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblLogo)
+                            .addComponent(lblTituloLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(panLogoLayout.createSequentialGroup()
+                        .addGap(36, 36, 36)
+                        .addComponent(btnCerrarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addComponent(panNavegacion, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -392,14 +409,6 @@ public class frmMisPedidos extends javax.swing.JFrame {
                 .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
                 .addContainerGap())
         );
-
-        cmbTipo.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        cmbTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cmbTipo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmbTipoActionPerformed(evt);
-            }
-        });
 
         txtAnio.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         txtAnio.setForeground(java.awt.Color.gray);
@@ -604,8 +613,7 @@ public class frmMisPedidos extends javax.swing.JFrame {
                 .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane1)
                     .addGroup(panPizzasLayout.createSequentialGroup()
-                        .addComponent(cmbTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(124, 124, 124)
+                        .addGap(285, 285, 285)
                         .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
                             .addGroup(panPizzasLayout.createSequentialGroup()
@@ -648,7 +656,6 @@ public class frmMisPedidos extends javax.swing.JFrame {
                                 .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(panPizzasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(cmbTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtDia, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtMes, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtAnio, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))))
@@ -945,10 +952,6 @@ public class frmMisPedidos extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnPEMouseClicked
 
-    private void cmbTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTipoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cmbTipoActionPerformed
-
     private void btnFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltrarActionPerformed
 //        try {
 //
@@ -990,6 +993,15 @@ public class frmMisPedidos extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnFiltrarMouseClicked
 
+    private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
+        // Abrir frmInicio
+        frmInicio inicio = new frmInicio();
+        inicio.setVisible(true);
+
+        // Cerrar esta ventana
+        //this.dispose();
+    }//GEN-LAST:event_btnCerrarSesionActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1019,11 +1031,11 @@ public class frmMisPedidos extends javax.swing.JFrame {
     private javax.swing.JPanel btnActualizar;
     private javax.swing.JPanel btnCancelar;
     private javax.swing.JPanel btnCarrito;
+    private javax.swing.JButton btnCerrarSesion;
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JPanel btnInicio;
     private javax.swing.JPanel btnMispedidos;
     private javax.swing.JPanel btnPE;
-    private javax.swing.JComboBox<String> cmbTipo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

@@ -23,7 +23,6 @@ import persistencia.dominio.Telefono;
 import persistencia.excepciones.PersistenciaException;
 
 /**
- *
  * @author Brian Kaleb Sandoval Rodríguez - 00000262741
  * @author Alejandra Leal Armenta - 00000262719
  * @author Paulina Michel Guevara Cervantez - 00000262724

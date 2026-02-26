@@ -106,6 +106,7 @@ public class frmCatalogo extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         btnPE = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
+        btnCerrarSesion = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         panMostrarPizzas = new javax.swing.JPanel();
 
@@ -297,6 +298,16 @@ public class frmCatalogo extends javax.swing.JFrame {
 
         panNavegacion.add(btnPE, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 2, 150, 60));
 
+        btnCerrarSesion.setBackground(new java.awt.Color(206, 90, 25));
+        btnCerrarSesion.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        btnCerrarSesion.setForeground(new java.awt.Color(255, 255, 255));
+        btnCerrarSesion.setText("Volver");
+        btnCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCerrarSesionActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panLogoLayout = new javax.swing.GroupLayout(panLogo);
         panLogo.setLayout(panLogoLayout);
         panLogoLayout.setHorizontalGroup(
@@ -307,18 +318,25 @@ public class frmCatalogo extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(lblTituloLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(lblTituloLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCerrarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34))
                     .addComponent(panNavegacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         panLogoLayout.setVerticalGroup(
             panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panLogoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblLogo)
-                    .addComponent(lblTituloLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0)
+                .addGroup(panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panLogoLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(panLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblLogo)
+                            .addComponent(lblTituloLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(panLogoLayout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addComponent(btnCerrarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addComponent(panNavegacion, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -443,6 +461,15 @@ public class frmCatalogo extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnPEMousePressed
 
+    private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
+        // Abrir frmInicio
+        frmInicio inicio = new frmInicio();
+        inicio.setVisible(true);
+
+        // Cerrar esta ventana
+        this.dispose();
+    }//GEN-LAST:event_btnCerrarSesionActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -471,6 +498,7 @@ public class frmCatalogo extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel btnActualizar;
     private javax.swing.JPanel btnCarrito;
+    private javax.swing.JButton btnCerrarSesion;
     private javax.swing.JPanel btnInicio;
     private javax.swing.JPanel btnMispedidos;
     private javax.swing.JPanel btnPE;
@@ -485,7 +513,5 @@ public class frmCatalogo extends javax.swing.JFrame {
     private javax.swing.JPanel panLogo;
     private javax.swing.JPanel panMostrarPizzas;
     private javax.swing.JPanel panNavegacion;
-    private javax.swing.JPanel panPizzas;
-    private javax.swing.JPanel panPizzas1;
     // End of variables declaration//GEN-END:variables
 }
